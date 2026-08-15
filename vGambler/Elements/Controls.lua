@@ -290,6 +290,13 @@ function vGambler:SetupControlsPage(page)
 
 	self.ChatWindow:AddMessage("Welcome to |cffFFC44Dv|rGambler")
 
+	for i = 1, #self.PendingMessages do
+		self.ChatWindow:AddMessage(self.PendingMessages[i])
+	end
+
+	self.PendingMessages = table.wipe(self.PendingMessages)
+	self:UpdateChatScrollBar()
+
 	self:SortButtonList(GameButtons, GameButtons)
 	self:SortButtonList(GameSettings, GameSettings)
 	self:SortButtonList(PlayButtons, PlayButtons)
