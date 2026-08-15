@@ -33,7 +33,7 @@ function vGambler:HistoryLineOnEnter()
 		return
 	end
 
-	vGambler:WindowButtonOnEnter(self)
+	vGambler.WindowButtonOnEnter(self)
 	vGambler.Tooltip:SetOwner(self, "ANCHOR_NONE")
 	vGambler.Tooltip:SetPoint("LEFT", self, "RIGHT", 8, 0)
 	vGambler.Tooltip:ClearLines()
@@ -49,7 +49,7 @@ function vGambler:HistoryLineOnEnter()
 end
 
 function vGambler:HistoryLineOnLeave()
-	vGambler:WindowButtonOnLeave(self)
+	vGambler.WindowButtonOnLeave(self)
 	vGambler.Tooltip:Hide()
 end
 
