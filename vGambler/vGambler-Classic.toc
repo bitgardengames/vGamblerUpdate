@@ -1,9 +1,9 @@
-## Interface: 20504
+## Interface: 11403
 ## Author: Hydra
 ## Version: 1.0
-## Title: |cffFFC44DGamble|r|cffFFFFFFBuddy|r
+## Title: |cffFFC44Dv|r|cffFFFFFFGambler|r
 ## Notes: Gamble away your hard earned gold!
-## SavedVariables: GambleBuddyBans, GambleBuddyData, GambleBuddyPlayers, GambleBuddySettings, GambleBuddyHistory
+## SavedVariables: vGamblerBans, vGamblerData, vGamblerPlayers, vGamblerSettings, vGamblerHistory
 
 Libs\LibStub.lua
 Libs\CallbackHandler-1.0.lua
@@ -26,8 +26,8 @@ Languages/zhTW.lua
 Elements/Settings.lua
 Elements/Game.lua
 Elements/Interface.lua
-Elements/Controls.lua
 Elements/Comms.lua
+Elements/Controls.lua
 Elements/Stats.lua
 Elements/Bans.lua
 Elements/Commands.lua

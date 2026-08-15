@@ -1,5 +1,5 @@
 local Name, AddOn = ...
-local GambleBuddy = AddOn.GambleBuddy
+local vGambler = AddOn.vGambler
 
 local table = table
 local string = string
@@ -19,13 +19,13 @@ local LastSorter
 local SortDir = 1
 local SortSetting = "Earnings"
 
-function GambleBuddy:AddStat(stat, value)
-	if (not GambleBuddyData) then
-		GambleBuddyData = {}
+function vGambler:AddStat(stat, value)
+	if (not vGamblerData) then
+		vGamblerData = {}
 	end
 
-	if (not GambleBuddyData[stat]) then
-		GambleBuddyData[stat] = 0
+	if (not vGamblerData[stat]) then
+		vGamblerData[stat] = 0
 	end
 
 	if (not Session[stat]) then
@@ -33,18 +33,18 @@ function GambleBuddy:AddStat(stat, value)
 	end
 
 	Session[stat] = Session[stat] + value
-	GambleBuddyData[stat] = GambleBuddyData[stat] + value
+	vGamblerData[stat] = vGamblerData[stat] + value
 
 	self:UpdateStat(stat)
 end
 
-function GambleBuddy:AddMaxStat(stat, value)
-	if (not GambleBuddyData) then
-		GambleBuddyData = {}
+function vGambler:AddMaxStat(stat, value)
+	if (not vGamblerData) then
+		vGamblerData = {}
 	end
 
-	if (not GambleBuddyData[stat]) then
-		GambleBuddyData[stat] = 0
+	if (not vGamblerData[stat]) then
+		vGamblerData[stat] = 0
 	end
 
 	if (not Session[stat]) then
@@ -52,22 +52,22 @@ function GambleBuddy:AddMaxStat(stat, value)
 	end
 
 	Session[stat] = math.max(Session[stat], value)
-	GambleBuddyData[stat] = math.max(GambleBuddyData[stat], value)
+	vGamblerData[stat] = math.max(vGamblerData[stat], value)
 
 	self:UpdateStat(stat)
 end
 
-function GambleBuddy:AddPlayerStat(name, stat, value)
-	if (not GambleBuddyPlayers) then
-		GambleBuddyPlayers = {}
+function vGambler:AddPlayerStat(name, stat, value)
+	if (not vGamblerPlayers) then
+		vGamblerPlayers = {}
 	end
 
-	if (not GambleBuddyPlayers[name]) then
-		GambleBuddyPlayers[name] = {}
+	if (not vGamblerPlayers[name]) then
+		vGamblerPlayers[name] = {}
 	end
 
-	if (not GambleBuddyPlayers[name][stat]) then
-		GambleBuddyPlayers[name][stat] = 0
+	if (not vGamblerPlayers[name][stat]) then
+		vGamblerPlayers[name][stat] = 0
 	end
 
 	if (not PlayerSession[name]) then
@@ -78,21 +78,21 @@ function GambleBuddy:AddPlayerStat(name, stat, value)
 		PlayerSession[name][stat] = 0
 	end
 
-	GambleBuddyPlayers[name][stat] = GambleBuddyPlayers[name][stat] + value
+	vGamblerPlayers[name][stat] = vGamblerPlayers[name][stat] + value
 	PlayerSession[name][stat] = PlayerSession[name][stat] + value
 end
 
-function GambleBuddy:AddPlayerMaxStat(name, stat, value)
-	if (not GambleBuddyPlayers) then
-		GambleBuddyPlayers = {}
+function vGambler:AddPlayerMaxStat(name, stat, value)
+	if (not vGamblerPlayers) then
+		vGamblerPlayers = {}
 	end
 
-	if (not GambleBuddyPlayers[name]) then
-		GambleBuddyPlayers[name] = {}
+	if (not vGamblerPlayers[name]) then
+		vGamblerPlayers[name] = {}
 	end
 
-	if (not GambleBuddyPlayers[name][stat]) then
-		GambleBuddyPlayers[name][stat] = 0
+	if (not vGamblerPlayers[name][stat]) then
+		vGamblerPlayers[name][stat] = 0
 	end
 
 	if (not PlayerSession[name]) then
@@ -103,11 +103,11 @@ function GambleBuddy:AddPlayerMaxStat(name, stat, value)
 		PlayerSession[name][stat] = 0
 	end
 
-	GambleBuddyPlayers[name][stat] = math.max(GambleBuddyPlayers[name][stat], value)
+	vGamblerPlayers[name][stat] = math.max(vGamblerPlayers[name][stat], value)
 	PlayerSession[name][stat] = math.max(PlayerSession[name][stat], value)
 end
 
-GambleBuddy.SortStats = {
+vGambler.SortStats = {
 	Name = function(dir)
 		if (dir and dir == 0) then
 			table.sort(StatsSorter, function(a, b)
@@ -163,21 +163,21 @@ GambleBuddy.SortStats = {
 	end,
 }
 
-function GambleBuddy:ResetStats()
-	GambleBuddyPlayers = nil
+function vGambler:ResetStats()
+	vGamblerPlayers = nil
 
-	print("GambleBuddy: Stats have been reset.")
+	print("vGambler: Stats have been reset.")
 end
 
-function GambleBuddy:UpdateStatDisplay(value)
-	GambleBuddySettings.StatDisplay = value
-	GambleBuddy.Settings.StatDisplay = value
+function vGambler:UpdateStatDisplay(value)
+	vGamblerSettings.StatDisplay = value
+	vGambler.Settings.StatDisplay = value
 
-	GambleBuddy:UpdateBasicStats()
-	GambleBuddy:UpdateStatGrid()
+	vGambler:UpdateBasicStats()
+	vGambler:UpdateStatGrid()
 end
 
-function GambleBuddy:AddLongStatLine(parent)
+function vGambler:AddLongStatLine(parent)
 	if FreeStatLines[1] then -- Get an old line, only make new ones as needed
 		local Line = table.remove(FreeStatLines, 1)
 
@@ -227,7 +227,7 @@ function GambleBuddy:AddLongStatLine(parent)
 	table.insert(StatLines, Line)
 end
 
-function GambleBuddy:ResetStatLines()
+function vGambler:ResetStatLines()
 	local Line
 
 	for i = #StatsSorter, 1, -1 do
@@ -242,7 +242,7 @@ function GambleBuddy:ResetStatLines()
 	end
 end
 
-function GambleBuddy:GetStatTable()
+function vGambler:GetStatTable()
 	if FreeStatTables[1] then
 		return table.remove(FreeStatTables, 1)
 	else
@@ -250,18 +250,18 @@ function GambleBuddy:GetStatTable()
 	end
 end
 
-function GambleBuddy:UpdateStatGrid()
-	GambleBuddy:ResetStatLines()
-	GambleBuddy:PopulateStatLines(SortDir)
+function vGambler:UpdateStatGrid()
+	vGambler:ResetStatLines()
+	vGambler:PopulateStatLines(SortDir)
 end
 
-function GambleBuddy:PopulateStatLines(direction)
-	local PlayerData = self.Settings.StatDisplay == true and PlayerSession or GambleBuddyPlayers
-	local Page = GambleBuddy:GetPage("Stats")
+function vGambler:PopulateStatLines(direction)
+	local PlayerData = self.Settings.StatDisplay == true and PlayerSession or vGamblerPlayers
+	local Page = vGambler:GetPage("Stats")
 
 	for user, data in next, PlayerData do
 		if (data.wins or data.losses) then -- Filter players who haven't won or lost
-			local StatData = GambleBuddy:GetStatTable()
+			local StatData = vGambler:GetStatTable()
 			local Percent
 
 			if (data.wins and data.games) then
@@ -277,24 +277,24 @@ function GambleBuddy:PopulateStatLines(direction)
 		end
 	end
 
-	if GambleBuddy.SortStats[SortSetting] then
-		GambleBuddy.SortStats[SortSetting](direction)
+	if vGambler.SortStats[SortSetting] then
+		vGambler.SortStats[SortSetting](direction)
 	else
-		GambleBuddy.SortStats.Earnings(1)
+		vGambler.SortStats.Earnings(1)
 	end
 
 	for i = 1, #StatsSorter do
-		GambleBuddy:AddLongStatLine(Page.StatArea)
+		vGambler:AddLongStatLine(Page.StatArea)
 		StatLines[i].Name:SetText(string.format("%s.  %s", i, StatsSorter[i][1]))
 		StatLines[i].Wins:SetText(StatsSorter[i][2])
 		StatLines[i].WinPercent:SetText(string.format("%s%%", StatsSorter[i][3]))
-		StatLines[i].Earnings:SetText(string.format("%s|cffffe02eg|r", GambleBuddy:Comma(StatsSorter[i][4])))
+		StatLines[i].Earnings:SetText(string.format("%s|cffffe02eg|r", vGambler:Comma(StatsSorter[i][4])))
 	end
 
-	GambleBuddy:SetStatScrollOffset(1)
+	vGambler:SetStatScrollOffset(1)
 end
 
-function GambleBuddy:SetStatScrollOffset(offset)
+function vGambler:SetStatScrollOffset(offset)
 	self.Offset = offset
 
 	if (self.Offset <= 1) then
@@ -304,7 +304,7 @@ function GambleBuddy:SetStatScrollOffset(offset)
 	end
 
 	local First
-	local Page = GambleBuddy:GetPage("Stats")
+	local Page = vGambler:GetPage("Stats")
 
 	Page.StatAreaScroll:SetMinMaxValues(1, math.max(1, #StatsSorter - 9))
 	Page.StatAreaScroll:SetValue(self.Offset)
@@ -329,11 +329,11 @@ function GambleBuddy:SetStatScrollOffset(offset)
 	end
 end
 
-function GambleBuddy:StatScrollOnValueChanged(offset)
-	GambleBuddy:SetStatScrollOffset(floor(offset + 0.5))
+function vGambler:StatScrollOnValueChanged(offset)
+	vGambler:SetStatScrollOffset(floor(offset + 0.5))
 end
 
-function GambleBuddy:StatScrollOnMouseWheel(delta)
+function vGambler:StatScrollOnMouseWheel(delta)
 	if (delta > 0) then -- Up
 		self.Offset = self.Offset - 1
 
@@ -348,12 +348,12 @@ function GambleBuddy:StatScrollOnMouseWheel(delta)
 		end
 	end
 
-	GambleBuddy:SetStatScrollOffset(self.Offset)
+	vGambler:SetStatScrollOffset(self.Offset)
 	self:SetValue(self.Offset)
 end
 
-function GambleBuddy:StatLineOnMouseWheel(delta)
-	local Page = GambleBuddy:GetPage("Stats")
+function vGambler:StatLineOnMouseWheel(delta)
+	local Page = vGambler:GetPage("Stats")
 	local ScrollBar = Page.StatAreaScroll
 
 	if (delta > 0) then -- Up
@@ -370,11 +370,11 @@ function GambleBuddy:StatLineOnMouseWheel(delta)
 		end
 	end
 
-	GambleBuddy:SetStatScrollOffset(ScrollBar.Offset)
+	vGambler:SetStatScrollOffset(ScrollBar.Offset)
 	ScrollBar:SetValue(ScrollBar.Offset)
 end
 
-function GambleBuddy:OnStatCategoryMouseUp()
+function vGambler:OnStatCategoryMouseUp()
 	if (LastSorter and LastSorter == self) then -- If we're re-clicking on a category, toggle the direction. Otherwise if clicking a new category sort down by default
 		if (SortDir == 1) then
 			SortDir = 0
@@ -387,13 +387,13 @@ function GambleBuddy:OnStatCategoryMouseUp()
 
 	SortSetting = self.SortMode
 
-	GambleBuddy:ResetStatLines()
-	GambleBuddy:PopulateStatLines(SortDir)
+	vGambler:ResetStatLines()
+	vGambler:PopulateStatLines(SortDir)
 
 	LastSorter = self
 end
 
-function GambleBuddy:SetupStatsPage(page)
+function vGambler:SetupStatsPage(page)
 	page.SessionToggle = {}
 
 	local HeaderBar = CreateFrame("Frame", nil, page, "BackdropTemplate")
@@ -495,7 +495,7 @@ function GambleBuddy:SetupStatsPage(page)
 	StatAreaScroll:SetWidth(12)
 	StatAreaScroll:SetPoint("TOPRIGHT", StatArea.Header, "BOTTOMRIGHT", 1, 0)
 	StatAreaScroll:SetPoint("BOTTOMRIGHT", StatArea, -3, 16)
-	StatAreaScroll:SetThumbTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraThumb.tga")
+	StatAreaScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
 	StatAreaScroll:SetOrientation("VERTICAL")
 	StatAreaScroll:SetValueStep(1)
 	StatAreaScroll:SetObeyStepOnDrag(true)
@@ -516,17 +516,17 @@ function GambleBuddy:SetupStatsPage(page)
 	StatAreaScrollThumb:SetVertexColor(0.25, 0.266, 0.294)
 
 	if (self.Settings.UIStyle == 1) then
-		StatAreaScroll:SetThumbTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraRoundThumb.tga")
-		StatAreaScrollThumb:SetTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraRoundThumb.tga")
+		StatAreaScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
+		StatAreaScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
 	else
-		StatAreaScrollThumb:SetTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraThumb.tga")
+		StatAreaScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
 	end
 
 	local StatWidthScroll = CreateFrame("Slider", nil, StatArea)
 	StatWidthScroll:SetHeight(12)
 	StatWidthScroll:SetPoint("BOTTOMLEFT", StatArea, 1, 4)
 	StatWidthScroll:SetPoint("BOTTOMRIGHT", StatArea, -17, 4)
-	StatWidthScroll:SetThumbTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraThumbHoriz.tga")
+	StatWidthScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumbHoriz.tga")
 	StatWidthScroll:SetOrientation("HORIZONTAL")
 	StatWidthScroll:SetValueStep(1)
 	StatWidthScroll:SetObeyStepOnDrag(true)
@@ -547,40 +547,40 @@ function GambleBuddy:SetupStatsPage(page)
 	StatWidthScrollThumb:SetVertexColor(0.25, 0.266, 0.294)
 
 	if (self.Settings.UIStyle == 1) then
-		StatWidthScroll:SetThumbTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraRoundThumbHoriz.tga")
-		StatWidthScrollThumb:SetTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraRoundThumbHoriz.tga")
+		StatWidthScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumbHoriz.tga")
+		StatWidthScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumbHoriz.tga")
 	else
-		StatWidthScrollThumb:SetTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraThumbHoriz.tga")
+		StatWidthScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumbHoriz.tga")
 	end
 
 	self:PopulateStatLines(1)
 end
 
-function GambleBuddy:UpdateStat(stat)
+function vGambler:UpdateStat(stat)
 	local StatsPage = self:GetPage("About")
-	local Data = self.Settings.StatDisplay == true and Session or GambleBuddyData
+	local Data = self.Settings.StatDisplay == true and Session or vGamblerData
 
 	if (StatsPage.Stats[stat] and self.StatMethods[stat]) then
 		self.StatMethods[stat](Data, StatsPage.Stats[stat])
 	end
 end
 
-function GambleBuddy:ResetGeneralStats()
-	if GambleBuddyData then
-		local Page = GambleBuddy:GetPage("About")
+function vGambler:ResetGeneralStats()
+	if vGamblerData then
+		local Page = vGambler:GetPage("About")
 
 		for stat in next, Page.Stats do
 			Page.Stats[stat].Right:SetText(0)
 		end
 
-		GambleBuddyData = {}
+		vGamblerData = {}
 	end
 end
 
-function GambleBuddy:ResetPlayerStats()
-	if GambleBuddyPlayers then
-		GambleBuddyPlayers = {}
+function vGambler:ResetPlayerStats()
+	if vGamblerPlayers then
+		vGamblerPlayers = {}
 		
-		GambleBuddy:UpdateStatGrid()
+		vGambler:UpdateStatGrid()
 	end
 end

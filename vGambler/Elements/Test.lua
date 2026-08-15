@@ -1,12 +1,12 @@
 local Name, AddOn = ...
-local GambleBuddy = AddOn.GambleBuddy
+local vGambler = AddOn.vGambler
 local L = AddOn.L
 
-GambleBuddy.Ela = 0
-GambleBuddy.Testers = {}
-GambleBuddy.InUseNames = {}
+vGambler.Ela = 0
+vGambler.Testers = {}
+vGambler.InUseNames = {}
 
-GambleBuddy.TestNames = {
+vGambler.TestNames = {
 	"|cff0070DDThrall|r", "|cff3FC7EBJaina|r", "|cffC69B6DMagni|r", "|cffAAD372Sylvanas|r", "|cffC41E3AArthas|r", "|cffFF7C0AMalfurion|r", "|cffA330C9Illidan|r", "|cffF48CBAAnduin|r", "|cff8788EEMedivh|r", "|cff3FC7EBKhadgar|r", "|cff8788EEGul'dan|r",
 	"|cff8788EEArchimonde|r", "|cff8788EEKil'jaeden|r", "Velen", "|cffAAD372Brann|r", "|cffC69B6DMuradin|r", "|cff3FC7EBKael'thas|r", "|cffAAD372Alleria|r", "Tyrande", "Maiev", "|cffFF7C0ACenarius|r", "Elune", "|cffF48CBABolvar|r", "|cff3FC7EBAegwynn|r",
 	"|cff0070DDNer'zhul|r", "|cff0070DDDrek'Thar|r", "|cffFFF468Genn|r", "|cff3FC7EBRhonin|r", "|cffF48CBATirion|r", "|cffF48CBATuralyon|r", "|cffF48CBAUther|r", "|cffC69B6DVarian|r", "|cffC69B6DGrommash|r", "|cffC69B6DOrgrim|r", "|cffF48CBAYrel|r",
@@ -15,7 +15,7 @@ GambleBuddy.TestNames = {
 	"|cff0070DDNobundo|r", "|cff3FC7EBThalyssra|r", "|cffAAD372Vol'jin|r", "|cffAAD372Shandris|r", "|cff0070DDDraka|r",
 }
 
-function GambleBuddy:AddPlayersOnUpdate(elapsed)
+function vGambler:AddPlayersOnUpdate(elapsed)
 	self.Ela = self.Ela + elapsed
 
 	if (self.Ela > 0.2) then
@@ -35,7 +35,7 @@ function GambleBuddy:AddPlayersOnUpdate(elapsed)
 	end
 end
 
-function GambleBuddy:RollPlayersOnUpdate(elapsed)
+function vGambler:RollPlayersOnUpdate(elapsed)
 	self.Ela = self.Ela + elapsed
 
 	if (self.Ela > 0.6) then
@@ -54,7 +54,7 @@ function GambleBuddy:RollPlayersOnUpdate(elapsed)
 	end
 end
 
-function GambleBuddy:PauseOnUpdate(elapsed)
+function vGambler:PauseOnUpdate(elapsed)
 	self.Ela = self.Ela + elapsed
 
 	if (self.Ela > 2) then
@@ -92,7 +92,7 @@ function GambleBuddy:PauseOnUpdate(elapsed)
 	end
 end
 
-function GambleBuddy:ResetOnUpdate(elapsed)
+function vGambler:ResetOnUpdate(elapsed)
 	self.Ela = self.Ela + elapsed
 
 	if (self.Ela > 3) then
@@ -104,7 +104,7 @@ function GambleBuddy:ResetOnUpdate(elapsed)
 	end
 end
 
-function GambleBuddy:RollTestPlayers()
+function vGambler:RollTestPlayers()
 	if self.Testers[1] then
 		for i = 1, #self.Testers do
 			table.remove(self.Testers, 1)
@@ -119,7 +119,7 @@ function GambleBuddy:RollTestPlayers()
 	self:SetScript("OnUpdate", self.RollPlayersOnUpdate)
 end
 
-function GambleBuddy:TestGame()
+function vGambler:TestGame()
 	self.IsTestGame = true
 	self.TestCount = random(2, 4)
 	self:StartGame()

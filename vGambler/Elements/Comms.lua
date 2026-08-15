@@ -1,12 +1,12 @@
 local Name, AddOn = ...
-local GambleBuddy = AddOn.GambleBuddy
+local vGambler = AddOn.vGambler
 
 local string = string
 local CT = ChatThrottleLib
 
-GambleBuddy.Events = {}
+vGambler.Events = {}
 
-GambleBuddy.Events.Message = function(self, message)
+vGambler.Events.Message = function(self, message)
 	if (not self.ChatWindow) then -- Window is load on demand, so it doesn't exist until we open the window. Do something to capture earlier messages until we load our window?
 		return
 	end
@@ -14,7 +14,7 @@ GambleBuddy.Events.Message = function(self, message)
 	self.ChatWindow:AddMessage(message)
 end
 
-GambleBuddy.Events.NewGame = function(self, args)
+vGambler.Events.NewGame = function(self, args)
 	local Leader, Channel, Wager = string.match(args, "(%a+)\\(%d+)\\(%d+)")
 
 	self:DisableGameButton("Start")
@@ -31,7 +31,7 @@ GambleBuddy.Events.NewGame = function(self, args)
 	self.GameWager = tonumber(Wager)
 end
 
-GambleBuddy.Events.ResetGame = function(self)
+vGambler.Events.ResetGame = function(self)
 	self:RemoveAllPlayers()
 
 	self:EnableGameButton("Start")
@@ -43,20 +43,20 @@ GambleBuddy.Events.ResetGame = function(self)
 	self.GameWager = self.Settings.RollValue
 end
 
-GambleBuddy.Events.AddPlayer = function(self, args)
+vGambler.Events.AddPlayer = function(self, args)
 	local Name, GUID = string.match(args, "(%a+)\\(%S+)")
 
 	self:AddPlayer(Name, GUID)
 end
 
-GambleBuddy.Events.RemovePlayer = function(self, name)
+vGambler.Events.RemovePlayer = function(self, name)
 	self:RemovePlayer(name)
 	self:AddStat("withdraw", 1)
 
-	self.Window.Label:SetText(string.format("|cffFFC44DGamble|r|cffFFFFFFBuddy|r  (%s / %s)", self.Rolled or 0, #self.Players))
+	self.Window.Label:SetText(string.format("|cffFFC44Dv|r|cffFFFFFFGambler|r  (%s / %s)", self.Rolled or 0, #self.Players))
 end
 
-GambleBuddy.Events.PlayerRoll = function(self, args)
+vGambler.Events.PlayerRoll = function(self, args)
 	local Name, Roll = string.match(args, "(%a+)\\(%d+)")
 
 	for i = 1, #self.Players do
@@ -77,7 +77,7 @@ GambleBuddy.Events.PlayerRoll = function(self, args)
 			end
 
 			-- Update the header as well to display number of players
-			self.Window.Label:SetText(string.format("|cffFFC44DGamble|r|cffFFFFFFBuddy|r  (%s / %s)", self.Rolled or 0, #self.Players))
+			self.Window.Label:SetText(string.format("|cffFFC44Dv|r|cffFFFFFFGambler|r  (%s / %s)", self.Rolled or 0, #self.Players))
 
 			self:AddStat("rolls", 1)
 
@@ -92,7 +92,7 @@ GambleBuddy.Events.PlayerRoll = function(self, args)
 	end
 end
 
-GambleBuddy.Events.GameEnded = function(self, args)
+vGambler.Events.GameEnded = function(self, args)
 	local Winner, Loser, High, Low = string.match(args, "(%S+)\\(%S+)\\(%d+)\\(%d+)")
 	local Value = tonumber(High) - tonumber(Low)
 
@@ -118,10 +118,10 @@ GambleBuddy.Events.GameEnded = function(self, args)
 	self.TiedGame = false
 
 	-- If we're in silent, add the message
-	--self:SendMessage(string.format("|cffFFC44DGamble|rBuddy: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
+	--self:SendMessage(string.format("|cffFFC44Dv|rGambler: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
 end
 
-GambleBuddy.Events.GameDraw = function(self)
+vGambler.Events.GameDraw = function(self)
 	if self.Settings.PlaySounds then
 		PlaySound(SOUNDKIT.LFG_DENIED)
 	end
@@ -129,11 +129,11 @@ GambleBuddy.Events.GameDraw = function(self)
 	self:AddStat("draw", 1)
 end
 
-GambleBuddy.Events.GameTie = function(self)
+vGambler.Events.GameTie = function(self)
 
 end
 
-GambleBuddy.Events.Toggle = function(self) -- Just a testing event, remove for release
+vGambler.Events.Toggle = function(self) -- Just a testing event, remove for release
 	if (not self.Window) then
 		self:CreateWindow()
 	end
@@ -143,18 +143,18 @@ GambleBuddy.Events.Toggle = function(self) -- Just a testing event, remove for r
 	end
 end
 
-GambleBuddy.Events.Version = function(self, message)
+vGambler.Events.Version = function(self, message)
 	local Version = tonumber(message)
 
-	if (Version > (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)("GambleBuddy", "Version")) then
-		print(string.format("GambleBuddy: A new version is available (%s)", Version))
+	if (Version > (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)("vGambler", "Version")) then
+		print(string.format("vGambler: A new version is available (%s)", Version))
 	end
 end
 
-function GambleBuddy:CHAT_MSG_ADDON(prefix, message, chattype, sender)
+function vGambler:CHAT_MSG_ADDON(prefix, message, chattype, sender)
 	sender = string.match(sender, "(%S+)-.-")
 
-	if (prefix ~= "GambleBuddy" or sender == UnitName("player")) then
+	if (prefix ~= "vGambler" or sender == UnitName("player")) then
 		return
 	end
 
@@ -165,7 +165,7 @@ function GambleBuddy:CHAT_MSG_ADDON(prefix, message, chattype, sender)
 	end
 end
 
-function GambleBuddy:SendEvent(event, args)
+function vGambler:SendEvent(event, args)
 	if (self.Settings.Channel == 4) then
 		return
 	end
@@ -174,9 +174,9 @@ function GambleBuddy:SendEvent(event, args)
 
 	local Message = string.format("%s\\%s", event, args or " ")
 
-	CT:SendAddonMessage("NORMAL", "GambleBuddy", Message, self.ChannelSelections[self.Settings.Channel])
+	CT:SendAddonMessage("NORMAL", "vGambler", Message, self.ChannelSelections[self.Settings.Channel])
 end
 
-GambleBuddy:RegisterEvent("CHAT_MSG_ADDON")
+vGambler:RegisterEvent("CHAT_MSG_ADDON")
 
-C_ChatInfo.RegisterAddonMessagePrefix("GambleBuddy")
+C_ChatInfo.RegisterAddonMessagePrefix("vGambler")

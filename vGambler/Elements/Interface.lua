@@ -1,12 +1,12 @@
 local Name, AddOn = ...
 local L = AddOn.L
-local GambleBuddy = AddOn.GambleBuddy
+local vGambler = AddOn.vGambler
 local LSM = LibStub:GetLibrary("LibSharedMedia-3.0")
 
-LSM:Register("font", "PT Sans", "Interface\\Addons\\GambleBuddy\\Assets\\PTSans.ttf")
+LSM:Register("font", "PT Sans", "Interface\\Addons\\vGambler\\Assets\\PTSans.ttf")
 
-GambleBuddy.LSMFonts = LSM:HashTable("font")
-GambleBuddy.Blank = "Interface\\AddOns\\GambleBuddy\\Assets\\HydraUIBlank.tga"
+vGambler.LSMFonts = LSM:HashTable("font")
+vGambler.Blank = "Interface\\AddOns\\vGambler\\Assets\\HydraUIBlank.tga"
 
 --[[
 	To do
@@ -22,45 +22,45 @@ local table = table
 local string = string
 local math = math
 
-GambleBuddy.Tie = {}
-GambleBuddy.Players = {}
-GambleBuddy.UIPlayers = {}
-GambleBuddy.FreePlayers = {}
+vGambler.Tie = {}
+vGambler.Players = {}
+vGambler.UIPlayers = {}
+vGambler.FreePlayers = {}
 
-GambleBuddy.ChannelColors = {
-	{GambleBuddy:HexToRGB("aaaaff")},
-	{GambleBuddy:HexToRGB("ff7f00")},
-	{GambleBuddy:HexToRGB("40ff40")},
-	{GambleBuddy:HexToRGB("e6cc80")},
-	{GambleBuddy:HexToRGB("aa00ff")},
+vGambler.ChannelColors = {
+	{vGambler:HexToRGB("aaaaff")},
+	{vGambler:HexToRGB("ff7f00")},
+	{vGambler:HexToRGB("40ff40")},
+	{vGambler:HexToRGB("e6cc80")},
+	{vGambler:HexToRGB("aa00ff")},
 }
 
-GambleBuddy.ChannelSelections = {
+vGambler.ChannelSelections = {
 	PARTY,
 	RAID,
 	GUILD,
 	"Test",
 }
 
-function GambleBuddy:CreateBackdrops()
+function vGambler:CreateBackdrops()
 	if (self.Settings.UIStyle == 1) then
 		self.LargeBackdrop = {
 			bgFile = self.Blank,
-			edgeFile = "Interface\\AddOns\\GambleBuddy\\Assets\\HydraRound3.tga",
+			edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound3.tga",
 			edgeSize = 14,
 			insets = {left = 3, right = 3, top = 3, bottom = 3},
 		}
 
 		self.MediumBackdrop = {
 			bgFile = self.Blank,
-			edgeFile = "Interface\\AddOns\\GambleBuddy\\Assets\\HydraRound2.tga",
+			edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound2.tga",
 			edgeSize = 14,
 			insets = {left = 3, right = 3, top = 3, bottom = 3},
 		}
 
 		self.SmallBackdrop = {
 			bgFile = self.Blank,
-			edgeFile = "Interface\\AddOns\\GambleBuddy\\Assets\\HydraRound1.tga",
+			edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound1.tga",
 			edgeSize = 14,
 			insets = {left = 2, right = 2, top = 2, bottom = 2},
 		}
@@ -88,8 +88,8 @@ function GambleBuddy:CreateBackdrops()
 	end
 end
 
-function GambleBuddy:CreateTooltip()
-	local Tooltip = CreateFrame("GameTooltip", "GambleBuddyTooltip", UIParent, "GameTooltipTemplate")
+function vGambler:CreateTooltip()
+	local Tooltip = CreateFrame("GameTooltip", "vGamblerTooltip", UIParent, "GameTooltipTemplate")
 	Tooltip:SetFrameLevel(3)
 	Tooltip.NineSlice:SetAlpha(0)
 
@@ -104,7 +104,7 @@ function GambleBuddy:CreateTooltip()
 	Tooltip.Inside = CreateFrame("Frame", nil, Tooltip, "BackdropTemplate")
 	Tooltip.Inside:SetPoint("TOPLEFT", Tooltip, 0, -0)
 	Tooltip.Inside:SetPoint("BOTTOMRIGHT", Tooltip, 0, 0)
-	Tooltip.Inside:SetBackdrop(GambleBuddy.SmallBackdrop)
+	Tooltip.Inside:SetBackdrop(vGambler.SmallBackdrop)
 	Tooltip.Inside:SetBackdropColor(0.184, 0.192, 0.211)
 	Tooltip.Inside:SetBackdropBorderColor(0.184, 0.192, 0.211)
 	Tooltip.Inside:SetFrameLevel(2)
@@ -112,7 +112,7 @@ function GambleBuddy:CreateTooltip()
 	self.Tooltip = Tooltip
 end
 
-function GambleBuddy:SendMessage(message)
+function vGambler:SendMessage(message)
 	if (self.Settings.Channel == 4)then
 		self.ChatWindow:AddMessage(message)
 
@@ -126,7 +126,7 @@ function GambleBuddy:SendMessage(message)
 	end
 end
 
-function GambleBuddy:Comma(number)
+function vGambler:Comma(number)
 	if (not number) then
 		return
 	end
@@ -136,7 +136,7 @@ function GambleBuddy:Comma(number)
 	return Left and Left .. string.reverse(string.gsub(string.reverse(Number), "(%d%d%d)", "%1,")) or tostring(number)
 end
 
-function GambleBuddy:ListPlayers(data) -- Can't just table.concat the player table
+function vGambler:ListPlayers(data) -- Can't just table.concat the player table
 	local List = ""
 
 	for i = 1, #data do
@@ -150,29 +150,29 @@ function GambleBuddy:ListPlayers(data) -- Can't just table.concat the player tab
 	return List
 end
 
-function GambleBuddy:WindowButtonMouseUp()
+function vGambler:WindowButtonMouseUp()
 	self.Label:SetPoint("LEFT", self, 5, -0.5)
 
-	if GambleBuddy.Settings.PlaySounds then
+	if vGambler.Settings.PlaySounds then
 		PlaySound(SOUNDKIT.UI_IG_STORE_PAGE_NAV_BUTTON)
 	end
 end
 
-function GambleBuddy:WindowButtonMouseDown()
+function vGambler:WindowButtonMouseDown()
 	self.Label:SetPoint("LEFT", self, 6, -1.5)
 end
 
-function GambleBuddy:WindowButtonOnEnter()
+function vGambler:WindowButtonOnEnter()
 	self:SetBackdropColor(0.25, 0.266, 0.294)
 	self:SetBackdropBorderColor(0.25, 0.266, 0.294)
 end
 
-function GambleBuddy:WindowButtonOnLeave()
+function vGambler:WindowButtonOnLeave()
 	self:SetBackdropColor(0.184, 0.192, 0.211)
 	self:SetBackdropBorderColor(0.184, 0.192, 0.211)
 end
 
-function GambleBuddy:DisableGameButton(id)
+function vGambler:DisableGameButton(id)
 	for i = 1, #self.Window.GameButtons do
 		if (self.Window.GameButtons[i].ID and self.Window.GameButtons[i].ID == id) then
 			self.Window.GameButtons[i]:EnableMouse(false)
@@ -184,13 +184,13 @@ function GambleBuddy:DisableGameButton(id)
 	end
 end
 
-function GambleBuddy:EnableGameButton(id)
+function vGambler:EnableGameButton(id)
 	for i = 1, #self.Window.GameButtons do
 		if (self.Window.GameButtons[i].ID and self.Window.GameButtons[i].ID == id) then
 			self.Window.GameButtons[i]:EnableMouse(true)
 
 			if (self.Window.GameButtons[i].ID == "Channel") then
-				self.Window.GameButtons[i].Animation:SetChange(unpack(GambleBuddy.ChannelColors[self.Settings.Channel]))
+				self.Window.GameButtons[i].Animation:SetChange(unpack(vGambler.ChannelColors[self.Settings.Channel]))
 			else
 				self.Window.GameButtons[i].Animation:SetChange(1, 1, 1)
 			end
@@ -202,7 +202,7 @@ function GambleBuddy:EnableGameButton(id)
 	end
 end
 
-function GambleBuddy:DisablePlayButton(id)
+function vGambler:DisablePlayButton(id)
 	for i = 1, #self.Window.PlayButtons do
 		if (self.Window.PlayButtons[i].ID and self.Window.PlayButtons[i].ID == id) then
 			self.Window.PlayButtons[i]:EnableMouse(false)
@@ -214,7 +214,7 @@ function GambleBuddy:DisablePlayButton(id)
 	end
 end
 
-function GambleBuddy:EnablePlayButton(id)
+function vGambler:EnablePlayButton(id)
 	for i = 1, #self.Window.PlayButtons do
 		if (self.Window.PlayButtons[i].ID and self.Window.PlayButtons[i].ID == id) then
 			self.Window.PlayButtons[i]:EnableMouse(true)
@@ -226,7 +226,7 @@ function GambleBuddy:EnablePlayButton(id)
 	end
 end
 
-function GambleBuddy:AddGameHeader(t, parent, name)
+function vGambler:AddGameHeader(t, parent, name)
 	local Header = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 	Header:SetSize(parent:GetWidth() - 8, 24)
 	Header:SetBackdrop(self.SmallBackdrop)
@@ -245,7 +245,7 @@ function GambleBuddy:AddGameHeader(t, parent, name)
 	return Header
 end
 
-function GambleBuddy:AddGameButton(t, parent, id, name, func)
+function vGambler:AddGameButton(t, parent, id, name, func)
 	local Button = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 	Button:SetSize(parent:GetWidth() - 8, 24)
 	Button:SetBackdrop(self.SmallBackdrop)
@@ -274,7 +274,7 @@ function GambleBuddy:AddGameButton(t, parent, id, name, func)
 	return Button
 end
 
-function GambleBuddy:WindowInputEnterPressed()
+function vGambler:WindowInputEnterPressed()
 	self:SetAutoFocus(false)
 	self:ClearFocus()
 
@@ -283,20 +283,20 @@ function GambleBuddy:WindowInputEnterPressed()
 	end
 end
 
-function GambleBuddy:WindowInputMouseDown()
+function vGambler:WindowInputMouseDown()
 	if (self.ID == "RollValue") then
-		self:SetText(tonumber(GambleBuddy.Settings.RollValue)) -- Get rid of the comma when we click
+		self:SetText(tonumber(vGambler.Settings.RollValue)) -- Get rid of the comma when we click
 	end
 
 	self:HighlightText()
 	self:SetAutoFocus(true)
 end
 
-function GambleBuddy:OnEditFocusLost()
+function vGambler:OnEditFocusLost()
 	self:SetAutoFocus(false)
 end
 
-function GambleBuddy:AddGameInput(t, parent, id, value, func)
+function vGambler:AddGameInput(t, parent, id, value, func)
 	local Input = CreateFrame("EditBox", nil, parent, "BackdropTemplate")
 	Input:SetSize(parent:GetWidth() - 8, 24)
 	Input:SetBackdrop(self.SmallBackdrop)
@@ -326,7 +326,7 @@ function GambleBuddy:AddGameInput(t, parent, id, value, func)
 	return Input
 end
 
-function GambleBuddy:WindowDropdownMouseDown()
+function vGambler:WindowDropdownMouseDown()
 	if self.List:IsShown() then
 		self.List:Hide()
 	else
@@ -334,34 +334,34 @@ function GambleBuddy:WindowDropdownMouseDown()
 	end
 end
 
-function GambleBuddy:DropdownItemOnMouseUp()
+function vGambler:DropdownItemOnMouseUp()
 	self.Button.List:Hide()
 
 	if self.Button.List.Hook then
 		self.Button.List:Hook(self.Button, self.Index)
 	end
 
-	if GambleBuddy.Settings.PlaySounds then
+	if vGambler.Settings.PlaySounds then
 		PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
 	end
 end
 
-function GambleBuddy:FontDropdownItemOnMouseUp()
+function vGambler:FontDropdownItemOnMouseUp()
 	self.Button.List:Hide()
 
 	if self.Button.List.Hook then
 		self.Button.List:Hook(self.Index)
 	end
 
-	self.Button.Label:SetFont(GambleBuddy.LSMFonts[self.Index], 12)
+	self.Button.Label:SetFont(vGambler.LSMFonts[self.Index], 12)
 	self.Button.Label:SetText(self.Index)
 
-	if GambleBuddy.Settings.PlaySounds then
+	if vGambler.Settings.PlaySounds then
 		PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
 	end
 end
 
-function GambleBuddy:AddGameDropdown(t, parent, id, text, selections, func)
+function vGambler:AddGameDropdown(t, parent, id, text, selections, func)
 	local Button = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 	Button:SetSize(parent:GetWidth() - 8, 24)
 	Button:SetBackdrop(self.SmallBackdrop)
@@ -441,7 +441,7 @@ function GambleBuddy:AddGameDropdown(t, parent, id, text, selections, func)
 	return Button
 end
 
-function GambleBuddy:SetFontScrollOffset(offset)
+function vGambler:SetFontScrollOffset(offset)
 	self.Offset = offset
 
 	if (self.Offset <= 1) then
@@ -470,13 +470,13 @@ function GambleBuddy:SetFontScrollOffset(offset)
 	end
 end
 
-function GambleBuddy:FontScrollOnValueChanged(offset)
+function vGambler:FontScrollOnValueChanged(offset)
 	self.Offset = offset
 
-	GambleBuddy.SetFontScrollOffset(self, offset)
+	vGambler.SetFontScrollOffset(self, offset)
 end
 
-function GambleBuddy:FontScrollOnMouseWheel(delta)
+function vGambler:FontScrollOnMouseWheel(delta)
 	if (delta > 0) then -- Up
 		self.Offset = self.Offset - 1
 
@@ -491,11 +491,11 @@ function GambleBuddy:FontScrollOnMouseWheel(delta)
 		end
 	end
 
-	GambleBuddy.SetFontScrollOffset(self, self.Offset)
+	vGambler.SetFontScrollOffset(self, self.Offset)
 	self:SetValue(self.Offset)
 end
 
-function GambleBuddy:AddFontDropdown(t, parent, id, value, func)
+function vGambler:AddFontDropdown(t, parent, id, value, func)
 	local Button = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 	Button:SetSize(parent:GetWidth() - 8, 24)
 	Button:SetBackdrop(self.SmallBackdrop)
@@ -567,7 +567,7 @@ function GambleBuddy:AddFontDropdown(t, parent, id, value, func)
 	ListScroll:SetWidth(12)
 	ListScroll:SetPoint("TOPRIGHT", Button.List, -5, -2)
 	ListScroll:SetPoint("BOTTOMRIGHT", Button.List, -5, 2)
-	ListScroll:SetThumbTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraThumb.tga")
+	ListScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
 	ListScroll:SetOrientation("VERTICAL")
 	ListScroll:SetValueStep(1)
 	ListScroll:SetObeyStepOnDrag(true)
@@ -588,10 +588,10 @@ function GambleBuddy:AddFontDropdown(t, parent, id, value, func)
 	ListScrollThumb:SetVertexColor(0.25, 0.266, 0.294)
 
 	if (self.Settings.UIStyle == 1) then
-		ListScroll:SetThumbTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraRoundThumb.tga")
-		ListScrollThumb:SetTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraRoundThumb.tga")
+		ListScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
+		ListScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
 	else
-		ListScrollThumb:SetTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraThumb.tga")
+		ListScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
 	end
 
 	self.SetFontScrollOffset(ListScroll, 1)
@@ -601,55 +601,55 @@ function GambleBuddy:AddFontDropdown(t, parent, id, value, func)
 	return Button
 end
 
-function GambleBuddy:CloseButtonOnEnter()
+function vGambler:CloseButtonOnEnter()
 	self.Texture:SetVertexColor(0.9, 0.1, 0.1)
 end
 
-function GambleBuddy:CloseButtonOnLeave()
+function vGambler:CloseButtonOnLeave()
 	self.Texture:SetVertexColor(1, 1, 1)
 end
 
-function GambleBuddy:CloseButtonMouseUp()
-	GambleBuddy:ToggleWindow()
+function vGambler:CloseButtonMouseUp()
+	vGambler:ToggleWindow()
 
-	--[[if GambleBuddy.Settings.PlaySounds then
+	--[[if vGambler.Settings.PlaySounds then
 		PlaySound(SOUNDKIT.GS_TITLE_OPTION_EXIT)
 	end]]
 end
 
-function GambleBuddy:RollInputOnEnter(value)
+function vGambler:RollInputOnEnter(value)
 	if (not value) then
 		value = 10
 	end
 
 	value = math.max(2, tonumber(value))-- 2 is the minimum we can allow
 
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
-	GambleBuddySettings.RollValue = value
-	GambleBuddy.Settings.RollValue = value
+	vGamblerSettings.RollValue = value
+	vGambler.Settings.RollValue = value
 
-	self:SetText(GambleBuddy:Comma(value))
+	self:SetText(vGambler:Comma(value))
 end
 
-function GambleBuddy:ShowPage(name)
-	for i = 1, #GambleBuddy.Window.Pages do
-		if (GambleBuddy.Window.Pages[i].Name == name) then
-			GambleBuddy.Window.Pages[i]:Show()
+function vGambler:ShowPage(name)
+	for i = 1, #vGambler.Window.Pages do
+		if (vGambler.Window.Pages[i].Name == name) then
+			vGambler.Window.Pages[i]:Show()
 		else
-			GambleBuddy.Window.Pages[i]:Hide()
+			vGambler.Window.Pages[i]:Hide()
 		end
 	end
 end
 
-function GambleBuddy:TabOnMouseUp()
-	GambleBuddy:ShowPage(self.Name)
+function vGambler:TabOnMouseUp()
+	vGambler:ShowPage(self.Name)
 end
 
--- GambleBuddy:CreatePageHook(name, func) -- So when the page is created, it can call hooks and feed Page through the function. To do later, easy enough to add in.
-function GambleBuddy:CreatePage(name)
+-- vGambler:CreatePageHook(name, func) -- So when the page is created, it can call hooks and feed Page through the function. To do later, easy enough to add in.
+function vGambler:CreatePage(name)
 	local Tab = CreateFrame("Frame", nil, self.Window.TabParent, "BackdropTemplate")
 	Tab:SetSize(81, 24)
 	Tab:SetBackdrop(self.SmallBackdrop)
@@ -680,7 +680,7 @@ function GambleBuddy:CreatePage(name)
 	return Page
 end
 
-function GambleBuddy:GetPage(name)
+function vGambler:GetPage(name)
 	for i = 1, #self.Window.Pages do
 		if (self.Window.Pages[i].Name == name) then
 			return self.Window.Pages[i]
@@ -688,40 +688,40 @@ function GambleBuddy:GetPage(name)
 	end
 end
 
-function GambleBuddy:OnChannelSelection(dropdown, value)
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+function vGambler:OnChannelSelection(dropdown, value)
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
-	GambleBuddySettings.Channel = value
-	GambleBuddy.Settings.Channel = value
+	vGamblerSettings.Channel = value
+	vGambler.Settings.Channel = value
 
-	dropdown.Label:SetText(GambleBuddy.ChannelSelections[value])
+	dropdown.Label:SetText(vGambler.ChannelSelections[value])
 
 	if (dropdown.ID == "Channel") then
-		dropdown.Label:SetTextColor(unpack(GambleBuddy.ChannelColors[value]))
+		dropdown.Label:SetTextColor(unpack(vGambler.ChannelColors[value]))
 	end
 end
 
-function GambleBuddy:SetGameScrollOffset(offset)
+function vGambler:SetGameScrollOffset(offset)
 	self.Offset = offset
 
 	if (self.Offset <= 1) then
 		self.Offset = 1
-	elseif (self.Offset > (#GambleBuddy.Players - 8)) then
+	elseif (self.Offset > (#vGambler.Players - 8)) then
 		self.Offset = self.Offset - 1
 	end
 
-	GambleBuddy:SortPlayerList()
+	vGambler:SortPlayerList()
 end
 
-function GambleBuddy:GameScrollOnValueChanged(offset)
-	GambleBuddy.Window.GameArea.ScrollBar.Offset = offset
+function vGambler:GameScrollOnValueChanged(offset)
+	vGambler.Window.GameArea.ScrollBar.Offset = offset
 
-	GambleBuddy:SetGameScrollOffset(offset)
+	vGambler:SetGameScrollOffset(offset)
 end
 
-function GambleBuddy:GameScrollOnMouseWheel(delta)
+function vGambler:GameScrollOnMouseWheel(delta)
 	if (delta > 0) then -- Up
 		self.Offset = self.Offset - 1
 
@@ -731,17 +731,17 @@ function GambleBuddy:GameScrollOnMouseWheel(delta)
 	else -- Down
 		self.Offset = self.Offset + 1
 
-		if (self.Offset > (#GambleBuddy.Players - 8)) then
+		if (self.Offset > (#vGambler.Players - 8)) then
 			self.Offset = self.Offset - 1
 		end
 	end
 
-	GambleBuddy:SetGameScrollOffset(self.Offset)
+	vGambler:SetGameScrollOffset(self.Offset)
 	self:SetValue(self.Offset)
 end
 
-function GambleBuddy:PlayerOnMouseWheel(delta)
-	local ScrollBar = GambleBuddy.Window.GameArea.ScrollBar
+function vGambler:PlayerOnMouseWheel(delta)
+	local ScrollBar = vGambler.Window.GameArea.ScrollBar
 
 	if (delta > 0) then -- Up
 		ScrollBar.Offset = ScrollBar.Offset - 1
@@ -752,7 +752,7 @@ function GambleBuddy:PlayerOnMouseWheel(delta)
 	else -- Down
 		ScrollBar.Offset = ScrollBar.Offset + 1
 
-		if (ScrollBar.Offset > (#GambleBuddy.Players - 8)) then
+		if (ScrollBar.Offset > (#vGambler.Players - 8)) then
 			ScrollBar.Offset = ScrollBar.Offset - 1
 		end
 	end
@@ -760,31 +760,31 @@ function GambleBuddy:PlayerOnMouseWheel(delta)
 	ScrollBar:SetValue(ScrollBar.Offset)
 end
 
-function GambleBuddy:ScrollBarOnEnter()
+function vGambler:ScrollBarOnEnter()
 	self:GetThumbTexture():SetVertexColor(0.235, 0.247, 0.27)
 end
 
-function GambleBuddy:ScrollBarOnLeave()
+function vGambler:ScrollBarOnLeave()
 	if (not self.OverrideThumb) then
 		self:GetThumbTexture():SetVertexColor(0.25, 0.266, 0.294)
 	end
 end
 
-function GambleBuddy:ScrollBarOnMouseDown()
+function vGambler:ScrollBarOnMouseDown()
 	self.OverrideThumb = true
 	self:GetThumbTexture():SetVertexColor(0.235, 0.247, 0.27)
 end
 
-function GambleBuddy:ScrollBarOnMouseUp()
+function vGambler:ScrollBarOnMouseUp()
 	self.OverrideThumb = false
 	self:GetThumbTexture():SetVertexColor(0.25, 0.266, 0.294)
 end
 
-function GambleBuddy:ChatScrollBarOnValueChanged(offset)
-	GambleBuddy.ChatWindow:SetScrollOffset(select(2, GambleBuddy.ChatWindow.ScrollBar:GetMinMaxValues()) - offset)
+function vGambler:ChatScrollBarOnValueChanged(offset)
+	vGambler.ChatWindow:SetScrollOffset(select(2, vGambler.ChatWindow.ScrollBar:GetMinMaxValues()) - offset)
 end
 
-function GambleBuddy:ChatOnMouseWheel(delta)
+function vGambler:ChatOnMouseWheel(delta)
 	local Value = self.ScrollBar:GetValue()
 
 	if (delta > 0) then
@@ -802,18 +802,18 @@ function GambleBuddy:ChatOnMouseWheel(delta)
 	end
 end
 
-function GambleBuddy:UpdateChatScrollBar()
-	local NumMessages = GambleBuddy.ChatWindow:GetNumMessages()
+function vGambler:UpdateChatScrollBar()
+	local NumMessages = vGambler.ChatWindow:GetNumMessages()
 
-	GambleBuddy.ChatWindow.ScrollBar:SetMinMaxValues(1, math.max(1, NumMessages))
+	vGambler.ChatWindow.ScrollBar:SetMinMaxValues(1, math.max(1, NumMessages))
 
-	if GambleBuddy.ChatWindow:AtBottom() then -- Only scroll the window if we're currently on the bottom. Otherwise stay at current offset
-		GambleBuddy.ChatWindow.ScrollBar:SetValue(math.max(0, NumMessages))
+	if vGambler.ChatWindow:AtBottom() then -- Only scroll the window if we're currently on the bottom. Otherwise stay at current offset
+		vGambler.ChatWindow.ScrollBar:SetValue(math.max(0, NumMessages))
 	end
 end
 
-function GambleBuddy:CreateWindow()
-	local Window = CreateFrame("Frame", "GambleBuddyWindow", UIParent, "BackdropTemplate")
+function vGambler:CreateWindow()
+	local Window = CreateFrame("Frame", "vGamblerWindow", UIParent, "BackdropTemplate")
 	Window:SetSize(460, 408)
 	Window:SetPoint("CENTER", UIParent, 0, 0)
 	Window:SetBackdrop(self.LargeBackdrop)
@@ -863,7 +863,7 @@ function GambleBuddy:CreateWindow()
 	Window.Label = Header:CreateFontString(nil, "OVERLAY")
 	Window.Label:SetPoint("TOPLEFT", Header, 7, -6)
 	Window.Label:SetFont(self.Font, 14)
-	Window.Label:SetText("|cffFFC44DGamble|r|cffFFFFFFBuddy|r")
+	Window.Label:SetText("|cffFFC44Dv|r|cffFFFFFFGambler|r")
 	Window.Label:SetShadowColor(0.029, 0.029, 0.051)
 	Window.Label:SetShadowOffset(0, -1)
 
@@ -877,7 +877,7 @@ function GambleBuddy:CreateWindow()
 	Close.Texture = Close:CreateTexture(nil, "OVERLAY")
 	Close.Texture:SetPoint("CENTER", Close, 0, 0)
 	Close.Texture:SetSize(16, 16)
-	Close.Texture:SetTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraUIClose.tga")
+	Close.Texture:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraUIClose.tga")
 
 	Window.Tabs = {}
 	Window.Pages = {}
@@ -912,7 +912,7 @@ function GambleBuddy:CreateWindow()
 	self:ShowPage("Game")
 end
 
-function GambleBuddy:SortButtonList(list, parent)
+function vGambler:SortButtonList(list, parent)
 	for i = 1, #list do
 		list[i]:ClearAllPoints()
 
@@ -924,56 +924,56 @@ function GambleBuddy:SortButtonList(list, parent)
 	end
 end
 
-function GambleBuddy:PlayerOnEnter()
-	if (not GambleBuddy.Settings.PlayerTooltips or not GambleBuddyPlayers) then
+function vGambler:PlayerOnEnter()
+	if (not vGambler.Settings.PlayerTooltips or not vGamblerPlayers) then
 		return
 	end
 
-	if GambleBuddy.Players[self.Index] then
-		local Stats = GambleBuddyPlayers[GambleBuddy.Players[self.Index].DisplayName]
+	if vGambler.Players[self.Index] then
+		local Stats = vGamblerPlayers[vGambler.Players[self.Index].DisplayName]
 
 		if (not Stats) then
 			-- Debug
-			print("No stats debug", GambleBuddy.Players[self.Index].DisplayName)
+			print("No stats debug", vGambler.Players[self.Index].DisplayName)
 
 			return
 		end
 
-		GambleBuddy.Tooltip:SetOwner(self, "ANCHOR_NONE")
-		GambleBuddy.Tooltip:SetPoint("BOTTOM", self, "TOP", 0, 5)
-		GambleBuddy.Tooltip:ClearLines()
+		vGambler.Tooltip:SetOwner(self, "ANCHOR_NONE")
+		vGambler.Tooltip:SetPoint("BOTTOM", self, "TOP", 0, 5)
+		vGambler.Tooltip:ClearLines()
 
-		GambleBuddy.Tooltip:AddDoubleLine(GambleBuddy.Players[self.Index].DisplayName, string.format("%s total games", Stats.games), 1, 1, 1, 1, 1, 1)
+		vGambler.Tooltip:AddDoubleLine(vGambler.Players[self.Index].DisplayName, string.format("%s total games", Stats.games), 1, 1, 1, 1, 1, 1)
 
 		if Stats.wins then
-			GambleBuddy.Tooltip:AddLine(" ")
-			GambleBuddy.Tooltip:AddDoubleLine("Wins:", Stats.wins, 1, 1, 1, 1, 1, 1)
-			GambleBuddy.Tooltip:AddDoubleLine("Win rate:", string.format("%s%%", math.floor((Stats.wins / Stats.games) * 100 + 0.5)), 1, 1, 1, 1, 1, 1)
-			GambleBuddy.Tooltip:AddDoubleLine("Gold Earned:", GambleBuddy:Comma(Stats.earnings), 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddLine(" ")
+			vGambler.Tooltip:AddDoubleLine("Wins:", Stats.wins, 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine("Win rate:", string.format("%s%%", math.floor((Stats.wins / Stats.games) * 100 + 0.5)), 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine("Gold Earned:", vGambler:Comma(Stats.earnings), 1, 1, 1, 1, 1, 1)
 		end
 
 		if Stats.losses then
-			GambleBuddy.Tooltip:AddLine(" ")
-			GambleBuddy.Tooltip:AddDoubleLine("Losses:", Stats.losses, 1, 1, 1, 1, 1, 1)
-			GambleBuddy.Tooltip:AddDoubleLine("Loss rate:", string.format("%s%%", math.floor((Stats.losses / Stats.games) * 100 + 0.5)), 1, 1, 1, 1, 1, 1)
-			GambleBuddy.Tooltip:AddDoubleLine("Gold Lost:", GambleBuddy:Comma(Stats.loss), 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddLine(" ")
+			vGambler.Tooltip:AddDoubleLine("Losses:", Stats.losses, 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine("Loss rate:", string.format("%s%%", math.floor((Stats.losses / Stats.games) * 100 + 0.5)), 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine("Gold Lost:", vGambler:Comma(Stats.loss), 1, 1, 1, 1, 1, 1)
 		end
 
 		if Stats.ties then
-			GambleBuddy.Tooltip:AddLine(" ")
-			GambleBuddy.Tooltip:AddDoubleLine("Ties:", Stats.ties, 1, 1, 1, 1, 1, 1) -- Condense information. Ties: %s (%s won, %s lost); next line; Tie win rate: %s%%
-			GambleBuddy.Tooltip:AddDoubleLine("Ties won:", Stats.tieswon or 0, 1, 1, 1, 1, 1, 1)
-			GambleBuddy.Tooltip:AddDoubleLine("Ties lost:", Stats.tieslost or 0, 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddLine(" ")
+			vGambler.Tooltip:AddDoubleLine("Ties:", Stats.ties, 1, 1, 1, 1, 1, 1) -- Condense information. Ties: %s (%s won, %s lost); next line; Tie win rate: %s%%
+			vGambler.Tooltip:AddDoubleLine("Ties won:", Stats.tieswon or 0, 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine("Ties lost:", Stats.tieslost or 0, 1, 1, 1, 1, 1, 1)
 		end
 
-		GambleBuddy.Tooltip:Show()
+		vGambler.Tooltip:Show()
 	end
 
 	--self:SetStatusBarColor(0.29, 0.298, 0.373)
 end
 
-function GambleBuddy:PlayerOnLeave()
-	GambleBuddy.Tooltip:Hide()
+function vGambler:PlayerOnLeave()
+	vGambler.Tooltip:Hide()
 
 	--[[self:SetStatusBarColor(0.25, 0.258, 0.333)
 	if self.Settings.ColoredBars then
@@ -984,7 +984,7 @@ function GambleBuddy:PlayerOnLeave()
 	end]]
 end
 
-function GambleBuddy:AddPlayer(name, guid)
+function vGambler:AddPlayer(name, guid)
 	local Name = string.match(name, "|c%x%x%x%x%x%x%x%x(%S+)|r") or name
 	local Hex
 
@@ -1009,7 +1009,7 @@ function GambleBuddy:AddPlayer(name, guid)
 	end
 end
 
-function GambleBuddy:RemovePlayer(name)
+function vGambler:RemovePlayer(name)
 	for i = 1, #self.UIPlayers do
 		if (self.UIPlayers[i].Name == name) then
 			self.UIPlayers[i]:Hide()
@@ -1025,7 +1025,7 @@ function GambleBuddy:RemovePlayer(name)
 	end
 end
 
-function GambleBuddy:RemoveAllPlayers()
+function vGambler:RemoveAllPlayers()
 	for i = #self.UIPlayers, 1, -1 do
 		self.UIPlayers[i]:Hide()
 		self.UIPlayers[i].Bar:SetAlpha(0)
@@ -1040,7 +1040,7 @@ function GambleBuddy:RemoveAllPlayers()
 	self.Window.GameArea.ScrollBar:SetValue(1)
 end
 
-function GambleBuddy:AddPlayerUI()
+function vGambler:AddPlayerUI()
 	local Player
 
 	if self.FreePlayers[1] then
@@ -1062,7 +1062,7 @@ function GambleBuddy:AddPlayerUI()
 		Player.Bar:SetAlpha(0)
 
 		if (self.Settings.UIStyle == 1) then
-			Player.Bar:SetStatusBarTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraRoundBar.tga")
+			Player.Bar:SetStatusBarTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundBar.tga")
 		else
 			Player.Bar:SetStatusBarTexture(self.Blank)
 		end
@@ -1101,7 +1101,7 @@ function GambleBuddy:AddPlayerUI()
 	self:SortPlayerList()
 end
 
-function GambleBuddy:RemovePlayerUI()
+function vGambler:RemovePlayerUI()
 	self.UIPlayers[1]:Hide()
 	self.UIPlayers[1].Bar:SetAlpha(0)
 	self.UIPlayers[1].Bar:SetValue(0)
@@ -1111,7 +1111,7 @@ function GambleBuddy:RemovePlayerUI()
 	self:SortPlayerList()
 end
 
-function GambleBuddy:RemoveAllPlayersUI()
+function vGambler:RemoveAllPlayersUI()
 	for i = #self.UIPlayers, 1, -1 do
 		self.UIPlayers[1]:Hide()
 		self.UIPlayers[1].Bar:SetAlpha(0)
@@ -1126,7 +1126,7 @@ function GambleBuddy:RemoveAllPlayersUI()
 	self.Window.GameArea.ScrollBar:SetValue(1)
 end
 
-function GambleBuddy:SortPlayerList(sort)
+function vGambler:SortPlayerList(sort)
 	local Lowest -- This is just flavor to color the bottom roll
 
 	if sort then
@@ -1201,7 +1201,7 @@ function GambleBuddy:SortPlayerList(sort)
 	end
 end
 
-function GambleBuddy:ToggleWindow()
+function vGambler:ToggleWindow()
 	if (not self.Window) then
 		self:CreateWindow()
 	end
@@ -1215,7 +1215,7 @@ function GambleBuddy:ToggleWindow()
 	self:SendEvent("Toggle") -- Not a real event, just to speed up testing
 end
 
-function GambleBuddy:ShowWindow()
+function vGambler:ShowWindow()
 	if (not self.Window) then
 		self:CreateWindow()
 
@@ -1234,7 +1234,7 @@ function GambleBuddy:ShowWindow()
 	end
 end
 
-function GambleBuddy:HideWindow()
+function vGambler:HideWindow()
 	if (not self.Window) then
 		return
 	end
@@ -1249,9 +1249,9 @@ function GambleBuddy:HideWindow()
 	end
 end
 
-function GambleBuddy:PLAYER_ENTERING_WORLD()
-	if GambleBuddySettings then
-		for name, value in next, GambleBuddySettings do
+function vGambler:PLAYER_ENTERING_WORLD()
+	if vGamblerSettings then
+		for name, value in next, vGamblerSettings do
 			self.Settings[name] = value
 		end
 	end
@@ -1261,13 +1261,13 @@ function GambleBuddy:PLAYER_ENTERING_WORLD()
 
 	-- If the font isn't available anymore, use PTSans
 	if (not self.Font) then
-		self.Font = "Interface\\AddOns\\GambleBuddy\\Assets\\PTSans.ttf"
+		self.Font = "Interface\\AddOns\\vGambler\\Assets\\PTSans.ttf"
 
 		-- Update the font dropdown menu to PTSans as well
 	end
 
 	if (not self.GameFont) then
-		self.GameFont = "Interface\\AddOns\\GambleBuddy\\Assets\\PTSans.ttf"
+		self.GameFont = "Interface\\AddOns\\vGambler\\Assets\\PTSans.ttf"
 	end
 
 	self:CreateBackdrops()
@@ -1275,40 +1275,40 @@ function GambleBuddy:PLAYER_ENTERING_WORLD()
 
 	-- Minimap Icon
 	self.LibDBIcon = LibStub("LibDBIcon-1.0")
-	local MinimapButton = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("GambleBuddy", {label = "GambleBuddy", type = "data source", icon = "Interface\\ICONS\\inv_misc_dice_02", text = "GambleBuddy"})
+	local MinimapButton = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("vGambler", {label = "vGambler", type = "data source", icon = "Interface\\ICONS\\inv_misc_dice_02", text = "vGambler"})
 
-	if (self.LibDBIcon and not self.LibDBIcon:IsRegistered("GambleBuddy")) then
-		self.LibDBIcon:Register("GambleBuddy", MinimapButton)
+	if (self.LibDBIcon and not self.LibDBIcon:IsRegistered("vGambler")) then
+		self.LibDBIcon:Register("vGambler", MinimapButton)
 	end
 
 	MinimapButton.OnClick = function()
-		GambleBuddy:ToggleWindow()
+		vGambler:ToggleWindow()
 	end
 
 	MinimapButton.OnEnter = function(self)
-		GambleBuddy.Tooltip:SetOwner(self, "ANCHOR_NONE")
-		GambleBuddy.Tooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
-		GambleBuddy.Tooltip:ClearLines()
-		GambleBuddy.Tooltip:AddLine("|cffFFC44DGamble|r|cffFFFFFFBuddy|r")
-		GambleBuddy.Tooltip:AddLine(" ")
-		GambleBuddy.Tooltip:AddLine("Click to toggle")
-		GambleBuddy.Tooltip:Show()
+		vGambler.Tooltip:SetOwner(self, "ANCHOR_NONE")
+		vGambler.Tooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+		vGambler.Tooltip:ClearLines()
+		vGambler.Tooltip:AddLine("|cffFFC44Dv|r|cffFFFFFFGambler|r")
+		vGambler.Tooltip:AddLine(" ")
+		vGambler.Tooltip:AddLine("Click to toggle")
+		vGambler.Tooltip:Show()
 	end
 
 	MinimapButton.OnLeave = function()
-		GambleBuddy.Tooltip:Hide()
+		vGambler.Tooltip:Hide()
 	end
 
 	if self.Settings.MinimapIcon then
-		self.LibDBIcon:Show("GambleBuddy")
+		self.LibDBIcon:Show("vGambler")
 	else
-		self.LibDBIcon:Hide("GambleBuddy")
+		self.LibDBIcon:Hide("vGambler")
 	end
 
 	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
 
-function GambleBuddy:OnEvent(event, ...)
+function vGambler:OnEvent(event, ...)
 	if self[event] then
 		self[event](self, ...)
 	elseif self.EventGroups[self.Settings.Channel][event] then
@@ -1316,5 +1316,5 @@ function GambleBuddy:OnEvent(event, ...)
 	end
 end
 
-GambleBuddy:RegisterEvent("PLAYER_ENTERING_WORLD")
-GambleBuddy:SetScript("OnEvent", GambleBuddy.OnEvent)
+vGambler:RegisterEvent("PLAYER_ENTERING_WORLD")
+vGambler:SetScript("OnEvent", vGambler.OnEvent)
