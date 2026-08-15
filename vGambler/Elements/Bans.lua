@@ -5,6 +5,8 @@ local L = AddOn.L
 vGambler.BannedPlayers = {}
 vGambler.FreeBannedPlayers = {}
 
+local VisibleBanRows = 11
+
 function vGambler:BanCloseButtonOnEnter()
 	self.Texture:SetVertexColor(0.9, 0.1, 0.1)
 
@@ -24,22 +26,6 @@ function vGambler:BanCloseButtonOnLeave()
 end
 
 function vGambler:UnbanPlayerFromUI()
-	local Page = vGambler:GetPage("Bans")
-
-	for i = 1, #vGambler.BannedPlayers do -- Remove the UI portion
-		if (vGambler.BannedPlayers[i].Name == self.Name) then
-			local Bar = table.remove(vGambler.BannedPlayers, i)
-
-			Bar:Hide()
-
-			table.insert(vGambler.FreeBannedPlayers, Bar)
-
-			vGambler:SortBannedPlayers()
-
-			break
-		end
-	end
-
 	for i = 1, #vGamblerBans do -- Remove the saved data
 		if (vGamblerBans[i][1] == self.Name) then
 			table.remove(vGamblerBans, i)
@@ -47,24 +33,27 @@ function vGambler:UnbanPlayerFromUI()
 			break
 		end
 	end
+
+	vGambler:SortBannedPlayers()
 end
 
 function vGambler:AddBannedPlayerUI(name, reason)
 	local Page = self:GetPage("Bans")
 	local Bar
 
-	if self.FreeBannedPlayers[1] then
+	if (#self.BannedPlayers >= math.min(#vGamblerBans, VisibleBanRows)) then
+		self:SortBannedPlayers()
+		return
+	elseif self.FreeBannedPlayers[1] then
 		Bar = table.remove(self.FreeBannedPlayers, 1)
 	else
 		Bar = CreateFrame("Frame", nil, Page.BanArea, "BackdropTemplate")
-		Bar:SetSize(Page:GetWidth() - 8, 24)
+		Bar:SetSize(Page:GetWidth() - 24, 24)
 		Bar:SetBackdrop(self.SmallBackdrop)
 		Bar:SetBackdropColor(0.184, 0.192, 0.211)
 		Bar:SetBackdropBorderColor(0.184, 0.192, 0.211)
 		Bar:SetScript("OnEnter", self.WindowButtonOnEnter)
 		Bar:SetScript("OnLeave", self.WindowButtonOnLeave)
-		Bar.Name = name
-
 		Bar.Label = Bar:CreateFontString(nil, "OVERLAY")
 		Bar.Label:SetPoint("LEFT", Bar, 5, -1)
 		Bar.Label:SetFont(self.Font, self.Settings.FontSize)
@@ -87,7 +76,6 @@ function vGambler:AddBannedPlayerUI(name, reason)
 		Bar.Remove:SetScript("OnEnter", self.BanCloseButtonOnEnter)
 		Bar.Remove:SetScript("OnLeave", self.BanCloseButtonOnLeave)
 		Bar.Remove:SetScript("OnMouseUp", self.UnbanPlayerFromUI)
-		Bar.Remove.Name = name
 
 		Bar.Remove.Texture = Bar.Remove:CreateTexture(nil, "OVERLAY")
 		Bar.Remove.Texture:SetPoint("CENTER", Bar.Remove, 0, 0)
@@ -95,9 +83,8 @@ function vGambler:AddBannedPlayerUI(name, reason)
 		Bar.Remove.Texture:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraUIClose.tga")
 	end
 
-	Bar.Label:SetText(name)
-	Bar.Reason:SetText(reason)
-	Bar:Show()
+	Bar:EnableMouseWheel(true)
+	Bar:SetScript("OnMouseWheel", self.BanScrollOnMouseWheel)
 
 	table.insert(self.BannedPlayers, Bar)
 
@@ -106,16 +93,45 @@ end
 
 function vGambler:SortBannedPlayers()
 	local Page = self:GetPage("Bans")
+	local Maximum = math.max(1, #vGamblerBans - VisibleBanRows + 1)
+	local Offset = math.max(1, math.min(math.floor((Page.BanScroll.Offset or 1) + 0.5), Maximum))
+
+	Page.BanScroll.Offset = Offset
+	Page.BanScroll:SetMinMaxValues(1, Maximum)
+	Page.BanScroll:SetValue(Offset)
 
 	for i = 1, #self.BannedPlayers do
-		self.BannedPlayers[i]:ClearAllPoints()
+		local Bar = self.BannedPlayers[i]
+		local Ban = vGamblerBans[Offset + i - 1]
 
-		if (i == 1) then
-			self.BannedPlayers[i]:SetPoint("TOPLEFT", Page.BanArea, 4, -30)
+		Bar:ClearAllPoints()
+
+		if Ban and i <= VisibleBanRows then
+			if (i == 1) then
+				Bar:SetPoint("TOPLEFT", Page.BanArea, 4, -30)
+			else
+				Bar:SetPoint("TOPLEFT", self.BannedPlayers[i-1], "BOTTOMLEFT", 0, -2)
+			end
+
+			Bar.Name = Ban[1]
+			Bar.Remove.Name = Ban[1]
+			Bar.Label:SetText(Ban[1])
+			Bar.Reason:SetText(Ban[2])
+			Bar:Show()
 		else
-			self.BannedPlayers[i]:SetPoint("TOPLEFT", self.BannedPlayers[i-1], "BOTTOMLEFT", 0, -2)
+			Bar:Hide()
 		end
 	end
+end
+
+function vGambler:BanScrollOnValueChanged(offset)
+	vGambler:GetPage("Bans").BanScroll.Offset = offset
+	vGambler:SortBannedPlayers()
+end
+
+function vGambler:BanScrollOnMouseWheel(delta)
+	local ScrollBar = vGambler:GetPage("Bans").BanScroll
+	ScrollBar:SetValue(ScrollBar.Offset - delta)
 end
 
 function vGambler:BanPlayer(player, reason)
@@ -321,6 +337,8 @@ function vGambler:SetupBansPage(page)
 	BanArea:SetBackdrop(self.MediumBackdrop)
 	BanArea:SetBackdropColor(0.184, 0.192, 0.211)
 	BanArea:SetBackdropBorderColor(0.184, 0.192, 0.211)
+	BanArea:EnableMouseWheel(true)
+	BanArea:SetScript("OnMouseWheel", self.BanScrollOnMouseWheel)
 
 	BanArea.Header = CreateFrame("Frame", nil, BanArea, "BackdropTemplate")
 	BanArea.Header:SetSize(page:GetWidth() - 8, 24)
@@ -343,7 +361,29 @@ function vGambler:SetupBansPage(page)
 	BanArea.HeaderReason:SetShadowOffset(0, -1)
 	BanArea.HeaderReason:SetText("|cffFFC44DBan reason|r")
 
+	local BanScroll = CreateFrame("Slider", nil, BanArea)
+	BanScroll:SetWidth(12)
+	BanScroll:SetPoint("TOPRIGHT", BanArea.Header, "BOTTOMRIGHT", 1, 0)
+	BanScroll:SetPoint("BOTTOMRIGHT", BanArea, -3, 4)
+	BanScroll:SetThumbTexture(self.Settings.UIStyle == 1 and "Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga" or "Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
+	BanScroll:GetThumbTexture():SetSize(32, 32)
+	BanScroll:GetThumbTexture():SetVertexColor(0.25, 0.266, 0.294)
+	BanScroll:SetOrientation("VERTICAL")
+	BanScroll:SetValueStep(1)
+	BanScroll:SetObeyStepOnDrag(true)
+	BanScroll:SetMinMaxValues(1, 1)
+	BanScroll:SetValue(1)
+	BanScroll.Offset = 1
+	BanScroll:EnableMouseWheel(true)
+	BanScroll:SetScript("OnMouseWheel", self.BanScrollOnMouseWheel)
+	BanScroll:SetScript("OnValueChanged", self.BanScrollOnValueChanged)
+	BanScroll:SetScript("OnEnter", self.ScrollBarOnEnter)
+	BanScroll:SetScript("OnLeave", self.ScrollBarOnLeave)
+	BanScroll:SetScript("OnMouseDown", self.ScrollBarOnMouseDown)
+	BanScroll:SetScript("OnMouseUp", self.ScrollBarOnMouseUp)
+
 	page.BanArea = BanArea
+	page.BanScroll = BanScroll
 	page.BanButton = BanButton
 	page.NameInput = NameInput
 	page.ReasonInput = ReasonInput
