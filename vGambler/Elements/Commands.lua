@@ -19,15 +19,15 @@ vGambler.Commands = {
 
 	getban = function(name) -- /vg getban {player}
 		if (not vGamblerBans) then
-			return print("No players are banned")
+			return print(L.NO_BANNED_PLAYERS)
 		end
 
 		local Banned, Reason = vGambler:IsBanned(name)
 
 		if Banned then
-			print(string.format("%s is banned (%s)", name, Reason))
+			print(string.format(L.PLAYER_IS_BANNED, name, Reason))
 		else
-			print(string.format("%s is not banned", name))
+			print(string.format(L.PLAYER_NOT_BANNED, name))
 		end
 	end,
 

@@ -649,7 +649,7 @@ function vGambler:TabOnMouseUp()
 end
 
 -- vGambler:CreatePageHook(name, func) -- So when the page is created, it can call hooks and feed Page through the function. To do later, easy enough to add in.
-function vGambler:CreatePage(name)
+function vGambler:CreatePage(name, label)
 	local Tab = CreateFrame("Frame", nil, self.Window.TabParent, "BackdropTemplate")
 	Tab:SetSize(81, 24)
 	Tab:SetBackdrop(self.SmallBackdrop)
@@ -665,7 +665,7 @@ function vGambler:CreatePage(name)
 	Tab.Label = Tab:CreateFontString(nil, "OVERLAY")
 	Tab.Label:SetPoint("LEFT", Tab, 5, -0.5)
 	Tab.Label:SetFont(self.Font, self.Settings.FontSize, "")
-	Tab.Label:SetText(name)
+	Tab.Label:SetText(label or name)
 	Tab.Label:SetShadowColor(0.029, 0.029, 0.051)
 	Tab.Label:SetShadowOffset(0, -1)
 
@@ -739,7 +739,7 @@ function vGambler:CreateWindow()
 	Window.Label = Header:CreateFontString(nil, "OVERLAY")
 	Window.Label:SetPoint("TOPLEFT", Header, 7, -6)
 	Window.Label:SetFont(self.Font, 14)
-	Window.Label:SetText("|cffFFC44DvGambler|r")
+	Window.Label:SetText(L.WINDOW_TITLE)
 	Window.Label:SetShadowColor(0.029, 0.029, 0.051)
 	Window.Label:SetShadowOffset(0, -1)
 
@@ -769,12 +769,12 @@ function vGambler:CreateWindow()
 
 	Window.TabParent = TabParent
 
-	local GamePage = self:CreatePage("Game")
-	local StatsPage = self:CreatePage("Stats")
-	local HistoryPage = self:CreatePage("History")
-	local BansPage = self:CreatePage("Bans")
-	local SettingsPage = self:CreatePage("Settings")
-	local AboutPage = self:CreatePage("About")
+	local GamePage = self:CreatePage("Game", L.PAGE_GAME)
+	local StatsPage = self:CreatePage("Stats", L.PAGE_STATS)
+	local HistoryPage = self:CreatePage("History", L.PAGE_HISTORY)
+	local BansPage = self:CreatePage("Bans", L.PAGE_BANS)
+	local SettingsPage = self:CreatePage("Settings", L.PAGE_SETTINGS)
+	local AboutPage = self:CreatePage("About", L.PAGE_ABOUT)
 
 	-- Page stuff, this will be moved later
 	self:SetupControlsPage(GamePage)
@@ -820,27 +820,27 @@ function vGambler:PlayerOnEnter()
 		vGambler.Tooltip:SetPoint("BOTTOM", self, "TOP", 0, 5)
 		vGambler.Tooltip:ClearLines()
 
-		vGambler.Tooltip:AddDoubleLine(vGambler.Players[self.Index].DisplayName, string.format("%s total games", Stats.games), 1, 1, 1, 1, 1, 1)
+		vGambler.Tooltip:AddDoubleLine(vGambler.Players[self.Index].DisplayName, string.format(L.TOTAL_GAMES, Stats.games), 1, 1, 1, 1, 1, 1)
 
 		if Stats.wins then
 			vGambler.Tooltip:AddLine(" ")
-			vGambler.Tooltip:AddDoubleLine("Wins:", Stats.wins, 1, 1, 1, 1, 1, 1)
-			vGambler.Tooltip:AddDoubleLine("Win rate:", string.format("%s%%", math.floor((Stats.wins / Stats.games) * 100 + 0.5)), 1, 1, 1, 1, 1, 1)
-			vGambler.Tooltip:AddDoubleLine("Gold Earned:", vGambler:Comma(Stats.earnings), 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine(L.WINS, Stats.wins, 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine(L.WIN_RATE, string.format(L.PERCENT, math.floor((Stats.wins / Stats.games) * 100 + 0.5)), 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine(L.GOLD_EARNED, vGambler:Comma(Stats.earnings), 1, 1, 1, 1, 1, 1)
 		end
 
 		if Stats.losses then
 			vGambler.Tooltip:AddLine(" ")
-			vGambler.Tooltip:AddDoubleLine("Losses:", Stats.losses, 1, 1, 1, 1, 1, 1)
-			vGambler.Tooltip:AddDoubleLine("Loss rate:", string.format("%s%%", math.floor((Stats.losses / Stats.games) * 100 + 0.5)), 1, 1, 1, 1, 1, 1)
-			vGambler.Tooltip:AddDoubleLine("Gold Lost:", vGambler:Comma(Stats.loss), 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine(L.LOSSES, Stats.losses, 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine(L.LOSS_RATE, string.format(L.PERCENT, math.floor((Stats.losses / Stats.games) * 100 + 0.5)), 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine(L.GOLD_LOST, vGambler:Comma(Stats.loss), 1, 1, 1, 1, 1, 1)
 		end
 
 		if Stats.ties then
 			vGambler.Tooltip:AddLine(" ")
-			vGambler.Tooltip:AddDoubleLine("Ties:", Stats.ties, 1, 1, 1, 1, 1, 1) -- Condense information. Ties: %s (%s won, %s lost); next line; Tie win rate: %s%%
-			vGambler.Tooltip:AddDoubleLine("Ties won:", Stats.tieswon or 0, 1, 1, 1, 1, 1, 1)
-			vGambler.Tooltip:AddDoubleLine("Ties lost:", Stats.tieslost or 0, 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine(L.TIES, Stats.ties, 1, 1, 1, 1, 1, 1) -- Condense information. Ties: %s (%s won, %s lost); next line; Tie win rate: %s%%
+			vGambler.Tooltip:AddDoubleLine(L.TIES_WON, Stats.tieswon or 0, 1, 1, 1, 1, 1, 1)
+			vGambler.Tooltip:AddDoubleLine(L.TIES_LOST, Stats.tieslost or 0, 1, 1, 1, 1, 1, 1)
 		end
 
 		vGambler.Tooltip:Show()
@@ -917,7 +917,7 @@ function vGambler:RemoveAllPlayers()
 		table.insert(self.FreePlayers, table.remove(self.UIPlayers, i))
 	end
 
-	self.Window.Label:SetText("|cffFCCA03Gamble|r|cffFFFFFFBuddy|r")
+	self.Window.Label:SetText(L.WINDOW_TITLE)
 
 	self.Window.GameArea.ScrollBar:SetMinMaxValues(1, 1)
 	self.Window.GameArea.ScrollBar:SetValue(1)
@@ -1003,7 +1003,7 @@ function vGambler:RemoveAllPlayersUI()
 		table.insert(self.FreePlayers, table.remove(self.UIPlayers, 1))
 	end
 
-	self.Window.Label:SetText("|cffFCCA03Gamble|r|cffFFFFFFBuddy|r")
+	self.Window.Label:SetText(L.WINDOW_TITLE)
 
 	self.Window.GameArea.ScrollBar:SetMinMaxValues(1, 1)
 	self.Window.GameArea.ScrollBar:SetValue(1)
@@ -1062,7 +1062,7 @@ function vGambler:SortPlayerList(sort)
 			self.UIPlayers[i].Bar:SetStatusBarColor(R * 0.70, G * 0.70, B * 0.70)
 
 			if self.Settings.PlayerNumbers then
-				self.UIPlayers[i].Label:SetText(string.format("%d.  %s", i, self.Players[i].Name))
+				self.UIPlayers[i].Label:SetText(string.format(L.NUMBERED_PLAYER, i, self.Players[i].Name))
 			else
 				self.UIPlayers[i].Label:SetText(self.Players[i].Name)
 			end
@@ -1070,7 +1070,7 @@ function vGambler:SortPlayerList(sort)
 			self.UIPlayers[i].Bar:SetStatusBarColor(0.25, 0.266, 0.294)
 
 			if self.Settings.PlayerNumbers then
-				self.UIPlayers[i].Label:SetText(string.format("%d.  %s", i, self.Players[i].DisplayName))
+				self.UIPlayers[i].Label:SetText(string.format(L.NUMBERED_PLAYER, i, self.Players[i].DisplayName))
 			else
 				self.UIPlayers[i].Label:SetText(self.Players[i].DisplayName)
 			end
@@ -1078,9 +1078,9 @@ function vGambler:SortPlayerList(sort)
 	end
 
 	if (#self.Players > 0) then
-		self.Window.Label:SetText("|cffFCCA03Gamble|r|cffFFFFFFBuddy|r" .. string.format(" (%s / %s)", self.Rolled or 0, #self.Players))
+		self.Window.Label:SetText(string.format(L.WINDOW_PROGRESS, self.Rolled or 0, #self.Players))
 	else
-		self.Window.Label:SetText("|cffFCCA03Gamble|r|cffFFFFFFBuddy|r")
+		self.Window.Label:SetText(L.WINDOW_TITLE)
 	end
 end
 
@@ -1171,9 +1171,9 @@ function vGambler:PLAYER_ENTERING_WORLD()
 		vGambler.Tooltip:SetOwner(self, "ANCHOR_NONE")
 		vGambler.Tooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
 		vGambler.Tooltip:ClearLines()
-		vGambler.Tooltip:AddLine("|cffFFC44DvGambler|r")
+		vGambler.Tooltip:AddLine(L.WINDOW_TITLE)
 		vGambler.Tooltip:AddLine(" ")
-		vGambler.Tooltip:AddLine("Click to toggle")
+		vGambler.Tooltip:AddLine(L.MINIMAP_TOOLTIP)
 		vGambler.Tooltip:Show()
 	end
 
