@@ -16,6 +16,7 @@ function vGambler:ResetGame() -- Resets the game to its initial state, clearing 
 	self.Locked = false
 	self.IsTestGame = nil
 	self.Result = nil
+	self.MatchPlayers = nil
 	self.Players = table.wipe(self.Players)
 	self.Tie = table.wipe(self.Tie)
 
@@ -166,6 +167,7 @@ function vGambler:CloseDrawGame()
 	end
 
 	self:AddStat("draw", 1)
+	self:AddMatchHistory("Draw", "Draw", 0, self.Settings.RollValue, self.MatchPlayers or {})
 
 	if self.IsTestGame then -- Just debugging to loop test games
 		self.Ela = 0
@@ -234,6 +236,14 @@ function vGambler:SortRolls()
 	table.sort(self.Players, function(a, b)
 		return a.Roll > b.Roll
 	end)
+
+	if (not self.Result) then
+		self.MatchPlayers = {}
+
+		for i = 1, #self.Players do
+			table.insert(self.MatchPlayers, {name = self.Players[i].DisplayName, roll = self.Players[i].Roll})
+		end
+	end
 
 	self:UpdateGameResults()
 end
@@ -305,6 +315,7 @@ function vGambler:DeclareWinner() -- Declares the winner of the game, calculates
 	self:SendMessage(string.format("|cffFFC44Dv|rGambler: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
 
 	self:SendEvent("GameEnded", Winner, Loser, self.Result[3], self.Result[4])
+	self:AddMatchHistory(Winner, Loser, Earnings, self.Settings.RollValue, self.MatchPlayers or {})
 
 	if self.IsTestGame then -- Just debugging to loop test games
 		self.Ela = 0

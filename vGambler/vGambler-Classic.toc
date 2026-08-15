@@ -29,6 +29,7 @@ Elements/Interface.lua
 Elements/Comms.lua
 Elements/Controls.lua
 Elements/Stats.lua
+Elements/History.lua
 Elements/Bans.lua
 Elements/Commands.lua
 Elements/About.lua
