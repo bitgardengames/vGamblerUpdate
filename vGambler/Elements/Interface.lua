@@ -1164,7 +1164,7 @@ function vGambler:SortPlayerList(sort)
 		else
 			self.UIPlayers[i].RollValue:SetText(self:Comma(self.Players[i].Roll))
 
-			self.UIPlayers[i].Bar:SetMinMaxValues(0, self.Settings.RollValue)
+			self.UIPlayers[i].Bar:SetMinMaxValues(0, self.GameWager or self.Settings.RollValue)
 			self.UIPlayers[i].Bar:SetValue(self.Players[i].Roll)
 			self.UIPlayers[i].Fade:Play()
 			self.UIPlayers[i].Bar.Fade:Play()
