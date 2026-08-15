@@ -25,11 +25,14 @@ vGambler.EventGroups = {
 function vGambler:ResetGame() -- Resets the game to its initial state, clearing all data, and enabling/disabling relevant buttons
 	local GameChannel = self.GameChannel or self.Settings.Channel
 
+	self:UnregisterEvent("CHAT_MSG_SYSTEM")
+
 	self.Rolled = 0
 	self.Locked = false
 	self.IsTestGame = nil
 	self.Result = nil
 	self.MatchPlayers = nil
+	self.TiedGame = nil
 	self.Host = nil
 	self.GameChannel = nil
 	self.GameWager = self.Settings.RollValue
