@@ -17,6 +17,9 @@ function vGambler:ResetGame() -- Resets the game to its initial state, clearing 
 	self.IsTestGame = nil
 	self.Result = nil
 	self.MatchPlayers = nil
+	self.Host = nil
+	self.GameChannel = nil
+	self.GameWager = self.Settings.RollValue
 	self.Players = table.wipe(self.Players)
 	self.Tie = table.wipe(self.Tie)
 
@@ -53,6 +56,9 @@ function vGambler:ResetGame() -- Resets the game to its initial state, clearing 
 end
 
 function vGambler:StartGame() --  Starts a new game, registers relevant events, and updates button states and UI
+	self.Host = UnitName("player")
+	self.GameChannel = self.Settings.Channel
+	self.GameWager = self.Settings.RollValue
 	if self.EventGroups[self.Settings.Channel] then
 		for event in next, self.EventGroups[self.Settings.Channel] do
 			self:RegisterEvent(event)
@@ -115,15 +121,21 @@ function vGambler:CloseGame() -- Closes the game, stops accepting players, and t
 		self:EnableGameButton("Reset")
 
 		self:DisablePlayButton("Join")
-		--self:EnablePlayButton("Reset")
+		self:DisablePlayButton("Withdraw")
+
+		for i = 1, #self.Players do
+			if (self.Players[i].Name == UnitName("player")) then
+				self:EnablePlayButton("Roll")
+				break
+			end
+		end
 
 		if self.Settings.PlaySounds then
 			PlaySoundFile(string.format("Interface\\AddOns\\vGambler\\Assets\\FX_BoardTilesDice_0%d.ogg", math.random(2, 4)))
 		end
 
 		self:SendMessage("|cffFFC44Dv|rGambler: Game is now closed! Roll!")
-
-		--self:SendEvent("CloseGame", UnitName("player"))
+		self:SendEvent("CloseGame", UnitName("player"))
 
 		if self.IsTestGame then
 			self:RollTestPlayers()
@@ -131,8 +143,6 @@ function vGambler:CloseGame() -- Closes the game, stops accepting players, and t
 	else
 		self:SendMessage("|cffFFC44Dv|rGambler: Not enough players!")
 	end
-
-	self:SendEvent("CloseGame", UnitName("player"))
 end
 
 function vGambler:CloseTiedGame()
@@ -151,6 +161,14 @@ function vGambler:CloseTiedGame()
 		self:DisableGameButton("RollValue")
 		--self:DisableGameButton("Close")
 		self:EnableGameButton("Reset")
+		self:DisablePlayButton("Roll")
+
+		for i = 1, #self.Players do
+			if (self.Players[i].Name == UnitName("player")) then
+				self:EnablePlayButton("Roll")
+				break
+			end
+		end
 
 		if self.IsTestGame then
 			self:RollTestPlayers()
@@ -175,6 +193,7 @@ function vGambler:CloseDrawGame()
 	end
 
 	self:SendMessage("|cffFFC44Dv|rGambler: The game has resulted in a draw!")
+	self:SendEvent("GameDraw")
 end
 
 function vGambler:UpdateGameResults() -- Sorts the player rolls and determines the winners and losers
@@ -252,6 +271,13 @@ function vGambler:SetTieMatch() -- Handles the situation where there is a tie, p
 	if self.IsTestGame then
 		self:SetScript("OnUpdate", self.PauseOnUpdate)
 	else
+		local Players = {}
+
+		for i = 1, #self.Tie do
+			table.insert(Players, self.Tie[i].Name)
+		end
+
+		self:SendEvent("GameTie", table.concat(Players, "\\"))
 		self:RemoveAllPlayersUI()
 
 		for i = #self.Players, 1, -1 do
@@ -314,7 +340,7 @@ function vGambler:DeclareWinner() -- Declares the winner of the game, calculates
 
 	self:SendMessage(string.format("|cffFFC44Dv|rGambler: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
 
-	self:SendEvent("GameEnded", Winner, Loser, self.Result[3], self.Result[4])
+	self:SendEvent("GameEnded", string.format("%s\\%s\\%d\\%d", Winner, Loser, self.Result[3], self.Result[4]))
 	self:AddMatchHistory(Winner, Loser, Earnings, self.Settings.RollValue, self.MatchPlayers or {})
 
 	if self.IsTestGame then -- Just debugging to loop test games
@@ -326,19 +352,19 @@ end
 function vGambler:CHAT_MSG_SYSTEM(message)
 	local Name, Roll, Min, Max = string.match(message, "^(%S+)%s%S+%s(%d+)%s%((%d+)-(%d+)%)")
 
-	if (tonumber(Min) == 1 and tonumber(Max) == self.Settings.RollValue) then
+	if (tonumber(Min) == 1 and tonumber(Max) == (self.GameWager or self.Settings.RollValue)) then
 		for i = 1, #self.Players do
 			if (self.Players[i].Name == Name and self.Players[i].Roll == 0) then
 				self.Players[i].Roll = tonumber(Roll)
 				self.Rolled = self.Rolled + 1
 
-				if (tonumber(Roll) == self.Settings.RollValue and self.Settings.RollValue > 99) then -- If a player hit the max possible roll, and the wager was 100 or higher
+				if (tonumber(Roll) == (self.GameWager or self.Settings.RollValue) and (self.GameWager or self.Settings.RollValue) > 99) then -- If a player hit the max possible roll, and the wager was 100 or higher
 					PlaySoundFile(569593)
 				end
 
 				self:AddStat("rolls", 1)
 
-				if (self.Rolled == #self.Players) then
+				if (self.Rolled == #self.Players and self.Host == UnitName("player")) then
 					self:SortRolls()
 				end
 

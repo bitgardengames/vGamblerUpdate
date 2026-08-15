@@ -230,9 +230,9 @@ function vGambler:SetupControlsPage(page)
 	self:AddGameDropdown(GameSettings, GameSettings, "Channel", self.ChannelSelections[self.Settings.Channel], self.ChannelSelections, self.OnChannelSelection)
 
 	self:AddGameHeader(PlayButtons, PlayButtons, "Join Game")
-	self:AddGameButton(PlayButtons, PlayButtons, "Join", "Join", function() end)
-	self:AddGameButton(PlayButtons, PlayButtons, "Withdraw", "Withdraw", function() end)
-	self:AddGameButton(PlayButtons, PlayButtons, "Roll", "Roll", function() end)
+	self:AddGameButton(PlayButtons, PlayButtons, "Join", "Join", function() vGambler:JoinGame() end)
+	self:AddGameButton(PlayButtons, PlayButtons, "Withdraw", "Withdraw", function() vGambler:WithdrawGame() end)
+	self:AddGameButton(PlayButtons, PlayButtons, "Roll", "Roll", function() vGambler:RollGame() end)
 
 	self:DisableGameButton("LastCall")
 	self:DisableGameButton("Reset")

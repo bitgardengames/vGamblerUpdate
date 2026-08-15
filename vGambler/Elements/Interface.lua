@@ -989,6 +989,12 @@ function vGambler:AddPlayer(name, guid)
 	local Name = string.match(name, "|c%x%x%x%x%x%x%x%x(%S+)|r") or name
 	local Hex
 
+	for i = 1, #self.Players do
+		if (self.Players[i].Name == Name) then
+			return
+		end
+	end
+
 	if guid then
 		local Class, ClassName = GetPlayerInfoByGUID(guid)
 
@@ -1011,17 +1017,17 @@ function vGambler:AddPlayer(name, guid)
 end
 
 function vGambler:RemovePlayer(name)
-	for i = 1, #self.UIPlayers do
-		if (self.UIPlayers[i].Name == name) then
-			self.UIPlayers[i]:Hide()
-			self.UIPlayers[i].Bar:SetAlpha(0)
-			self.UIPlayers[i].Bar:SetValue(0)
+	for i = 1, #self.Players do
+		if (self.Players[i].Name == name) then
+			table.remove(self.Players, i)
+			self:RemoveAllPlayersUI()
 
-			table.insert(self.FreePlayers, table.remove(self.UIPlayers, i))
+			for j = 1, #self.Players do
+				self:AddPlayerUI()
+			end
 
 			self:SortPlayerList()
-
-			break
+			return true
 		end
 	end
 end
@@ -1213,7 +1219,6 @@ function vGambler:ToggleWindow()
 		self:ShowWindow()
 	end
 
-	self:SendEvent("Toggle") -- Not a real event, just to speed up testing
 end
 
 function vGambler:ShowWindow()
