@@ -206,10 +206,12 @@ function vGambler:UpdateFadeChat(value)
 		vGamblerSettings = {}
 	end
 
-	vGambler.ChatWindow:SetFading(vGambler.Settings.FadeChat)
-
 	vGamblerSettings.FadeChat = value
 	vGambler.Settings.FadeChat = value
+
+	if vGambler.ChatWindow then
+		vGambler.ChatWindow:SetFading(vGambler.Settings.FadeChat)
+	end
 end
 
 function vGambler:UpdateUIFont(value)
