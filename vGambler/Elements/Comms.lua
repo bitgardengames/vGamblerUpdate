@@ -175,6 +175,7 @@ vGambler.Events.GameEnded = function(self, args)
 	self:AddPlayerStat(Winner, "earnings", Value)
 	self:AddPlayerStat(Loser, "losses", 1)
 	self:AddPlayerStat(Loser, "loss", Value)
+	self:RecordWinningStreak(Winner, Loser, Players)
 	self:AddMatchHistory(Winner, Loser, Value, Wager, Players)
 
 	self:UpdateBasicStats()
@@ -203,6 +204,8 @@ vGambler.Events.GameDraw = function(self, args)
 	end
 
 	self:AddStat("draw", 1)
+	self:RecordWinningStreak(nil, nil, Players)
+	self:UpdateBasicStats()
 	self:AddMatchHistory("Draw", "Draw", 0, Wager, Players)
 	self.Locked = false
 	self:UnregisterEvent("CHAT_MSG_SYSTEM")

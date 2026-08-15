@@ -6,15 +6,20 @@ local table = table
 local string = string
 local tonumber = tonumber
 
-local function GetRatio(data, numerator, denominator, multiplier)
-	local Numerator = data and tonumber(data[numerator]) or 0
-	local Denominator = data and tonumber(data[denominator]) or 0
+local function GetPlayerRecord(field)
+	local RecordName
+	local RecordValue = 0
 
-	if not Numerator or not Denominator or Denominator == 0 then
-		return 0
+	for PlayerName, PlayerData in next, vGambler:GetPlayerStatData() or {} do
+		local Value = tonumber(PlayerData[field]) or 0
+
+		if Value > RecordValue or (Value == RecordValue and Value > 0 and (not RecordName or PlayerName < RecordName)) then
+			RecordName = PlayerName
+			RecordValue = Value
+		end
 	end
 
-	return (Numerator / Denominator) * (multiplier or 1)
+	return RecordName, RecordValue
 end
 
 vGambler.StatMethods = {	-- Basic stats, just add optional formatting to some of them.
@@ -81,24 +86,22 @@ vGambler.StatMethods = {	-- Basic stats, just add optional formatting to some of
 		stat.Right:SetText(data and data.sessiongames or 0)
 	end,
 
-	averagegold = function(stat, data)
-		stat.Left:SetText(L.AVERAGE_GOLD)
-		stat.Right:SetText(string.format(L.GOLD_AMOUNT, string.format("%.2f", GetRatio(data, "totalgold", "games"))))
+	biggestwinner = function(stat)
+		local PlayerName, Value = GetPlayerRecord("earnings")
+		stat.Left:SetText(L.BIGGEST_WINNER)
+		stat.Right:SetText(PlayerName and string.format(L.PLAYER_GOLD_RECORD, PlayerName, vGambler:Comma(Value)) or L.NO_RECORD)
 	end,
 
-	averagerolls = function(stat, data)
-		stat.Left:SetText(L.AVERAGE_ROLLS)
-		stat.Right:SetText(string.format("%.2f", GetRatio(data, "rolls", "games")))
+	biggestloser = function(stat)
+		local PlayerName, Value = GetPlayerRecord("loss")
+		stat.Left:SetText(L.BIGGEST_LOSER)
+		stat.Right:SetText(PlayerName and string.format(L.PLAYER_GOLD_RECORD, PlayerName, vGambler:Comma(Value)) or L.NO_RECORD)
 	end,
 
-	drawrate = function(stat, data)
-		stat.Left:SetText(L.DRAW_RATE)
-		stat.Right:SetText(string.format(L.PERCENT, string.format("%.2f", GetRatio(data, "draw", "games", 100))))
-	end,
-
-	tierate = function(stat, data)
-		stat.Left:SetText(L.TIE_RATE)
-		stat.Right:SetText(string.format(L.PERCENT, string.format("%.2f", GetRatio(data, "ties", "games", 100))))
+	winningstreak = function(stat)
+		local PlayerName, Value = GetPlayerRecord("winningstreak")
+		stat.Left:SetText(L.LONGEST_WINNING_STREAK)
+		stat.Right:SetText(PlayerName and string.format(L.PLAYER_STREAK_RECORD, PlayerName, Value) or L.NO_RECORD)
 	end,
 }
 
@@ -157,16 +160,16 @@ function vGambler:SetupAboutPage(page)
 	for _, stat in ipairs({"games", "rolls", "ties", "draws", "totalgold", "uniqueplayers"}) do
 		page.Stats[stat] = self:AddStatLine(page.General, General, stat)
 	end
-	self:AddGameHeader(page.General, General, L.AVERAGES_AND_RATES)
-	page.Stats["averagerolls"] = self:AddStatLine(page.General, General, "averagerolls")
+	self:AddGameHeader(page.General, General, L.PLAYER_RECORDS)
+	page.Stats["biggestwinner"] = self:AddStatLine(page.General, General, "biggestwinner")
 	self:SortButtonList(page.General, General)
 
 	self:AddGameHeader(page.Performance, Performance, L.TOP_STATS)
 	for _, stat in ipairs({"topwager", "topwin", "toppayout", "sessiongames"}) do
 		page.Stats[stat] = self:AddStatLine(page.Performance, Performance, stat)
 	end
-	self:AddGameHeader(page.Performance, Performance, L.AVERAGES_AND_RATES)
-	for _, stat in ipairs({"averagegold", "drawrate", "tierate"}) do
+	self:AddGameHeader(page.Performance, Performance, L.PLAYER_RECORDS)
+	for _, stat in ipairs({"biggestloser", "winningstreak"}) do
 		page.Stats[stat] = self:AddStatLine(page.Performance, Performance, stat)
 	end
 	self:SortButtonList(page.Performance, Performance)
@@ -182,10 +185,10 @@ function vGambler:UpdateStat(stat)
 		self.StatMethods[stat](StatsPage.Stats[stat], Data)
 	end
 
-	-- Aggregate changes can affect any of the derived dashboard metrics.
-	for _, derivedStat in ipairs({"averagegold", "averagerolls", "drawrate", "tierate"}) do
-		if StatsPage.Stats[derivedStat] then
-			self.StatMethods[derivedStat](StatsPage.Stats[derivedStat], Data)
+	-- Player changes can affect any of the dashboard records.
+	for _, recordStat in ipairs({"biggestwinner", "biggestloser", "winningstreak"}) do
+		if StatsPage.Stats[recordStat] then
+			self.StatMethods[recordStat](StatsPage.Stats[recordStat], Data)
 		end
 	end
 end

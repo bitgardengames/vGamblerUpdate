@@ -205,6 +205,8 @@ function vGambler:CloseDrawGame()
 	end
 
 	self:AddStat("draw", 1)
+	self:RecordWinningStreak(nil, nil, self.MatchPlayers)
+	self:UpdateBasicStats()
 	self:AddMatchHistory("Draw", "Draw", 0, self.GameWager or self.Settings.RollValue, self.MatchPlayers or {})
 
 	if self.IsTestGame then -- Just debugging to loop test games
@@ -342,6 +344,7 @@ function vGambler:DeclareWinner() -- Declares the winner of the game, calculates
 	self:AddPlayerStat(Winner, "earnings", Earnings)
 	self:AddPlayerStat(Loser, "losses", 1)
 	self:AddPlayerStat(Loser, "loss", Earnings)
+	self:RecordWinningStreak(Winner, Loser, self.MatchPlayers)
 
 	if self.TiedGame then
 		self:AddPlayerStat(Winner, "tieswon", 1)

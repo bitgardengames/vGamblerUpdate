@@ -117,6 +117,43 @@ function vGambler:AddPlayerMaxStat(name, stat, value)
 	PlayerSession[name][stat] = math.max(PlayerSession[name][stat], value)
 end
 
+function vGambler:RecordWinningStreak(winner, loser, players)
+	local Participants = {}
+
+	for _, Player in ipairs(players or {}) do
+		if Player.name then
+			Participants[Player.name] = true
+		end
+	end
+
+	if winner and winner ~= "Draw" then
+		Participants[winner] = true
+	end
+
+	if loser and loser ~= "Draw" then
+		Participants[loser] = true
+	end
+
+	for PlayerName in next, Participants do
+		vGamblerPlayers = vGamblerPlayers or {}
+		vGamblerPlayers[PlayerName] = vGamblerPlayers[PlayerName] or {}
+		PlayerSession[PlayerName] = PlayerSession[PlayerName] or {}
+
+		if PlayerName == winner then
+			local PlayerData = vGamblerPlayers[PlayerName]
+			local SessionData = PlayerSession[PlayerName]
+
+			PlayerData.currentstreak = (PlayerData.currentstreak or 0) + 1
+			PlayerData.winningstreak = math.max(PlayerData.winningstreak or 0, PlayerData.currentstreak)
+			SessionData.currentstreak = (SessionData.currentstreak or 0) + 1
+			SessionData.winningstreak = math.max(SessionData.winningstreak or 0, SessionData.currentstreak)
+		else
+			vGamblerPlayers[PlayerName].currentstreak = 0
+			PlayerSession[PlayerName].currentstreak = 0
+		end
+	end
+end
+
 vGambler.SortStats = {
 	Name = function(dir)
 		if (dir and dir == 0) then
@@ -175,7 +212,9 @@ vGambler.SortStats = {
 
 function vGambler:ResetStats()
 	vGamblerPlayers = nil
+	table.wipe(PlayerSession)
 
+	self:UpdateBasicStats()
 	print(L.STATS_RESET)
 end
 
@@ -609,7 +648,9 @@ end
 function vGambler:ResetPlayerStats()
 	if vGamblerPlayers then
 		vGamblerPlayers = {}
+		table.wipe(PlayerSession)
 		
+		vGambler:UpdateBasicStats()
 		vGambler:UpdateStatGrid()
 	end
 end
