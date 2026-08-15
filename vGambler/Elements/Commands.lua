@@ -83,11 +83,15 @@ SLASH_VGAMBLER1 = "/vg"
 SLASH_VGAMBLER2 = "/gamble"
 SLASH_VGAMBLER3 = "/vgambler"
 SlashCmdList.VGAMBLER = function(command)
-	local arg1, arg2 = string.match(command, "^(%S+)%s(.+)$")
+	local arg1, arg2 = string.match(command, "^(%S+)%s*(.*)$")
 
 	if (not arg1) then
 		vGambler:ToggleWindow()
-	elseif vGambler.Commands[arg1] then
-		vGambler.Commands[arg1](arg2)
+	else
+		arg1 = string.lower(arg1)
+
+		if vGambler.Commands[arg1] then
+			vGambler.Commands[arg1](arg2)
+		end
 	end
 end
