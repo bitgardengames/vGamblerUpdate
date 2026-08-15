@@ -26,8 +26,8 @@ Languages/zhTW.lua
 Elements/Settings.lua
 Elements/Game.lua
 Elements/Interface.lua
-Elements/Comms.lua
 Elements/Controls.lua
+Elements/Comms.lua
 Elements/Stats.lua
 Elements/History.lua
 Elements/Bans.lua
