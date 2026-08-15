@@ -10,6 +10,28 @@ vGambler.PendingMessages = {}
 
 local PendingMessageLimit = 50
 
+local function ParseMatchPlayers(fields, firstPlayer)
+	local Players = {}
+
+	for i = firstPlayer, #fields, 2 do
+		if fields[i] and fields[i + 1] then
+			table.insert(Players, {name = fields[i], roll = tonumber(fields[i + 1])})
+		end
+	end
+
+	return Players
+end
+
+local function SplitEventArgs(args)
+	local Fields = {}
+
+	for Field in string.gmatch(args, "[^\\]+") do
+		table.insert(Fields, Field)
+	end
+
+	return Fields
+end
+
 vGambler.Events.Message = function(self, message)
 	if (not self.ChatWindow) then
 		table.insert(self.PendingMessages, message)
@@ -135,8 +157,12 @@ vGambler.Events.PlayerRoll = function(self, args)
 end
 
 vGambler.Events.GameEnded = function(self, args)
-	local Winner, Loser, High, Low = string.match(args, "(%S+)\\(%S+)\\(%d+)\\(%d+)")
-	local Value = tonumber(High) - tonumber(Low)
+	local Fields = SplitEventArgs(args)
+	local Winner, Loser = Fields[1], Fields[2]
+	local High, Low = tonumber(Fields[3]), tonumber(Fields[4])
+	local Wager = tonumber(Fields[5]) or self.GameWager or self.Settings.RollValue
+	local Value = High - Low
+	local Players = ParseMatchPlayers(Fields, 6)
 
 	self:AddStat("games", 1)
 	self:AddStat("totalgold", Value)
@@ -148,6 +174,7 @@ vGambler.Events.GameEnded = function(self, args)
 	self:AddPlayerStat(Winner, "earnings", Value)
 	self:AddPlayerStat(Loser, "losses", 1)
 	self:AddPlayerStat(Loser, "loss", Value)
+	self:AddMatchHistory(Winner, Loser, Value, Wager, Players)
 
 	self:UpdateBasicStats()
 	self:UpdateStatGrid()
@@ -165,12 +192,17 @@ vGambler.Events.GameEnded = function(self, args)
 	--self:SendMessage(string.format("|cffFFC44Dv|rGambler: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
 end
 
-vGambler.Events.GameDraw = function(self)
+vGambler.Events.GameDraw = function(self, args)
+	local Fields = SplitEventArgs(args)
+	local Wager = tonumber(Fields[1]) or self.GameWager or self.Settings.RollValue
+	local Players = ParseMatchPlayers(Fields, 2)
+
 	if self.Settings.PlaySounds then
 		PlaySound(SOUNDKIT.LFG_DENIED)
 	end
 
 	self:AddStat("draw", 1)
+	self:AddMatchHistory("Draw", "Draw", 0, Wager, Players)
 	self.Locked = false
 	self:UnregisterEvent("CHAT_MSG_SYSTEM")
 	self:DisablePlayButton("Roll")
