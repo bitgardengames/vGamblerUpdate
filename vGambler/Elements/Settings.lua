@@ -238,6 +238,9 @@ function vGambler:FontSizeInputOnEnter(value)
 	end
 
 	value = tonumber(value)
+	if (not value) then
+		return vGambler.Settings.FontSize
+	end
 
 	if (value > 18) then
 		value = 18
@@ -247,6 +250,8 @@ function vGambler:FontSizeInputOnEnter(value)
 
 	vGamblerSettings.FontSize = value
 	vGambler.Settings.FontSize = value
+
+	return value
 end
 
 function vGambler:SetupSettingsPage(page)
