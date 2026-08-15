@@ -135,6 +135,14 @@ function vGambler:BanScrollOnMouseWheel(delta)
 end
 
 function vGambler:BanPlayer(player, reason)
+	player = string.match(player or "", "^%s*(.-)%s*$")
+
+	local Page = self.Window and self:GetPage("Bans")
+
+	if (player == "" or (Page and player == Page.NameInput.DefaultText)) then
+		return
+	end
+
 	if (not vGamblerBans) then
 		vGamblerBans = {}
 	end
@@ -211,7 +219,9 @@ function vGambler:BanPlayerFromUI()
 	local Reason = Page.ReasonInput:GetText()
 
 	-- Validate that we have an actual name
-	if (string.find(Name, "%S") and Name == Page.NameInput.DefaultText) then
+	Name = string.match(Name or "", "^%s*(.-)%s*$")
+
+	if (Name == "" or Name == Page.NameInput.DefaultText) then
 		return
 	end
 
