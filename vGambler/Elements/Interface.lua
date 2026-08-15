@@ -1010,19 +1010,71 @@ function vGambler:AddPlayer(name, guid)
 end
 
 function vGambler:RemovePlayer(name)
-	for i = 1, #self.UIPlayers do
-		if (self.UIPlayers[i].Name == name) then
-			self.UIPlayers[i]:Hide()
-			self.UIPlayers[i].Bar:SetAlpha(0)
-			self.UIPlayers[i].Bar:SetValue(0)
+	-- Once rolling starts, the participant list is part of the game state and
+	-- must not change. Host removals can be added later as an explicit policy.
+	if self.Locked then
+		return false
+	end
 
-			table.insert(self.FreePlayers, table.remove(self.UIPlayers, i))
+	local PlayerIndex
 
-			self:SortPlayerList()
-
+	for i = 1, #self.Players do
+		if (self.Players[i].Name == name) then
+			PlayerIndex = i
 			break
 		end
 	end
+
+	if (not PlayerIndex) then
+		return false
+	end
+
+	table.remove(self.Players, PlayerIndex)
+
+	local Player = table.remove(self.UIPlayers, PlayerIndex)
+
+	if Player then
+		Player:Hide()
+		Player.Bar:SetAlpha(0)
+		Player.Bar:SetValue(0)
+		table.insert(self.FreePlayers, Player)
+	end
+
+	-- Rebind each surviving row to its new Players index before laying it out.
+	for i = 1, #self.UIPlayers do
+		self.UIPlayers[i].Index = i
+	end
+
+	self:SortPlayerList()
+
+	local ScrollBar = self.Window.GameArea.ScrollBar
+	local MaximumOffset = math.max(1, #self.Players - 8)
+	local Offset = math.min(ScrollBar:GetValue() or 1, MaximumOffset)
+
+	ScrollBar:SetMinMaxValues(1, MaximumOffset)
+	ScrollBar.Offset = Offset
+	ScrollBar:SetValue(Offset)
+	self:SetGameScrollOffset(Offset)
+
+	local LocalPlayer = UnitName("player")
+	local IsParticipant = false
+
+	for i = 1, #self.Players do
+		if (self.Players[i].Name == LocalPlayer) then
+			IsParticipant = true
+			break
+		end
+	end
+
+	if IsParticipant then
+		self:DisablePlayButton("Join")
+		self:EnablePlayButton("Withdraw")
+	else
+		self:EnablePlayButton("Join")
+		self:DisablePlayButton("Withdraw")
+	end
+
+	return true
 end
 
 function vGambler:RemoveAllPlayers()

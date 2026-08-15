@@ -50,10 +50,9 @@ vGambler.Events.AddPlayer = function(self, args)
 end
 
 vGambler.Events.RemovePlayer = function(self, name)
-	self:RemovePlayer(name)
-	self:AddStat("withdraw", 1)
-
-	self.Window.Label:SetText(string.format("|cffFFC44Dv|r|cffFFFFFFGambler|r  (%s / %s)", self.Rolled or 0, #self.Players))
+	if self:RemovePlayer(name) then
+		self:AddStat("withdraw", 1)
+	end
 end
 
 vGambler.Events.PlayerRoll = function(self, args)
