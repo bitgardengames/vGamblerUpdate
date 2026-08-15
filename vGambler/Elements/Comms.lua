@@ -81,7 +81,7 @@ vGambler.Events.RemovePlayer = function(self, name)
 		self:DisablePlayButton("Withdraw")
 	end
 
-	self.Window.Label:SetText(string.format("|cffFFC44Dv|r|cffFFFFFFGambler|r  (%s / %s)", self.Rolled or 0, #self.Players))
+	self.Window.Label:SetText(string.format("|cffFFC44DvGambler|r  (%s / %s)", self.Rolled or 0, #self.Players))
 end
 
 vGambler.Events.CloseGame = function(self)
@@ -114,7 +114,7 @@ vGambler.Events.PlayerRoll = function(self, args)
 			end
 
 			-- Update the header as well to display number of players
-			self.Window.Label:SetText(string.format("|cffFFC44Dv|r|cffFFFFFFGambler|r  (%s / %s)", self.Rolled or 0, #self.Players))
+			self.Window.Label:SetText(string.format("|cffFFC44DvGambler|r  (%s / %s)", self.Rolled or 0, #self.Players))
 
 			self:AddStat("rolls", 1)
 

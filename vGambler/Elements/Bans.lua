@@ -151,7 +151,7 @@ function vGambler:UnbanPlayer(player)
 		end
 	end
 
-	vGambler:SendMessage(string.format("|cffFFC44Dv|r|cffFFFFFFGambler|r: %s has been removed from the ban list.", player))
+	vGambler:SendMessage(string.format("|cffFFC44DvGambler|r: %s has been removed from the ban list.", player))
 end
 
 function vGambler:ResetBans()
@@ -213,7 +213,7 @@ function vGambler:BanPlayerFromUI()
 	Page.ReasonInput:ClearFocus()
 	Page.ReasonInput:SetText(Page.ReasonInput.DefaultText)
 
-	vGambler:SendMessage(string.format("|cffFFC44Dv|r|cffFFFFFFGambler|r: Banning %s for the reason: %s", Name, Reason))
+	vGambler:SendMessage(string.format("|cffFFC44DvGambler|r: Banning %s for the reason: %s", Name, Reason))
 end
 
 function vGambler:BanInputOnMouseDown()

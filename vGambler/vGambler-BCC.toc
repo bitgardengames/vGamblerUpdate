@@ -1,7 +1,7 @@
 ## Interface: 20504
 ## Author: Hydra
 ## Version: 1.0
-## Title: |cffFFC44Dv|r|cffFFFFFFGambler|r
+## Title: |cffFFC44DvGambler|r
 ## Notes: Gamble away your hard earned gold!
 ## SavedVariables: vGamblerBans, vGamblerData, vGamblerPlayers, vGamblerSettings, vGamblerHistory
 
