@@ -16,6 +16,61 @@ local function AddMatchData(payload, wager, players)
 	return table.concat(payload, "\\")
 end
 
+-- A "game" is a resolved, non-draw match. A "tie" is one tie-break round, so
+-- one match can contribute several ties. Player games count match participation;
+-- player ties count participation in tie-break rounds. tieswon/tieslost are added
+-- once at match resolution when at least one tie-break round occurred.
+function vGambler:AccountTieRound(players)
+	self:AddStat("ties", 1)
+
+	for i = 1, #(players or {}) do
+		self:AddPlayerStat(players[i], "ties", 1)
+	end
+
+	self.TiedGame = true
+end
+
+function vGambler:AccountCompletedGame(winner, loser, high, low, wager, players)
+	local Earnings = high - low
+
+	for i = 1, #(players or {}) do
+		self:AddPlayerStat(players[i].name, "games", 1)
+	end
+
+	self.SessionGames = (self.SessionGames or 0) + 1
+	self:AddStat("games", 1)
+	self:AddStat("totalgold", Earnings)
+	self:AddMaxStat("topwin", high)
+	self:AddMaxStat("toppayout", Earnings)
+	self:AddMaxStat("topwager", wager)
+	self:AddMaxStat("sessiongames", self.SessionGames)
+
+	self:AddPlayerStat(winner, "wins", 1)
+	self:AddPlayerStat(winner, "earnings", Earnings)
+	self:AddPlayerStat(loser, "losses", 1)
+	self:AddPlayerStat(loser, "loss", Earnings)
+	self:RecordWinningStreak(winner, loser, players)
+
+	if self.TiedGame then
+		self:AddPlayerStat(winner, "tieswon", 1)
+		self:AddPlayerStat(loser, "tieslost", 1)
+	end
+
+	self:AddMatchHistory(winner, loser, Earnings, wager, players or {})
+
+	return Earnings
+end
+
+function vGambler:AccountDraw(wager, players)
+	for i = 1, #(players or {}) do
+		self:AddPlayerStat(players[i].name, "games", 1)
+	end
+
+	self:AddStat("draw", 1)
+	self:RecordWinningStreak(nil, nil, players)
+	self:AddMatchHistory("Draw", "Draw", 0, wager, players or {})
+end
+
 vGambler.EventGroups = {
 	{CHAT_MSG_PARTY = true, CHAT_MSG_PARTY_LEADER = true},
 	{CHAT_MSG_RAID = true, CHAT_MSG_RAID_LEADER = true},
@@ -206,18 +261,12 @@ function vGambler:CloseDrawGame()
 	self.Locked = false
 	self.TiedGame = false
 
-	for i = 1, #(self.MatchPlayers or {}) do
-		self:AddPlayerStat(self.MatchPlayers[i].name, "games", 1)
-	end
-
 	if self.Settings.PlaySounds then
 		PlaySound(SOUNDKIT.LFG_DENIED)
 	end
 
-	self:AddStat("draw", 1)
-	self:RecordWinningStreak(nil, nil, self.MatchPlayers)
+	self:AccountDraw(self.GameWager or self.Settings.RollValue, self.MatchPlayers)
 	self:UpdateBasicStats()
-	self:AddMatchHistory("Draw", "Draw", 0, self.GameWager or self.Settings.RollValue, self.MatchPlayers or {})
 
 	if self.IsTestGame then -- Just debugging to loop test games
 		self.Ela = 0
@@ -321,10 +370,13 @@ function vGambler:SetTieMatch() -- Handles the situation where there is a tie, p
 		for i = 1, #self.Players do
 			self.Players[i].Roll = 0
 			self:AddPlayerUI()
-			self:AddPlayerStat(self.Players[i].DisplayName, "ties", 1)
 		end
 
-		self:AddStat("ties", 1)
+		local Players = {}
+		for i = 1, #self.Players do
+			table.insert(Players, self.Players[i].DisplayName)
+		end
+		self:AccountTieRound(Players)
 
 		self:CloseTiedGame()
 	end
@@ -337,31 +389,8 @@ end
 function vGambler:DeclareWinner() -- Declares the winner of the game, calculates earnings, and updates statistics
 	local Winner = self.Result[1][1].DisplayName
 	local Loser = self.Result[2][1].DisplayName
-	local Earnings = self.Result[3] - self.Result[4]
-
-	for i = 1, #(self.MatchPlayers or {}) do
-		self:AddPlayerStat(self.MatchPlayers[i].name, "games", 1)
-	end
-
-	self.SessionGames = (self.SessionGames or 0) + 1
-
-	self:AddStat("games", 1)
-	self:AddStat("totalgold", Earnings)
-	self:AddMaxStat("topwin", self.Result[3])
-	self:AddMaxStat("toppayout", Earnings)
-	self:AddMaxStat("topwager", self.GameWager or self.Settings.RollValue)
-	self:AddMaxStat("sessiongames", self.SessionGames)
-
-	self:AddPlayerStat(Winner, "wins", 1)
-	self:AddPlayerStat(Winner, "earnings", Earnings)
-	self:AddPlayerStat(Loser, "losses", 1)
-	self:AddPlayerStat(Loser, "loss", Earnings)
-	self:RecordWinningStreak(Winner, Loser, self.MatchPlayers)
-
-	if self.TiedGame then
-		self:AddPlayerStat(Winner, "tieswon", 1)
-		self:AddPlayerStat(Loser, "tieslost", 1)
-	end
+	local Wager = self.GameWager or self.Settings.RollValue
+	local Earnings = self:AccountCompletedGame(Winner, Loser, self.Result[3], self.Result[4], Wager, self.MatchPlayers)
 
 	self:UpdateBasicStats()
 	self:UpdateStatGrid()
@@ -375,8 +404,7 @@ function vGambler:DeclareWinner() -- Declares the winner of the game, calculates
 
 	self:SendMessage(string.format(L.GAME_RESULT, self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
 
-	self:SendEvent("GameEnded", AddMatchData({Winner, Loser, self.Result[3], self.Result[4]}, self.GameWager or self.Settings.RollValue, self.MatchPlayers))
-	self:AddMatchHistory(Winner, Loser, Earnings, self.GameWager or self.Settings.RollValue, self.MatchPlayers or {})
+	self:SendEvent("GameEnded", AddMatchData({Winner, Loser, self.Result[3], self.Result[4]}, Wager, self.MatchPlayers))
 
 	if self.IsTestGame then -- Just debugging to loop test games
 		self.Ela = 0
