@@ -1,5 +1,6 @@
 local Name, AddOn = ...
 local vGambler = AddOn.vGambler
+local L = AddOn.L
 
 local math = math
 local table = table
@@ -37,12 +38,12 @@ function vGambler:HistoryLineOnEnter()
 	vGambler.Tooltip:SetOwner(self, "ANCHOR_NONE")
 	vGambler.Tooltip:SetPoint("LEFT", self, "RIGHT", 8, 0)
 	vGambler.Tooltip:ClearLines()
-	vGambler.Tooltip:AddLine(string.format("Match %d", self.MatchNumber), 1, 1, 1)
+	vGambler.Tooltip:AddLine(string.format(L.MATCH_NUMBER, self.MatchNumber), 1, 1, 1)
 	vGambler.Tooltip:AddLine(" ")
 
 	for i = 1, #(Match.players or {}) do
 		local Player = Match.players[i]
-		vGambler.Tooltip:AddDoubleLine(string.format("%d. %s", i, Player.name), vGambler:Comma(Player.roll), 1, 1, 1, 1, 1, 1)
+		vGambler.Tooltip:AddDoubleLine(string.format(L.PLAYER_ROLL, i, Player.name), vGambler:Comma(Player.roll), 1, 1, 1, 1, 1, 1)
 	end
 
 	vGambler.Tooltip:Show()
@@ -70,7 +71,7 @@ function vGambler:SetHistoryScrollOffset(offset)
 		if Match then
 			Line.MatchIndex = MatchNumber
 			Line.MatchNumber = MatchNumber
-			Line.Label:SetText(string.format("%d. Winner: %s  Loser: %s  Value: %s|cffffe02eg|r", MatchNumber, Match.winner, Match.loser, self:Comma(Match.value)))
+			Line.Label:SetText(string.format(L.MATCH_SUMMARY, MatchNumber, Match.winner, Match.loser, self:Comma(Match.value)))
 			Line:Show()
 		else
 			Line:Hide()
@@ -102,7 +103,7 @@ function vGambler:SetupHistoryPage(page)
 	HistoryArea:EnableMouseWheel(true)
 	HistoryArea:SetScript("OnMouseWheel", self.HistoryScrollOnMouseWheel)
 
-	local Header = self:AddGameHeader({}, HistoryArea, "Match History")
+	local Header = self:AddGameHeader({}, HistoryArea, L.MATCH_HISTORY)
 	Header:SetPoint("TOPLEFT", HistoryArea, 4, -4)
 
 	for i = 1, 11 do

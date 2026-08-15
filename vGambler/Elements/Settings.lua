@@ -1,5 +1,6 @@
 local Name, AddOn = ...
 local vGambler = AddOn.vGambler
+local L = AddOn.L
 
 local table = table
 local string = string
@@ -25,7 +26,7 @@ vGambler.Settings = {
 	LeaveCommand = "0",
 }
 
-vGambler.UIStyleSelections = {"Round", "Square"} -- Localize these
+vGambler.UIStyleSelections = {L.ROUND, L.SQUARE} -- Localize these
 
 function vGambler:CheckBoxOnMouseUp()
 	if self.Toggled then
@@ -99,9 +100,9 @@ function vGambler:UpdateShowListNumbers(value)
 	for i = 1, #vGambler.Players do
 		if vGambler.Settings.PlayerNumbers then
 			if vGambler.Settings.ColoredBars then
-				vGambler.Players[i].Label:SetText(string.format("%d.  %s", i, vGambler.Players[i].Name))
+				vGambler.Players[i].Label:SetText(string.format(L.NUMBERED_PLAYER, i, vGambler.Players[i].Name))
 			else
-				vGambler.Players[i].Label:SetText(string.format("%d.  %s", i, vGambler.Players[i].DisplayName))
+				vGambler.Players[i].Label:SetText(string.format(L.NUMBERED_PLAYER, i, vGambler.Players[i].DisplayName))
 			end
 		else
 			if vGambler.Settings.ColoredBars then
@@ -163,7 +164,7 @@ function vGambler:UpdateClassColoredBars(value)
 			vGambler.UIPlayers[i].Label:SetTextColor(1, 1, 1)
 
 			if vGambler.Settings.PlayerNumbers then
-				vGambler.UIPlayers[i].Label:SetText(string.format("%d.  %s", i, vGambler.Players[i].Name))
+				vGambler.UIPlayers[i].Label:SetText(string.format(L.NUMBERED_PLAYER, i, vGambler.Players[i].Name))
 			else
 				vGambler.UIPlayers[i].Label:SetText(vGambler.Players[i].Name)
 			end
@@ -171,7 +172,7 @@ function vGambler:UpdateClassColoredBars(value)
 			vGambler.UIPlayers[i].Bar:SetStatusBarColor(0.25, 0.266, 0.294)
 
 			if vGambler.Settings.PlayerNumbers then
-				vGambler.UIPlayers[i].Label:SetText(string.format("%d.  %s", i, vGambler.Players[i].DisplayName))
+				vGambler.UIPlayers[i].Label:SetText(string.format(L.NUMBERED_PLAYER, i, vGambler.Players[i].DisplayName))
 			else
 				vGambler.UIPlayers[i].Label:SetText(vGambler.Players[i].DisplayName)
 			end
@@ -265,18 +266,18 @@ function vGambler:SetupSettingsPage(page)
 	Left:SetBackdropColor(0.184, 0.192, 0.211)
 	Left:SetBackdropBorderColor(0.184, 0.192, 0.211)
 
-	self:AddGameHeader(page.LeftSettings, Left, "Game Settings")
-	self:AddGameCheckbox(page.LeftSettings, Left, "Show player numbers", self.Settings.PlayerNumbers, self.UpdateShowListNumbers)
-	self:AddGameCheckbox(page.LeftSettings, Left, "Class colored bars", self.Settings.ColoredBars, self.UpdateClassColoredBars)
-	self:AddGameCheckbox(page.LeftSettings, Left, "Show tooltip stats", self.Settings.PlayerTooltips, self.UpdateShowPlayerTooltips)
+	self:AddGameHeader(page.LeftSettings, Left, L.GAME_SETTINGS)
+	self:AddGameCheckbox(page.LeftSettings, Left, L.SHOW_PLAYER_NUMBERS, self.Settings.PlayerNumbers, self.UpdateShowListNumbers)
+	self:AddGameCheckbox(page.LeftSettings, Left, L.CLASS_COLORED_BARS, self.Settings.ColoredBars, self.UpdateClassColoredBars)
+	self:AddGameCheckbox(page.LeftSettings, Left, L.SHOW_TOOLTIP_STATS, self.Settings.PlayerTooltips, self.UpdateShowPlayerTooltips)
 
-	self:AddGameHeader(page.LeftSettings, Left, "UI font")
+	self:AddGameHeader(page.LeftSettings, Left, L.UI_FONT)
 	self:AddFontDropdown(page.LeftSettings, Left, "Font", self.Settings.UIFont, self.UpdateUIFont)
 
-	self:AddGameHeader(page.LeftSettings, Left, "Game font")
+	self:AddGameHeader(page.LeftSettings, Left, L.GAME_FONT)
 	self:AddFontDropdown(page.LeftSettings, Left, "Font", self.Settings.GameFont, self.UpdateGameFont)
 
-	self:AddGameHeader(page.LeftSettings, Left, "Set font size")
+	self:AddGameHeader(page.LeftSettings, Left, L.SET_FONT_SIZE)
 	self:AddGameInput(page.LeftSettings, Left, "FontSize", self.Settings.FontSize, self.FontSizeInputOnEnter)
 
 	self:SortButtonList(page.LeftSettings, Left)
@@ -288,17 +289,17 @@ function vGambler:SetupSettingsPage(page)
 	Right:SetBackdropColor(0.184, 0.192, 0.211)
 	Right:SetBackdropBorderColor(0.184, 0.192, 0.211)
 
-	self:AddGameHeader(page.RightSettings, Right, "General Settings")
-	self:AddGameCheckbox(page.RightSettings, Right, "Show minimap button", self.Settings.MinimapIcon, self.UpdateShowMinimapButton)
-	self:AddGameCheckbox(page.RightSettings, Right, "Play sounds", self.Settings.PlaySounds, self.UpdatePlaySounds)
-	self:AddGameCheckbox(page.RightSettings, Right, "Fade chat", self.Settings.FadeChat, self.UpdateFadeChat)
+	self:AddGameHeader(page.RightSettings, Right, L.GENERAL_SETTINGS)
+	self:AddGameCheckbox(page.RightSettings, Right, L.SHOW_MINIMAP_BUTTON, self.Settings.MinimapIcon, self.UpdateShowMinimapButton)
+	self:AddGameCheckbox(page.RightSettings, Right, L.PLAY_SOUNDS, self.Settings.PlaySounds, self.UpdatePlaySounds)
+	self:AddGameCheckbox(page.RightSettings, Right, L.FADE_CHAT, self.Settings.FadeChat, self.UpdateFadeChat)
 
-	self:AddGameHeader(page.RightSettings, Right, "UI Style")
-	self:AddGameDropdown(page.RightSettings, Right, "UI style", self.UIStyleSelections[self.Settings.UIStyle], self.UIStyleSelections, self.UpdateUIStyle)
+	self:AddGameHeader(page.RightSettings, Right, L.UI_STYLE)
+	self:AddGameDropdown(page.RightSettings, Right, L.UI_STYLE_LABEL, self.UIStyleSelections[self.Settings.UIStyle], self.UIStyleSelections, self.UpdateUIStyle)
 
-	self:AddGameHeader(page.RightSettings, Right, "Stats Settings")
-	self:AddGameButton(page.RightSettings, Right, "resetgeneral", "Reset General Stats", self.ResetGeneralStats)
-	self:AddGameButton(page.RightSettings, Right, "resetplayers", "Reset Player Stats", self.ResetPlayerStats)
+	self:AddGameHeader(page.RightSettings, Right, L.STATS_SETTINGS)
+	self:AddGameButton(page.RightSettings, Right, "resetgeneral", L.RESET_GENERAL_STATS, self.ResetGeneralStats)
+	self:AddGameButton(page.RightSettings, Right, "resetplayers", L.RESET_PLAYER_STATS, self.ResetPlayerStats)
 
 	self:SortButtonList(page.RightSettings, Right)
 end

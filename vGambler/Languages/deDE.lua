@@ -1,12 +1,6 @@
 local Name, AddOn = ...
-local L = {}
-local vGambler = CreateFrame("Frame")
+local L = AddOn.L
 
-AddOn.L = L
-AddOn.Locale = GetLocale()
-AddOn.vGambler = vGambler
-
-if (Locale ~= "deDE") then
+if (AddOn.Locale ~= "deDE") then
 	return
 end
-

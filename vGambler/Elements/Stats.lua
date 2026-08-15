@@ -1,5 +1,6 @@
 local Name, AddOn = ...
 local vGambler = AddOn.vGambler
+local L = AddOn.L
 
 local table = table
 local string = string
@@ -166,7 +167,7 @@ vGambler.SortStats = {
 function vGambler:ResetStats()
 	vGamblerPlayers = nil
 
-	print("vGambler: Stats have been reset.")
+	print(L.STATS_RESET)
 end
 
 function vGambler:UpdateStatDisplay(value)
@@ -285,10 +286,10 @@ function vGambler:PopulateStatLines(direction)
 
 	for i = 1, #StatsSorter do
 		vGambler:AddLongStatLine(Page.StatArea)
-		StatLines[i].Name:SetText(string.format("%s.  %s", i, StatsSorter[i][1]))
+		StatLines[i].Name:SetText(string.format(L.NUMBERED_PLAYER, i, StatsSorter[i][1]))
 		StatLines[i].Wins:SetText(StatsSorter[i][2])
-		StatLines[i].WinPercent:SetText(string.format("%s%%", StatsSorter[i][3]))
-		StatLines[i].Earnings:SetText(string.format("%s|cffffe02eg|r", vGambler:Comma(StatsSorter[i][4])))
+		StatLines[i].WinPercent:SetText(string.format(L.PERCENT, StatsSorter[i][3]))
+		StatLines[i].Earnings:SetText(string.format(L.GOLD_AMOUNT, vGambler:Comma(StatsSorter[i][4])))
 	end
 
 	vGambler:SetStatScrollOffset(1)
@@ -411,7 +412,7 @@ function vGambler:SetupStatsPage(page)
 	SessionToggle:SetBackdropColor(0.184, 0.192, 0.211)
 	SessionToggle:SetBackdropBorderColor(0.184, 0.192, 0.211)
 
-	self:AddGameCheckbox(page.SessionToggle, SessionToggle, "Session Stats", self.Settings.StatDisplay, self.UpdateStatDisplay)
+	self:AddGameCheckbox(page.SessionToggle, SessionToggle, L.SESSION_STATS, self.Settings.StatDisplay, self.UpdateStatDisplay)
 
 	self:SortButtonList(page.SessionToggle, SessionToggle)
 
@@ -442,7 +443,7 @@ function vGambler:SetupStatsPage(page)
 	Player.Label:SetFont(self.Font, self.Settings.FontSize)
 	Player.Label:SetShadowColor(0.029, 0.029, 0.051)
 	Player.Label:SetShadowOffset(0, -1)
-	Player.Label:SetText("|cffFFC44DPlayer|r")
+	Player.Label:SetText(L.PLAYER_HEADER)
 
 	local Wins = CreateFrame("Frame", nil, StatArea.Header)
 	Wins:SetSize(67, 24)
@@ -457,7 +458,7 @@ function vGambler:SetupStatsPage(page)
 	Wins.Label:SetFont(self.Font, self.Settings.FontSize)
 	Wins.Label:SetShadowColor(0.029, 0.029, 0.051)
 	Wins.Label:SetShadowOffset(0, -1)
-	Wins.Label:SetText("|cffFFC44DWins|r")
+	Wins.Label:SetText(L.WINS_HEADER)
 
 	local WinPercent = CreateFrame("Frame", nil, StatArea.Header)
 	WinPercent:SetSize(87, 24)
@@ -472,7 +473,7 @@ function vGambler:SetupStatsPage(page)
 	WinPercent.Label:SetFont(self.Font, self.Settings.FontSize)
 	WinPercent.Label:SetShadowColor(0.029, 0.029, 0.051)
 	WinPercent.Label:SetShadowOffset(0, -1)
-	WinPercent.Label:SetText("|cffFFC44DWin %|r")
+	WinPercent.Label:SetText(L.WIN_PERCENT_HEADER)
 
 	local Earnings = CreateFrame("Frame", nil, StatArea.Header)
 	Earnings:SetSize(68, 24)
@@ -487,7 +488,7 @@ function vGambler:SetupStatsPage(page)
 	Earnings.Label:SetFont(self.Font, self.Settings.FontSize)
 	Earnings.Label:SetShadowColor(0.029, 0.029, 0.051)
 	Earnings.Label:SetShadowOffset(0, -1)
-	Earnings.Label:SetText("|cffFFC44DEarnings|r")
+	Earnings.Label:SetText(L.EARNINGS_HEADER)
 
 	page.StatArea = StatArea
 

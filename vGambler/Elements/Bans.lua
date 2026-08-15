@@ -167,7 +167,7 @@ function vGambler:UnbanPlayer(player)
 		end
 	end
 
-	vGambler:SendMessage(string.format("|cffFFC44DvGambler|r: %s has been removed from the ban list.", player))
+	vGambler:SendMessage(string.format(L.PLAYER_UNBANNED, player))
 end
 
 function vGambler:ResetBans()
@@ -190,7 +190,7 @@ function vGambler:ResetBans()
 		self:SortBannedPlayers()
 	end
 
-	print("vGambler: Ban list has been reset.")
+	print(L.BANS_RESET)
 end
 
 function vGambler:IsBanned(player)
@@ -229,7 +229,7 @@ function vGambler:BanPlayerFromUI()
 	Page.ReasonInput:ClearFocus()
 	Page.ReasonInput:SetText(Page.ReasonInput.DefaultText)
 
-	vGambler:SendMessage(string.format("|cffFFC44DvGambler|r: Banning %s for the reason: %s", Name, Reason))
+	vGambler:SendMessage(string.format(L.BANNING_PLAYER, Name, Reason))
 end
 
 function vGambler:BanInputOnMouseDown()
@@ -305,13 +305,13 @@ function vGambler:SetupBansPage(page)
 	ReasonInput:SetFont(self.Font, self.Settings.FontSize, "")
 	ReasonInput:SetShadowColor(0.029, 0.029, 0.051)
 	ReasonInput:SetShadowOffset(0, -1)
-	ReasonInput:SetText("|cffd2d2d2Reason (optional)|r")
+	ReasonInput:SetText(L.REASON_OPTIONAL)
 	ReasonInput:SetAutoFocus(false)
 	ReasonInput:SetTextInsets(6.5, -6, 2, 1)
 	ReasonInput:SetScript("OnMouseDown", self.BanInputOnMouseDown)
 	ReasonInput:SetScript("OnEnterPressed", self.BanInputOnEnterPressed)
 	ReasonInput:SetScript("OnEscapePressed", self.BanInputOnEnterPressed)
-	ReasonInput.DefaultText = "|cffd2d2d2Reason (optional)|r"
+	ReasonInput.DefaultText = L.REASON_OPTIONAL
 
 	local BanButton = CreateFrame("Frame", nil, Inputs, "BackdropTemplate")
 	BanButton:SetSize(60, 24)
@@ -352,14 +352,14 @@ function vGambler:SetupBansPage(page)
 	BanArea.HeaderLabel:SetFont(self.Font, self.Settings.FontSize)
 	BanArea.HeaderLabel:SetShadowColor(0.029, 0.029, 0.051)
 	BanArea.HeaderLabel:SetShadowOffset(0, -1)
-	BanArea.HeaderLabel:SetText("|cffFFC44DPlayer|r")
+	BanArea.HeaderLabel:SetText(L.PLAYER_HEADER)
 
 	BanArea.HeaderReason = BanArea.Header:CreateFontString(nil, "OVERLAY")
 	BanArea.HeaderReason:SetPoint("LEFT", BanArea.Header, "CENTER", -60, -1)
 	BanArea.HeaderReason:SetFont(self.Font, self.Settings.FontSize)
 	BanArea.HeaderReason:SetShadowColor(0.029, 0.029, 0.051)
 	BanArea.HeaderReason:SetShadowOffset(0, -1)
-	BanArea.HeaderReason:SetText("|cffFFC44DBan reason|r")
+	BanArea.HeaderReason:SetText(L.BAN_REASON_HEADER)
 
 	local BanScroll = CreateFrame("Slider", nil, BanArea)
 	BanScroll:SetWidth(12)

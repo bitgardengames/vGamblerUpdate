@@ -1,48 +1,49 @@
 local Name, AddOn = ...
 local vGambler = AddOn.vGambler
+local L = AddOn.L
 
 local table = table
 local string = string
 
 vGambler.StatMethods = {	-- Basic stats, just add optional formatting to some of them.
 	games = function(stat, data)
-		stat.Left:SetText("Games:")
+		stat.Left:SetText(L.GAMES)
 		stat.Right:SetText(data and vGambler:Comma(data.games) or 0)
 	end,
 
 	rolls = function(stat, data)
-		stat.Left:SetText("Rolls:")
+		stat.Left:SetText(L.ROLLS)
 		stat.Right:SetText(data and vGambler:Comma(data.rolls) or 0)
 	end,
 
 	ties = function(stat, data)
-		stat.Left:SetText("Tied Games:")
+		stat.Left:SetText(L.TIED_GAMES)
 		stat.Right:SetText(data and vGambler:Comma(data.ties) or 0)
 	end,
 
 	draws = function(stat, data)
-		stat.Left:SetText("Draw Games:")
+		stat.Left:SetText(L.DRAW_GAMES)
 		stat.Right:SetText(data and vGambler:Comma(data.draw) or 0)
 	end,
 
 	totalgold = function(stat, data)
-		stat.Left:SetText("Gold Won:")
-		stat.Right:SetText(string.format("%s|cffffe02eg|r", data and vGambler:Comma(data.totalgold) or 0))
+		stat.Left:SetText(L.GOLD_WON)
+		stat.Right:SetText(string.format(L.GOLD_AMOUNT, data and vGambler:Comma(data.totalgold) or 0))
 	end,
 
 	topwager = function(stat, data)
-		stat.Left:SetText("Highest Wager:")
+		stat.Left:SetText(L.HIGHEST_WAGER)
 		stat.Right:SetText(data and vGambler:Comma(data.topwager) or 0)
 	end,
 
 	topwin = function(stat, data)
-		stat.Left:SetText("Highest Roll:")
+		stat.Left:SetText(L.HIGHEST_ROLL)
 		stat.Right:SetText(data and vGambler:Comma(data.topwin) or 0)
 	end,
 
 	toppayout = function(stat, data)
-		stat.Left:SetText("Highest Payout:")
-		stat.Right:SetText(string.format("%s|cffffe02eg|r", data and vGambler:Comma(data.toppayout) or 0))
+		stat.Left:SetText(L.HIGHEST_PAYOUT)
+		stat.Right:SetText(string.format(L.GOLD_AMOUNT, data and vGambler:Comma(data.toppayout) or 0))
 	end,
 
 	uniqueplayers = function(stat, data)
@@ -59,12 +60,12 @@ vGambler.StatMethods = {	-- Basic stats, just add optional formatting to some of
 			end
 		end
 
-		stat.Left:SetText("Unique Players")
+		stat.Left:SetText(L.UNIQUE_PLAYERS)
 		stat.Right:SetText(Count)
 	end,
 
 	sessiongames = function(stat, data)
-		stat.Left:SetText("Highest game streak:")
+		stat.Left:SetText(L.HIGHEST_GAME_STREAK)
 		stat.Right:SetText(data and data.sessiongames or 0)
 	end,
 }
@@ -110,7 +111,7 @@ function vGambler:SetupAboutPage(page)
 	GameInfo:SetBackdropColor(0.184, 0.192, 0.211)
 	GameInfo:SetBackdropBorderColor(0.184, 0.192, 0.211)
 
-	self:AddGameHeader(page.Game, GameInfo, "General Stats")
+	self:AddGameHeader(page.Game, GameInfo, L.GENERAL_STATS)
 	page.Stats["games"] = self:AddStatLine(page.Game, GameInfo, "games")
 	page.Stats["rolls"] = self:AddStatLine(page.Game, GameInfo, "rolls")
 	page.Stats["ties"] = self:AddStatLine(page.Game, GameInfo, "ties")
@@ -118,7 +119,7 @@ function vGambler:SetupAboutPage(page)
 	page.Stats["totalgold"] = self:AddStatLine(page.Game, GameInfo, "totalgold")
 	page.Stats["uniqueplayers"] = self:AddStatLine(page.Game, GameInfo, "uniqueplayers")
 
-	self:AddGameHeader(page.Game, GameInfo, "Top Stats")
+	self:AddGameHeader(page.Game, GameInfo, L.TOP_STATS)
 	page.Stats["topwager"] = self:AddStatLine(page.Game, GameInfo, "topwager")
 	page.Stats["topwin"] = self:AddStatLine(page.Game, GameInfo, "topwin")
 	page.Stats["toppayout"] = self:AddStatLine(page.Game, GameInfo, "toppayout")

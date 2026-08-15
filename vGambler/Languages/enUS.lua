@@ -1,7 +1,120 @@
 local Name, AddOn = ...
+
+AddOn.L = AddOn.L or {}
+AddOn.Locale = AddOn.Locale or GetLocale()
+AddOn.vGambler = AddOn.vGambler or CreateFrame("Frame")
+
 local L = AddOn.L
 
-if (AddOn.Locale ~= "enUS" or AddOn.Locale ~= "enGB") then
+-- English is the base catalog.  Locale files loaded after this one replace only
+-- the entries that they translate, leaving every other string in English.
+L.PREFIX = "|cffFFC44DvGambler|r"
+L.WINDOW_TITLE = L.PREFIX
+L.WINDOW_PROGRESS = L.PREFIX .. "  (%s / %s)"
+L.MINIMAP_TOOLTIP = "Click to toggle"
+L.WELCOME = "Welcome to " .. L.PREFIX
+L.PAGE_GAME = "Game"
+L.PAGE_STATS = "Stats"
+L.PAGE_HISTORY = "History"
+L.PAGE_BANS = "Bans"
+L.PAGE_SETTINGS = "Settings"
+L.PAGE_ABOUT = "About"
+L.NUMBERED_PLAYER = "%d.  %s"
+L.GOLD_AMOUNT = "%s|cffffe02eg|r"
+L.PERCENT = "%s%%"
+
+L.GAME_RESET = L.PREFIX .. ": Game has been reset."
+L.GAME_STARTED = L.PREFIX .. ": New game started! Current roll is for %sg! type %s to enter (%s to withdraw)."
+L.LAST_CALL = L.PREFIX .. ": Last call to enter!"
+L.NEED_TO_ROLL = L.PREFIX .. ": The following players still need to roll: %s"
+L.GAME_CLOSED = L.PREFIX .. ": Game is now closed! Roll!"
+L.NOT_ENOUGH_PLAYERS = L.PREFIX .. ": Not enough players!"
+L.GAME_DRAW = L.PREFIX .. ": The game has resulted in a draw!"
+L.WINNING_TIE = L.PREFIX .. ": Winning tie found (%s). %s need to roll again to determine the winner"
+L.LOSING_TIE = L.PREFIX .. ": Losing tie found (%s). %s need to roll again to determine the loser"
+L.GAME_RESULT = L.PREFIX .. ": %s (%s) owes %s (%s) %s gold!"
+L.BANNED_FROM_ENTERING = L.PREFIX .. ": %s is banned from entering."
+L.BANNED_FROM_ENTERING_REASON = L.PREFIX .. ": %s is banned from entering. Reason: %s."
+
+L.HOST_GAME = "Host Game"
+L.START_GAME = "Start Game"
+L.LAST_CALL_BUTTON = "Last Call"
+L.CLOSE_GAME = "Close Game"
+L.RESET_GAME = "Reset Game"
+L.ROLL_VALUE = "Roll Value"
+L.GAME_CHANNEL = "Game Channel"
+L.JOIN_GAME = "Join Game"
+L.JOIN = "Join"
+L.WITHDRAW = "Withdraw"
+L.ROLL = "Roll"
+L.TEST = "Test"
+
+L.GAME_SETTINGS = "Game Settings"
+L.SHOW_PLAYER_NUMBERS = "Show player numbers"
+L.CLASS_COLORED_BARS = "Class colored bars"
+L.SHOW_TOOLTIP_STATS = "Show tooltip stats"
+L.UI_FONT = "UI font"
+L.GAME_FONT = "Game font"
+L.SET_FONT_SIZE = "Set font size"
+L.GENERAL_SETTINGS = "General Settings"
+L.SHOW_MINIMAP_BUTTON = "Show minimap button"
+L.PLAY_SOUNDS = "Play sounds"
+L.FADE_CHAT = "Fade chat"
+L.UI_STYLE = "UI Style"
+L.UI_STYLE_LABEL = "UI style"
+L.ROUND = "Round"
+L.SQUARE = "Square"
+L.STATS_SETTINGS = "Stats Settings"
+L.RESET_GENERAL_STATS = "Reset General Stats"
+L.RESET_PLAYER_STATS = "Reset Player Stats"
+
+L.MATCH_HISTORY = "Match History"
+L.MATCH_NUMBER = "Match %d"
+L.MATCH_SUMMARY = "%d. Winner: %s  Loser: %s  Value: %s|cffffe02eg|r"
+L.PLAYER_ROLL = "%d. %s"
+
+L.REASON_OPTIONAL = "|cffd2d2d2Reason (optional)|r"
+L.PLAYER_HEADER = "|cffFFC44DPlayer|r"
+L.BAN_REASON_HEADER = "|cffFFC44DBan reason|r"
+L.PLAYER_UNBANNED = L.PREFIX .. ": %s has been removed from the ban list."
+L.BANNING_PLAYER = L.PREFIX .. ": Banning %s for the reason: %s"
+L.BANS_RESET = "vGambler: Ban list has been reset."
+
+L.GAMES = "Games:"
+L.ROLLS = "Rolls:"
+L.TIED_GAMES = "Tied Games:"
+L.DRAW_GAMES = "Draw Games:"
+L.GOLD_WON = "Gold Won:"
+L.HIGHEST_WAGER = "Highest Wager:"
+L.HIGHEST_ROLL = "Highest Roll:"
+L.HIGHEST_PAYOUT = "Highest Payout:"
+L.UNIQUE_PLAYERS = "Unique Players"
+L.HIGHEST_GAME_STREAK = "Highest game streak:"
+L.GENERAL_STATS = "General Stats"
+L.TOP_STATS = "Top Stats"
+L.SESSION_STATS = "Session Stats"
+L.WINS_HEADER = "|cffFFC44DWins|r"
+L.WIN_PERCENT_HEADER = "|cffFFC44DWin %|r"
+L.EARNINGS_HEADER = "|cffFFC44DEarnings|r"
+L.TOTAL_GAMES = "%s total games"
+L.WINS = "Wins:"
+L.WIN_RATE = "Win rate:"
+L.GOLD_EARNED = "Gold Earned:"
+L.LOSSES = "Losses:"
+L.LOSS_RATE = "Loss rate:"
+L.GOLD_LOST = "Gold Lost:"
+L.TIES = "Ties:"
+L.TIES_WON = "Ties won:"
+L.TIES_LOST = "Ties lost:"
+L.STATS_RESET = "vGambler: Stats have been reset."
+
+L.NO_BANNED_PLAYERS = "No players are banned"
+L.PLAYER_IS_BANNED = "%s is banned (%s)"
+L.PLAYER_NOT_BANNED = "%s is not banned"
+L.NEW_VERSION = "vGambler: A new version is available (%s)"
+
+-- This condition deliberately accepts both English clients.  The catalog is
+-- still populated above for every locale so untranslated keys can fall back.
+if (AddOn.Locale ~= "enUS" and AddOn.Locale ~= "enGB") then
 	return
 end
-

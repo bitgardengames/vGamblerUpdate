@@ -63,7 +63,7 @@ function vGambler:ResetGame() -- Resets the game to its initial state, clearing 
 	self:DisablePlayButton("Withdraw")
 	self:DisablePlayButton("Roll")
 
-	self:SendMessage("|cffFFC44DvGambler|r: Game has been reset.")
+	self:SendMessage(L.GAME_RESET)
 
 	self:SendEvent("ResetGame", UnitName("player"))
 end
@@ -92,13 +92,13 @@ function vGambler:StartGame() --  Starts a new game, registers relevant events, 
 	self:DisablePlayButton("Withdraw")
 	self:DisablePlayButton("Roll")
 
-	self:SendMessage(string.format("|cffFFC44DvGambler|r: New game started! Current roll is for %sg! type %s to enter (%s to withdraw).", self:Comma(self.Settings.RollValue), self.Settings.EnterCommand, self.Settings.LeaveCommand))
+	self:SendMessage(string.format(L.GAME_STARTED, self:Comma(self.Settings.RollValue), self.Settings.EnterCommand, self.Settings.LeaveCommand))
 
 	self:SendEvent("NewGame", string.format("%s\\%s\\%d", UnitName("player"), self.Settings.Channel, self.Settings.RollValue))
 end
 
 function vGambler:LastCall() -- Sends a message announcing the last call for players to enter the game
-	self:SendMessage("|cffFFC44DvGambler|r: Last call to enter!")
+	self:SendMessage(L.LAST_CALL)
 
 	self:DisableGameButton("LastCall")
 end
@@ -113,7 +113,7 @@ function vGambler:CloseGame() -- Closes the game, stops accepting players, and t
 			end
 		end
 
-		self:SendMessage(string.format("|cffFFC44DvGambler|r: The following players still need to roll: %s", table.concat(List, ", ")))
+		self:SendMessage(string.format(L.NEED_TO_ROLL, table.concat(List, ", ")))
 	elseif (#self.Players > 1) then -- Stop accepting players, and start rolling
 		self.Rolled = 0
 		self.Locked = true
@@ -148,14 +148,14 @@ function vGambler:CloseGame() -- Closes the game, stops accepting players, and t
 			PlaySoundFile(string.format("Interface\\AddOns\\vGambler\\Assets\\FX_BoardTilesDice_0%d.ogg", math.random(2, 4)))
 		end
 
-		self:SendMessage("|cffFFC44DvGambler|r: Game is now closed! Roll!")
+		self:SendMessage(L.GAME_CLOSED)
 		self:SendEvent("CloseGame", UnitName("player"))
 
 		if self.IsTestGame then
 			self:RollTestPlayers()
 		end
 	else
-		self:SendMessage("|cffFFC44DvGambler|r: Not enough players!")
+		self:SendMessage(L.NOT_ENOUGH_PLAYERS)
 	end
 end
 
@@ -212,7 +212,7 @@ function vGambler:CloseDrawGame()
 		self:SetScript("OnUpdate", self.ResetOnUpdate)
 	end
 
-	self:SendMessage("|cffFFC44DvGambler|r: The game has resulted in a draw!")
+	self:SendMessage(L.GAME_DRAW)
 	self:SendEvent("GameDraw", AddMatchData({}, self.GameWager or self.Settings.RollValue, self.MatchPlayers))
 end
 
@@ -253,13 +253,13 @@ function vGambler:UpdateGameResults() -- Sorts the player rolls and determines t
 			table.insert(self.Tie, self.Result[1][i])
 		end
 
-		self:SendMessage(string.format("|cffFFC44DvGambler|r: Winning tie found (%s). %s need to roll again to determine the winner", self.Result[3], self:ListPlayers(self.Tie)))
+		self:SendMessage(string.format(L.WINNING_TIE, self.Result[3], self:ListPlayers(self.Tie)))
 	elseif (#self.Result[2] > 1 and #self.Result[1] > 0) then
 		for i = 1, #self.Result[2] do
 			table.insert(self.Tie, self.Result[2][i])
 		end
 
-		self:SendMessage(string.format("|cffFFC44DvGambler|r: Losing tie found (%s). %s need to roll again to determine the loser", self.Result[4], self:ListPlayers(self.Tie)))
+		self:SendMessage(string.format(L.LOSING_TIE, self.Result[4], self:ListPlayers(self.Tie)))
 	end
 
     if (#self.Tie > 0) then
@@ -358,7 +358,7 @@ function vGambler:DeclareWinner() -- Declares the winner of the game, calculates
 	self.Locked = false
 	self.TiedGame = false
 
-	self:SendMessage(string.format("|cffFFC44DvGambler|r: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
+	self:SendMessage(string.format(L.GAME_RESULT, self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
 
 	self:SendEvent("GameEnded", AddMatchData({Winner, Loser, self.Result[3], self.Result[4]}, self.GameWager or self.Settings.RollValue, self.MatchPlayers))
 	self:AddMatchHistory(Winner, Loser, Earnings, self.GameWager or self.Settings.RollValue, self.MatchPlayers or {})
@@ -410,9 +410,9 @@ function vGambler:ChatMessageEvent(message, sender, lang, channel, player, flags
 			self:SendEvent("AddPlayer", string.format("%s\\%s", sender, guid))
 		else
 			if (Reason == true) then -- No reason specified for this player being banned.
-				self:SendMessage(string.format("|cffFFC44DvGambler|r: %s is banned from entering.", sender))
+				self:SendMessage(string.format(L.BANNED_FROM_ENTERING, sender))
 			else -- Let them know why they were banned.
-				self:SendMessage(string.format("|cffFFC44DvGambler|r: %s is banned from entering. Reason: %s.", sender, Reason))
+				self:SendMessage(string.format(L.BANNED_FROM_ENTERING_REASON, sender, Reason))
 			end
 		end
 	elseif (message == self.Settings.LeaveCommand) then

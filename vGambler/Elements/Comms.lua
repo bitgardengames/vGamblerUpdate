@@ -1,5 +1,6 @@
 local Name, AddOn = ...
 local vGambler = AddOn.vGambler
+local L = AddOn.L
 
 local table = table
 local string = string
@@ -112,7 +113,7 @@ vGambler.Events.RemovePlayer = function(self, name)
 		self:DisablePlayButton("Withdraw")
 	end
 
-	self.Window.Label:SetText(string.format("|cffFFC44DvGambler|r  (%s / %s)", self.Rolled or 0, #self.Players))
+	self.Window.Label:SetText(string.format(L.WINDOW_PROGRESS, self.Rolled or 0, #self.Players))
 end
 
 vGambler.Events.CloseGame = function(self)
@@ -145,7 +146,7 @@ vGambler.Events.PlayerRoll = function(self, args)
 			end
 
 			-- Update the header as well to display number of players
-			self.Window.Label:SetText(string.format("|cffFFC44DvGambler|r  (%s / %s)", self.Rolled or 0, #self.Players))
+			self.Window.Label:SetText(string.format(L.WINDOW_PROGRESS, self.Rolled or 0, #self.Players))
 
 			self:AddStat("rolls", 1)
 
@@ -254,7 +255,7 @@ vGambler.Events.Version = function(self, message)
 	local Version = tonumber(message)
 
 	if (Version > (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)("vGambler", "Version")) then
-		print(string.format("vGambler: A new version is available (%s)", Version))
+		print(string.format(L.NEW_VERSION, Version))
 	end
 end
 

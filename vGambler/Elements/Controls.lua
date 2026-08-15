@@ -218,22 +218,22 @@ function vGambler:SetupControlsPage(page)
 
 	self:SetGameScrollOffset(1)
 
-	self:AddGameHeader(GameButtons, GameButtons, "Host Game")
-	self:AddGameButton(GameButtons, GameButtons, "Start", "Start Game", function() if vGambler.Settings.Channel == 4 then vGambler:TestGame() else vGambler:StartGame() end end)
-	self:AddGameButton(GameButtons, GameButtons, "LastCall", "Last Call", function() vGambler:LastCall() end)
-	self:AddGameButton(GameButtons, GameButtons, "Close", "Close Game", function() vGambler:CloseGame() end)
-	self:AddGameButton(GameButtons, GameButtons, "Reset", "Reset Game", function() vGambler:ResetGame() end)
+	self:AddGameHeader(GameButtons, GameButtons, L.HOST_GAME)
+	self:AddGameButton(GameButtons, GameButtons, "Start", L.START_GAME, function() if vGambler.Settings.Channel == 4 then vGambler:TestGame() else vGambler:StartGame() end end)
+	self:AddGameButton(GameButtons, GameButtons, "LastCall", L.LAST_CALL_BUTTON, function() vGambler:LastCall() end)
+	self:AddGameButton(GameButtons, GameButtons, "Close", L.CLOSE_GAME, function() vGambler:CloseGame() end)
+	self:AddGameButton(GameButtons, GameButtons, "Reset", L.RESET_GAME, function() vGambler:ResetGame() end)
 
-	self:AddGameHeader(GameSettings, GameSettings, "Roll Value")
+	self:AddGameHeader(GameSettings, GameSettings, L.ROLL_VALUE)
 	self:AddGameInput(GameSettings, GameSettings, "RollValue", self:Comma(self.Settings.RollValue), self.RollInputOnEnter)
 
-	self:AddGameHeader(GameSettings, GameSettings, "Game Channel")
+	self:AddGameHeader(GameSettings, GameSettings, L.GAME_CHANNEL)
 	self:AddGameDropdown(GameSettings, GameSettings, "Channel", self.ChannelSelections[self.Settings.Channel], self.ChannelSelections, self.OnChannelSelection)
 
-	self:AddGameHeader(PlayButtons, PlayButtons, "Join Game")
-	self:AddGameButton(PlayButtons, PlayButtons, "Join", "Join", function() vGambler:JoinGame() end)
-	self:AddGameButton(PlayButtons, PlayButtons, "Withdraw", "Withdraw", function() vGambler:WithdrawGame() end)
-	self:AddGameButton(PlayButtons, PlayButtons, "Roll", "Roll", function() vGambler:RollGame() end)
+	self:AddGameHeader(PlayButtons, PlayButtons, L.JOIN_GAME)
+	self:AddGameButton(PlayButtons, PlayButtons, "Join", L.JOIN, function() vGambler:JoinGame() end)
+	self:AddGameButton(PlayButtons, PlayButtons, "Withdraw", L.WITHDRAW, function() vGambler:WithdrawGame() end)
+	self:AddGameButton(PlayButtons, PlayButtons, "Roll", L.ROLL, function() vGambler:RollGame() end)
 
 	self:DisableGameButton("LastCall")
 	self:DisableGameButton("Reset")
@@ -289,7 +289,7 @@ function vGambler:SetupControlsPage(page)
 		Thumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
 	end
 
-	self.ChatWindow:AddMessage("Welcome to |cffFFC44DvGambler|r")
+	self.ChatWindow:AddMessage(L.WELCOME)
 
 	for i = 1, #self.PendingMessages do
 		self.ChatWindow:AddMessage(self.PendingMessages[i])
