@@ -74,12 +74,13 @@ function vGambler:PauseOnUpdate(elapsed)
 		for i = 1, #self.Players do
 			self.Players[i].Roll = 0
 			self:AddPlayerUI()
-			self:AddPlayerStat(self.Players[i].DisplayName, "ties", 1)
 		end
 
-		self:AddStat("ties", 1)
-
-		self.TiedGame = true
+		local Players = {}
+		for i = 1, #self.Players do
+			table.insert(Players, self.Players[i].DisplayName)
+		end
+		self:AccountTieRound(Players)
 		self.Tie = table.wipe(self.Tie)
 
 		self:CloseTiedGame()

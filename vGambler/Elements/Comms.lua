@@ -162,25 +162,9 @@ vGambler.Events.GameEnded = function(self, args)
 	local Winner, Loser = Fields[1], Fields[2]
 	local High, Low = tonumber(Fields[3]), tonumber(Fields[4])
 	local Wager = tonumber(Fields[5]) or self.GameWager or self.Settings.RollValue
-	local Value = High - Low
 	local Players = ParseMatchPlayers(Fields, 6)
 
-	for i = 1, #Players do
-		self:AddPlayerStat(Players[i].name, "games", 1)
-	end
-
-	self:AddStat("games", 1)
-	self:AddStat("totalgold", Value)
-	self:AddMaxStat("topwin", High)
-	self:AddMaxStat("toppayout", Value)
-	self:AddMaxStat("topwager", self.GameWager)
-
-	self:AddPlayerStat(Winner, "wins", 1)
-	self:AddPlayerStat(Winner, "earnings", Value)
-	self:AddPlayerStat(Loser, "losses", 1)
-	self:AddPlayerStat(Loser, "loss", Value)
-	self:RecordWinningStreak(Winner, Loser, Players)
-	self:AddMatchHistory(Winner, Loser, Value, Wager, Players)
+	self:AccountCompletedGame(Winner, Loser, High, Low, Wager, Players)
 
 	self:UpdateBasicStats()
 	self:UpdateStatGrid()
@@ -203,18 +187,12 @@ vGambler.Events.GameDraw = function(self, args)
 	local Wager = tonumber(Fields[1]) or self.GameWager or self.Settings.RollValue
 	local Players = ParseMatchPlayers(Fields, 2)
 
-	for i = 1, #Players do
-		self:AddPlayerStat(Players[i].name, "games", 1)
-	end
-
 	if self.Settings.PlaySounds then
 		PlaySound(SOUNDKIT.LFG_DENIED)
 	end
 
-	self:AddStat("draw", 1)
-	self:RecordWinningStreak(nil, nil, Players)
+	self:AccountDraw(Wager, Players)
 	self:UpdateBasicStats()
-	self:AddMatchHistory("Draw", "Draw", 0, Wager, Players)
 	self.Locked = false
 	self:UnregisterEvent("CHAT_MSG_SYSTEM")
 	self:DisablePlayButton("Roll")
@@ -222,6 +200,7 @@ end
 
 vGambler.Events.GameTie = function(self, args)
 	local Players = {}
+	local TiedPlayers = {}
 
 	for Name in string.gmatch(args, "[^\\]+") do
 		Players[Name] = true
@@ -239,11 +218,13 @@ vGambler.Events.GameTie = function(self, args)
 
 	for i = 1, #self.Players do
 		self:AddPlayerUI()
+		table.insert(TiedPlayers, self.Players[i].DisplayName)
 	end
+
+	self:AccountTieRound(TiedPlayers)
 
 	self.Rolled = 0
 	self.Locked = true
-	self.TiedGame = true
 	self:DisablePlayButton("Roll")
 
 	if Players[UnitName("player")] then
