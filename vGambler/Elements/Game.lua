@@ -1,17 +1,17 @@
 local Name, AddOn = ...
-local GambleBuddy = AddOn.GambleBuddy
+local vGambler = AddOn.vGambler
 local L = AddOn.L
 
 local table = table
 local string = string
 
-GambleBuddy.EventGroups = {
+vGambler.EventGroups = {
 	{CHAT_MSG_PARTY = true, CHAT_MSG_PARTY_LEADER = true},
 	{CHAT_MSG_RAID = true, CHAT_MSG_RAID_LEADER = true},
 	{CHAT_MSG_GUILD = true},
 }
 
-function GambleBuddy:ResetGame() -- Resets the game to its initial state, clearing all data, and enabling/disabling relevant buttons
+function vGambler:ResetGame() -- Resets the game to its initial state, clearing all data, and enabling/disabling relevant buttons
 	self.Rolled = 0
 	self.Locked = false
 	self.IsTestGame = nil
@@ -46,12 +46,12 @@ function GambleBuddy:ResetGame() -- Resets the game to its initial state, cleari
 	self:DisablePlayButton("Withdraw")
 	self:DisablePlayButton("Roll")
 
-	self:SendMessage("|cffFFC44DGamble|rBuddy: Game has been reset.")
+	self:SendMessage("|cffFFC44Dv|rGambler: Game has been reset.")
 
 	self:SendEvent("ResetGame", UnitName("player"))
 end
 
-function GambleBuddy:StartGame() --  Starts a new game, registers relevant events, and updates button states and UI
+function vGambler:StartGame() --  Starts a new game, registers relevant events, and updates button states and UI
 	if self.EventGroups[self.Settings.Channel] then
 		for event in next, self.EventGroups[self.Settings.Channel] do
 			self:RegisterEvent(event)
@@ -72,18 +72,18 @@ function GambleBuddy:StartGame() --  Starts a new game, registers relevant event
 	self:DisablePlayButton("Withdraw")
 	self:DisablePlayButton("Roll")
 
-	self:SendMessage(string.format("|cffFFC44DGamble|rBuddy: New game started! Current roll is for %sg! type %s to enter (%s to withdraw).", self:Comma(self.Settings.RollValue), self.Settings.EnterCommand, self.Settings.LeaveCommand))
+	self:SendMessage(string.format("|cffFFC44Dv|rGambler: New game started! Current roll is for %sg! type %s to enter (%s to withdraw).", self:Comma(self.Settings.RollValue), self.Settings.EnterCommand, self.Settings.LeaveCommand))
 
 	self:SendEvent("NewGame", string.format("%s\\%s\\%d", UnitName("player"), self.Settings.Channel, self.Settings.RollValue))
 end
 
-function GambleBuddy:LastCall() -- Sends a message announcing the last call for players to enter the game
-	self:SendMessage("|cffFFC44DGamble|rBuddy: Last call to enter!")
+function vGambler:LastCall() -- Sends a message announcing the last call for players to enter the game
+	self:SendMessage("|cffFFC44Dv|rGambler: Last call to enter!")
 
 	self:DisableGameButton("LastCall")
 end
 
-function GambleBuddy:CloseGame() -- Closes the game, stops accepting players, and triggers the rolling process
+function vGambler:CloseGame() -- Closes the game, stops accepting players, and triggers the rolling process
 	if self.Locked then -- There's a roll going currently. Announce who still needs to roll.
 		local List = {}
 
@@ -93,7 +93,7 @@ function GambleBuddy:CloseGame() -- Closes the game, stops accepting players, an
 			end
 		end
 
-		self:SendMessage(string.format("|cffFFC44DGamble|rBuddy: The following players still need to roll: %s", table.concat(List, ", ")))
+		self:SendMessage(string.format("|cffFFC44Dv|rGambler: The following players still need to roll: %s", table.concat(List, ", ")))
 	elseif (#self.Players > 1) then -- Stop accepting players, and start rolling
 		self.Rolled = 0
 		self.Locked = true
@@ -117,10 +117,10 @@ function GambleBuddy:CloseGame() -- Closes the game, stops accepting players, an
 		--self:EnablePlayButton("Reset")
 
 		if self.Settings.PlaySounds then
-			PlaySoundFile(string.format("Interface\\AddOns\\GambleBuddy\\Assets\\FX_BoardTilesDice_0%d.ogg", math.random(2, 4)))
+			PlaySoundFile(string.format("Interface\\AddOns\\vGambler\\Assets\\FX_BoardTilesDice_0%d.ogg", math.random(2, 4)))
 		end
 
-		self:SendMessage("|cffFFC44DGamble|rBuddy: Game is now closed! Roll!")
+		self:SendMessage("|cffFFC44Dv|rGambler: Game is now closed! Roll!")
 
 		--self:SendEvent("CloseGame", UnitName("player"))
 
@@ -128,13 +128,13 @@ function GambleBuddy:CloseGame() -- Closes the game, stops accepting players, an
 			self:RollTestPlayers()
 		end
 	else
-		self:SendMessage("|cffFFC44DGamble|rBuddy: Not enough players!")
+		self:SendMessage("|cffFFC44Dv|rGambler: Not enough players!")
 	end
 
 	self:SendEvent("CloseGame", UnitName("player"))
 end
 
-function GambleBuddy:CloseTiedGame()
+function vGambler:CloseTiedGame()
 	if (#self.Players > 1) then
 		self.Rolled = 0
 		self.Locked = true
@@ -157,7 +157,7 @@ function GambleBuddy:CloseTiedGame()
 	end
 end
 
-function GambleBuddy:CloseDrawGame()
+function vGambler:CloseDrawGame()
 	self.Locked = false
 	self.TiedGame = false
 
@@ -172,10 +172,10 @@ function GambleBuddy:CloseDrawGame()
 		self:SetScript("OnUpdate", self.ResetOnUpdate)
 	end
 
-	self:SendMessage("|cffFFC44DGamble|rBuddy: The game has resulted in a draw!")
+	self:SendMessage("|cffFFC44Dv|rGambler: The game has resulted in a draw!")
 end
 
-function GambleBuddy:UpdateGameResults() -- Sorts the player rolls and determines the winners and losers
+function vGambler:UpdateGameResults() -- Sorts the player rolls and determines the winners and losers
 	local High = self.Players[1].Roll
 	local Low = self.Players[#self.Players].Roll
 	local Winners = {}
@@ -212,13 +212,13 @@ function GambleBuddy:UpdateGameResults() -- Sorts the player rolls and determine
 			table.insert(self.Tie, self.Result[1][i])
 		end
 
-		self:SendMessage(string.format("|cffFFC44DGamble|rBuddy: Winning tie found (%s). %s need to roll again to determine the winner", self.Result[3], self:ListPlayers(self.Tie)))
+		self:SendMessage(string.format("|cffFFC44Dv|rGambler: Winning tie found (%s). %s need to roll again to determine the winner", self.Result[3], self:ListPlayers(self.Tie)))
 	elseif (#self.Result[2] > 1 and #self.Result[1] > 0) then
 		for i = 1, #self.Result[2] do
 			table.insert(self.Tie, self.Result[2][i])
 		end
 
-		self:SendMessage(string.format("|cffFFC44DGamble|rBuddy: Losing tie found (%s). %s need to roll again to determine the loser", self.Result[4], self:ListPlayers(self.Tie)))
+		self:SendMessage(string.format("|cffFFC44Dv|rGambler: Losing tie found (%s). %s need to roll again to determine the loser", self.Result[4], self:ListPlayers(self.Tie)))
 	end
 
     if (#self.Tie > 0) then
@@ -228,7 +228,7 @@ function GambleBuddy:UpdateGameResults() -- Sorts the player rolls and determine
     end
 end
 
-function GambleBuddy:SortRolls()
+function vGambler:SortRolls()
 	self:UnregisterEvent("CHAT_MSG_SYSTEM")
 
 	table.sort(self.Players, function(a, b)
@@ -238,7 +238,7 @@ function GambleBuddy:SortRolls()
 	self:UpdateGameResults()
 end
 
-function GambleBuddy:SetTieMatch() -- Handles the situation where there is a tie, prompting tied players to roll again
+function vGambler:SetTieMatch() -- Handles the situation where there is a tie, prompting tied players to roll again
 	if self.IsTestGame then
 		self:SetScript("OnUpdate", self.PauseOnUpdate)
 	else
@@ -268,7 +268,7 @@ function GambleBuddy:SetTieMatch() -- Handles the situation where there is a tie
 	end
 end
 
-function GambleBuddy:DeclareWinner() -- Declares the winner of the game, calculates earnings, and updates statistics
+function vGambler:DeclareWinner() -- Declares the winner of the game, calculates earnings, and updates statistics
 	local Winner = self.Result[1][1].DisplayName
 	local Loser = self.Result[2][1].DisplayName
 	local Earnings = self.Result[3] - self.Result[4]
@@ -302,7 +302,7 @@ function GambleBuddy:DeclareWinner() -- Declares the winner of the game, calcula
 	self.Locked = false
 	self.TiedGame = false
 
-	self:SendMessage(string.format("|cffFFC44DGamble|rBuddy: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
+	self:SendMessage(string.format("|cffFFC44Dv|rGambler: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
 
 	self:SendEvent("GameEnded", Winner, Loser, self.Result[3], self.Result[4])
 
@@ -312,7 +312,7 @@ function GambleBuddy:DeclareWinner() -- Declares the winner of the game, calcula
 	end
 end
 
-function GambleBuddy:CHAT_MSG_SYSTEM(message)
+function vGambler:CHAT_MSG_SYSTEM(message)
 	local Name, Roll, Min, Max = string.match(message, "^(%S+)%s%S+%s(%d+)%s%((%d+)-(%d+)%)")
 
 	if (tonumber(Min) == 1 and tonumber(Max) == self.Settings.RollValue) then
@@ -341,7 +341,7 @@ function GambleBuddy:CHAT_MSG_SYSTEM(message)
 	end
 end
 
-function GambleBuddy:ChatMessageEvent(message, sender, lang, channel, player, flags, zone, channel, base, lang, line, guid)
+function vGambler:ChatMessageEvent(message, sender, lang, channel, player, flags, zone, channel, base, lang, line, guid)
 	sender = string.match(sender, "(%S+)-.-") -- Remove server name.
 
 	if (message == self.Settings.EnterCommand) then
@@ -353,9 +353,9 @@ function GambleBuddy:ChatMessageEvent(message, sender, lang, channel, player, fl
 			self:SendEvent("AddPlayer", string.format("%s\\%s", sender, guid))
 		else
 			if (Reason == true) then -- No reason specified for this player being banned.
-				self:SendMessage(string.format("|cffFFC44DGamble|rBuddy: %s is banned from entering.", sender))
+				self:SendMessage(string.format("|cffFFC44Dv|rGambler: %s is banned from entering.", sender))
 			else -- Let them know why they were banned.
-				self:SendMessage(string.format("|cffFFC44DGamble|rBuddy: %s is banned from entering. Reason: %s.", sender, Reason))
+				self:SendMessage(string.format("|cffFFC44Dv|rGambler: %s is banned from entering. Reason: %s.", sender, Reason))
 			end
 		end
 	elseif (message == self.Settings.LeaveCommand) then

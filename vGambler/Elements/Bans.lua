@@ -1,11 +1,11 @@
 local Name, AddOn = ...
-local GambleBuddy = AddOn.GambleBuddy
+local vGambler = AddOn.vGambler
 local L = AddOn.L
 
-GambleBuddy.BannedPlayers = {}
-GambleBuddy.FreeBannedPlayers = {}
+vGambler.BannedPlayers = {}
+vGambler.FreeBannedPlayers = {}
 
-function GambleBuddy:BanCloseButtonOnEnter()
+function vGambler:BanCloseButtonOnEnter()
 	self.Texture:SetVertexColor(0.9, 0.1, 0.1)
 
 	local Parent = self:GetParent()
@@ -14,7 +14,7 @@ function GambleBuddy:BanCloseButtonOnEnter()
 	Parent:SetBackdropBorderColor(0.25, 0.266, 0.294)
 end
 
-function GambleBuddy:BanCloseButtonOnLeave()
+function vGambler:BanCloseButtonOnLeave()
 	self.Texture:SetVertexColor(1, 1, 1)
 
 	local Parent = self:GetParent()
@@ -23,33 +23,33 @@ function GambleBuddy:BanCloseButtonOnLeave()
 	Parent:SetBackdropBorderColor(0.184, 0.192, 0.211)
 end
 
-function GambleBuddy:UnbanPlayerFromUI()
-	local Page = GambleBuddy:GetPage("Bans")
+function vGambler:UnbanPlayerFromUI()
+	local Page = vGambler:GetPage("Bans")
 
-	for i = 1, #GambleBuddy.BannedPlayers do -- Remove the UI portion
-		if (GambleBuddy.BannedPlayers[i].Name == self.Name) then
-			local Bar = table.remove(GambleBuddy.BannedPlayers, i)
+	for i = 1, #vGambler.BannedPlayers do -- Remove the UI portion
+		if (vGambler.BannedPlayers[i].Name == self.Name) then
+			local Bar = table.remove(vGambler.BannedPlayers, i)
 
 			Bar:Hide()
 
-			table.insert(GambleBuddy.FreeBannedPlayers, Bar)
+			table.insert(vGambler.FreeBannedPlayers, Bar)
 
-			GambleBuddy:SortBannedPlayers()
+			vGambler:SortBannedPlayers()
 
 			break
 		end
 	end
 
-	for i = 1, #GambleBuddyBans do -- Remove the saved data
-		if (GambleBuddyBans[i][1] == self.Name) then
-			table.remove(GambleBuddyBans, i)
+	for i = 1, #vGamblerBans do -- Remove the saved data
+		if (vGamblerBans[i][1] == self.Name) then
+			table.remove(vGamblerBans, i)
 
 			break
 		end
 	end
 end
 
-function GambleBuddy:AddBannedPlayerUI(name, reason)
+function vGambler:AddBannedPlayerUI(name, reason)
 	local Page = self:GetPage("Bans")
 	local Bar
 
@@ -92,7 +92,7 @@ function GambleBuddy:AddBannedPlayerUI(name, reason)
 		Bar.Remove.Texture = Bar.Remove:CreateTexture(nil, "OVERLAY")
 		Bar.Remove.Texture:SetPoint("CENTER", Bar.Remove, 0, 0)
 		Bar.Remove.Texture:SetSize(16, 16)
-		Bar.Remove.Texture:SetTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraUIClose.tga")
+		Bar.Remove.Texture:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraUIClose.tga")
 	end
 
 	Bar.Label:SetText(name)
@@ -104,7 +104,7 @@ function GambleBuddy:AddBannedPlayerUI(name, reason)
 	self:SortBannedPlayers()
 end
 
-function GambleBuddy:SortBannedPlayers()
+function vGambler:SortBannedPlayers()
 	local Page = self:GetPage("Bans")
 
 	for i = 1, #self.BannedPlayers do
@@ -118,18 +118,18 @@ function GambleBuddy:SortBannedPlayers()
 	end
 end
 
-function GambleBuddy:BanPlayer(player, reason)
-	if (not GambleBuddyBans) then
-		GambleBuddyBans = {}
+function vGambler:BanPlayer(player, reason)
+	if (not vGamblerBans) then
+		vGamblerBans = {}
 	end
 
-	for i = 1, #GambleBuddyBans do
-		if (GambleBuddyBans[i][1] == player) then -- Check if this player is already banned
+	for i = 1, #vGamblerBans do
+		if (vGamblerBans[i][1] == player) then -- Check if this player is already banned
 			return
 		end
 	end
 
-	table.insert(GambleBuddyBans, {player, reason}) -- Can add date here if I feel like it
+	table.insert(vGamblerBans, {player, reason}) -- Can add date here if I feel like it
 
 	self:AddBannedPlayerUI(player, reason)
 
@@ -138,36 +138,36 @@ function GambleBuddy:BanPlayer(player, reason)
 	end
 end
 
-function GambleBuddy:UnbanPlayer(player)
-	if (not GambleBuddyBans) then
+function vGambler:UnbanPlayer(player)
+	if (not vGamblerBans) then
 		return
 	end
 
-	for i = 1, #GambleBuddyBans do
-		if (GambleBuddyBans[i][1] == player) then
-			table.remove(GambleBuddyBans, i)
+	for i = 1, #vGamblerBans do
+		if (vGamblerBans[i][1] == player) then
+			table.remove(vGamblerBans, i)
 
 			break
 		end
 	end
 
-	GambleBuddy:SendMessage(string.format("|cffFFC44DGamble|r|cffFFFFFFBuddy|r: %s has been removed from the ban list.", player))
+	vGambler:SendMessage(string.format("|cffFFC44Dv|r|cffFFFFFFGambler|r: %s has been removed from the ban list.", player))
 end
 
-function GambleBuddy:IsBanned(player)
-	if (not GambleBuddyBans) then
+function vGambler:IsBanned(player)
+	if (not vGamblerBans) then
 		return false
 	end
 
-	for i = 1, #GambleBuddyBans do
-		if (GambleBuddyBans[i][1] == player) then
-			return true, GambleBuddyBans[i][2]
+	for i = 1, #vGamblerBans do
+		if (vGamblerBans[i][1] == player) then
+			return true, vGamblerBans[i][2]
 		end
 	end
 end
 
-function GambleBuddy:BanPlayerFromUI()
-	local Page = GambleBuddy:GetPage("Bans")
+function vGambler:BanPlayerFromUI()
+	local Page = vGambler:GetPage("Bans")
 	local Name = Page.NameInput:GetText()
 	local Reason = Page.ReasonInput:GetText()
 
@@ -177,9 +177,9 @@ function GambleBuddy:BanPlayerFromUI()
 	end
 
 	if (string.find(Reason, "%S") and Reason ~= Page.ReasonInput.DefaultText) then
-		GambleBuddy:BanPlayer(Name, Reason)
+		vGambler:BanPlayer(Name, Reason)
 	else
-		GambleBuddy:BanPlayer(Name)
+		vGambler:BanPlayer(Name)
 	end
 
 	Page.NameInput:SetAutoFocus(false)
@@ -190,17 +190,17 @@ function GambleBuddy:BanPlayerFromUI()
 	Page.ReasonInput:ClearFocus()
 	Page.ReasonInput:SetText(Page.ReasonInput.DefaultText)
 
-	GambleBuddy:SendMessage(string.format("|cffFFC44DGamble|r|cffFFFFFFBuddy|r: Banning %s for the reason: %s", Name, Reason))
+	vGambler:SendMessage(string.format("|cffFFC44Dv|r|cffFFFFFFGambler|r: Banning %s for the reason: %s", Name, Reason))
 end
 
-function GambleBuddy:BanInputOnMouseDown()
+function vGambler:BanInputOnMouseDown()
 	self:SetText("")
 	self:SetAutoFocus(true)
 end
 
-function GambleBuddy:BanInputOnEnterPressed()
+function vGambler:BanInputOnEnterPressed()
 	local Text = self:GetText()
-	local Page = GambleBuddy:GetPage("Bans")
+	local Page = vGambler:GetPage("Bans")
 
 	if string.find(Text, "%S") then
 		Page.BanButton:SetBackdropColor(0.839, 0.270, 0.270)
@@ -216,22 +216,22 @@ function GambleBuddy:BanInputOnEnterPressed()
 	self:ClearFocus()
 end
 
-function GambleBuddy:BanButtonMouseDown()
+function vGambler:BanButtonMouseDown()
 	self.Label:ClearAllPoints()
 	self.Label:SetPoint("CENTER", self, 1, -2)
 end
 
-function GambleBuddy:BanButtonMouseUp()
+function vGambler:BanButtonMouseUp()
 	self.Label:ClearAllPoints()
 	self.Label:SetPoint("CENTER", self, 0, -1)
 
-	local Page = GambleBuddy:GetPage("Bans")
+	local Page = vGambler:GetPage("Bans")
 
 	Page.BanButton:SetBackdropColor(0.25, 0.266, 0.294)
 	Page.BanButton:SetBackdropBorderColor(0.25, 0.266, 0.294)
 end
 
-function GambleBuddy:SetupBansPage(page)
+function vGambler:SetupBansPage(page)
 	local Inputs = CreateFrame("Frame", nil, page, "BackdropTemplate")
 	Inputs:SetSize(353, 32)
 	Inputs:SetPoint("TOPLEFT", page, 0, 0)
@@ -280,7 +280,7 @@ function GambleBuddy:SetupBansPage(page)
 	BanButton:SetBackdrop(self.SmallBackdrop)
 	BanButton:SetBackdropColor(0.25, 0.266, 0.294)
 	BanButton:SetBackdropBorderColor(0.25, 0.266, 0.294)
-	BanButton:SetScript("OnMouseUp", GambleBuddy.BanPlayerFromUI)
+	BanButton:SetScript("OnMouseUp", vGambler.BanPlayerFromUI)
 	BanButton:HookScript("OnMouseUp", self.BanButtonMouseUp)
 	BanButton:HookScript("OnMouseDown", self.BanButtonMouseDown)
 
@@ -326,9 +326,9 @@ function GambleBuddy:SetupBansPage(page)
 	page.ReasonInput = ReasonInput
 
 	-- Add current bans to the UI
-	if (GambleBuddyBans and #GambleBuddyBans > 0) then
-		for i = 1, #GambleBuddyBans do
-			self:AddBannedPlayerUI(GambleBuddyBans[i][1], GambleBuddyBans[i][2])
+	if (vGamblerBans and #vGamblerBans > 0) then
+		for i = 1, #vGamblerBans do
+			self:AddBannedPlayerUI(vGamblerBans[i][1], vGamblerBans[i][2])
 		end
 	end
 end

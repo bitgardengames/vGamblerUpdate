@@ -1,5 +1,5 @@
 local Name, AddOn = ...
-local GambleBuddy = AddOn.GambleBuddy
+local vGambler = AddOn.vGambler
 
 local table = table
 local string = string
@@ -17,11 +17,11 @@ local string = string
 
 --]]
 
--- GambleBuddyHistory
+-- vGamblerHistory
 
-GambleBuddy.MatchHistory = {}
+vGambler.MatchHistory = {}
 
-function GambleBuddy:AddMatchHistory(wager, roll, outcome, value)
+function vGambler:AddMatchHistory(wager, roll, outcome, value)
 	if (#self.MatchHistory > 50) then -- Don't store more than 50 matches
 		table.remove(self.MatchHistory, 1)
 	end

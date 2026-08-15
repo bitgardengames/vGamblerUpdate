@@ -1,10 +1,10 @@
 local Name, AddOn = ...
-local GambleBuddy = AddOn.GambleBuddy
+local vGambler = AddOn.vGambler
 
 local table = table
 local string = string
 
-GambleBuddy.Settings = {
+vGambler.Settings = {
 	-- UI settings
 	MinimapIcon = true,
 	PlaySounds = true,
@@ -25,23 +25,23 @@ GambleBuddy.Settings = {
 	LeaveCommand = "0",
 }
 
-GambleBuddy.UIStyleSelections = {"Round", "Square"} -- Localize these
+vGambler.UIStyleSelections = {"Round", "Square"} -- Localize these
 
-function GambleBuddy:CheckBoxOnMouseUp()
+function vGambler:CheckBoxOnMouseUp()
 	if self.Toggled then
 		self.Toggled = false
 		self.Box:SetBackdropColor(0.125, 0.133, 0.145)
 		self.Box:SetBackdropBorderColor(0.125, 0.133, 0.145)
 
-		if GambleBuddy.Settings.PlaySounds then
+		if vGambler.Settings.PlaySounds then
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
 		end
 	else
 		self.Toggled = true
-		self.Box:SetBackdropColor(GambleBuddy:HexToRGB("FFC44D"))
-		self.Box:SetBackdropBorderColor(GambleBuddy:HexToRGB("FFC44D"))
+		self.Box:SetBackdropColor(vGambler:HexToRGB("FFC44D"))
+		self.Box:SetBackdropBorderColor(vGambler:HexToRGB("FFC44D"))
 
-		if GambleBuddy.Settings.PlaySounds then
+		if vGambler.Settings.PlaySounds then
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		end
 	end
@@ -51,7 +51,7 @@ function GambleBuddy:CheckBoxOnMouseUp()
 	end
 end
 
-function GambleBuddy:AddGameCheckbox(t, parent, text, value, func)
+function vGambler:AddGameCheckbox(t, parent, text, value, func)
 	local Line = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 	Line:SetSize(parent:GetWidth() - 8, 24)
 	Line:SetBackdrop(self.SmallBackdrop)
@@ -88,57 +88,57 @@ function GambleBuddy:AddGameCheckbox(t, parent, text, value, func)
 	return Line
 end
 
-function GambleBuddy:UpdateShowListNumbers(value)
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+function vGambler:UpdateShowListNumbers(value)
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
-	GambleBuddySettings.PlayerNumbers = value
-	GambleBuddy.Settings.PlayerNumbers = value
+	vGamblerSettings.PlayerNumbers = value
+	vGambler.Settings.PlayerNumbers = value
 
-	for i = 1, #GambleBuddy.Players do
-		if GambleBuddy.Settings.PlayerNumbers then
-			if GambleBuddy.Settings.ColoredBars then
-				GambleBuddy.Players[i].Label:SetText(string.format("%d.  %s", i, GambleBuddy.Players[i].Name))
+	for i = 1, #vGambler.Players do
+		if vGambler.Settings.PlayerNumbers then
+			if vGambler.Settings.ColoredBars then
+				vGambler.Players[i].Label:SetText(string.format("%d.  %s", i, vGambler.Players[i].Name))
 			else
-				GambleBuddy.Players[i].Label:SetText(string.format("%d.  %s", i, GambleBuddy.Players[i].DisplayName))
+				vGambler.Players[i].Label:SetText(string.format("%d.  %s", i, vGambler.Players[i].DisplayName))
 			end
 		else
-			if GambleBuddy.Settings.ColoredBars then
-				GambleBuddy.Players[i].Label:SetText(GambleBuddy.Players[i].Name)
+			if vGambler.Settings.ColoredBars then
+				vGambler.Players[i].Label:SetText(vGambler.Players[i].Name)
 			else
-				GambleBuddy.Players[i].Label:SetText(GambleBuddy.Players[i].DisplayName)
+				vGambler.Players[i].Label:SetText(vGambler.Players[i].DisplayName)
 			end
 		end
 	end
 end
 
-function GambleBuddy:UpdateShowMinimapButton(value)
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+function vGambler:UpdateShowMinimapButton(value)
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
-	GambleBuddySettings.MinimapIcon = value
-	GambleBuddy.Settings.MinimapIcon = value
+	vGamblerSettings.MinimapIcon = value
+	vGambler.Settings.MinimapIcon = value
 
 	if value then
-		GambleBuddy.LibDBIcon:Show("GambleBuddy")
+		vGambler.LibDBIcon:Show("vGambler")
 	else
-		GambleBuddy.LibDBIcon:Hide("GambleBuddy")
+		vGambler.LibDBIcon:Hide("vGambler")
 	end
 end
 
-function GambleBuddy:UpdateShowPlayerTooltips(value)
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+function vGambler:UpdateShowPlayerTooltips(value)
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
 	-- These should be in the hook or something instead of in each callback
-	GambleBuddySettings.PlayerTooltips = value
-	GambleBuddy.Settings.PlayerTooltips = value
+	vGamblerSettings.PlayerTooltips = value
+	vGambler.Settings.PlayerTooltips = value
 end
 
-function GambleBuddy:HexToRGB(hex)
+function vGambler:HexToRGB(hex)
 	if (not hex) then
 		return
 	end
@@ -146,93 +146,93 @@ function GambleBuddy:HexToRGB(hex)
 	return tonumber("0x" .. string.sub(hex, 1, 2)) / 255, tonumber("0x" .. string.sub(hex, 3, 4)) / 255, tonumber("0x" .. string.sub(hex, 5, 6)) / 255
 end
 
-function GambleBuddy:UpdateClassColoredBars(value)
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+function vGambler:UpdateClassColoredBars(value)
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
 	-- These should be in the hook or something instead of in each callback
-	GambleBuddySettings.ColoredBars = value
-	GambleBuddy.Settings.ColoredBars = value
+	vGamblerSettings.ColoredBars = value
+	vGambler.Settings.ColoredBars = value
 
-	for i = 1, #GambleBuddy.Players do
-		if GambleBuddy.Settings.ColoredBars then
-			local R, G, B = GambleBuddy:HexToRGB(GambleBuddy.Players[i].Hex)
+	for i = 1, #vGambler.Players do
+		if vGambler.Settings.ColoredBars then
+			local R, G, B = vGambler:HexToRGB(vGambler.Players[i].Hex)
 
-			GambleBuddy.UIPlayers[i].Bar:SetStatusBarColor(R * 0.70, G * 0.70, B * 0.70)
-			GambleBuddy.UIPlayers[i].Label:SetTextColor(1, 1, 1)
+			vGambler.UIPlayers[i].Bar:SetStatusBarColor(R * 0.70, G * 0.70, B * 0.70)
+			vGambler.UIPlayers[i].Label:SetTextColor(1, 1, 1)
 
-			if GambleBuddy.Settings.PlayerNumbers then
-				GambleBuddy.UIPlayers[i].Label:SetText(string.format("%d.  %s", i, GambleBuddy.Players[i].Name))
+			if vGambler.Settings.PlayerNumbers then
+				vGambler.UIPlayers[i].Label:SetText(string.format("%d.  %s", i, vGambler.Players[i].Name))
 			else
-				GambleBuddy.UIPlayers[i].Label:SetText(GambleBuddy.Players[i].Name)
+				vGambler.UIPlayers[i].Label:SetText(vGambler.Players[i].Name)
 			end
 		else
-			GambleBuddy.UIPlayers[i].Bar:SetStatusBarColor(0.25, 0.266, 0.294)
+			vGambler.UIPlayers[i].Bar:SetStatusBarColor(0.25, 0.266, 0.294)
 
-			if GambleBuddy.Settings.PlayerNumbers then
-				GambleBuddy.UIPlayers[i].Label:SetText(string.format("%d.  %s", i, GambleBuddy.Players[i].DisplayName))
+			if vGambler.Settings.PlayerNumbers then
+				vGambler.UIPlayers[i].Label:SetText(string.format("%d.  %s", i, vGambler.Players[i].DisplayName))
 			else
-				GambleBuddy.UIPlayers[i].Label:SetText(GambleBuddy.Players[i].DisplayName)
+				vGambler.UIPlayers[i].Label:SetText(vGambler.Players[i].DisplayName)
 			end
 		end
 	end
 end
 
-function GambleBuddy:UpdatePlaySounds(value)
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+function vGambler:UpdatePlaySounds(value)
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
-	GambleBuddySettings.PlaySounds = value
-	GambleBuddy.Settings.PlaySounds = value
+	vGamblerSettings.PlaySounds = value
+	vGambler.Settings.PlaySounds = value
 end
 
-function GambleBuddy:UpdateUIStyle(dropdown, value)
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+function vGambler:UpdateUIStyle(dropdown, value)
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
-	GambleBuddySettings.UIStyle = value
-	GambleBuddy.Settings.UIStyle = value
+	vGamblerSettings.UIStyle = value
+	vGambler.Settings.UIStyle = value
 
-	dropdown.Label:SetText(GambleBuddy.UIStyleSelections[value])
+	dropdown.Label:SetText(vGambler.UIStyleSelections[value])
 
 	-- Create a prompt, REQUIRES_RELOAD
 end
 
-function GambleBuddy:UpdateFadeChat(value)
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+function vGambler:UpdateFadeChat(value)
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
-	GambleBuddy.ChatWindow:SetFading(GambleBuddy.Settings.FadeChat)
+	vGambler.ChatWindow:SetFading(vGambler.Settings.FadeChat)
 
-	GambleBuddySettings.FadeChat = value
-	GambleBuddy.Settings.FadeChat = value
+	vGamblerSettings.FadeChat = value
+	vGambler.Settings.FadeChat = value
 end
 
-function GambleBuddy:UpdateUIFont(value)
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+function vGambler:UpdateUIFont(value)
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
-	GambleBuddySettings.UIFont = value
-	GambleBuddy.Settings.UIFont = value
+	vGamblerSettings.UIFont = value
+	vGambler.Settings.UIFont = value
 end
 
-function GambleBuddy:UpdateGameFont(value)
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+function vGambler:UpdateGameFont(value)
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
-	GambleBuddySettings.GameFont = value
-	GambleBuddy.Settings.GameFont = value
+	vGamblerSettings.GameFont = value
+	vGambler.Settings.GameFont = value
 end
 
-function GambleBuddy:FontSizeInputOnEnter(value)
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+function vGambler:FontSizeInputOnEnter(value)
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
 	value = tonumber(value)
@@ -243,11 +243,11 @@ function GambleBuddy:FontSizeInputOnEnter(value)
 		value = 10
 	end
 
-	GambleBuddySettings.FontSize = value
-	GambleBuddy.Settings.FontSize = value
+	vGamblerSettings.FontSize = value
+	vGambler.Settings.FontSize = value
 end
 
-function GambleBuddy:SetupSettingsPage(page)
+function vGambler:SetupSettingsPage(page)
 	page.LeftSettings = {}
 	page.RightSettings = {}
 

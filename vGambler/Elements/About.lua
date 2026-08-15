@@ -1,53 +1,53 @@
 local Name, AddOn = ...
-local GambleBuddy = AddOn.GambleBuddy
+local vGambler = AddOn.vGambler
 
 local table = table
 local string = string
 
-GambleBuddy.StatMethods = {	-- Basic stats, just add optional formatting to some of them.
+vGambler.StatMethods = {	-- Basic stats, just add optional formatting to some of them.
 	games = function(stat, data)
 		stat.Left:SetText("Games:")
-		stat.Right:SetText(data and GambleBuddy:Comma(data.games) or 0)
+		stat.Right:SetText(data and vGambler:Comma(data.games) or 0)
 	end,
 
 	rolls = function(stat, data)
 		stat.Left:SetText("Rolls:")
-		stat.Right:SetText(data and GambleBuddy:Comma(data.rolls) or 0)
+		stat.Right:SetText(data and vGambler:Comma(data.rolls) or 0)
 	end,
 
 	ties = function(stat, data)
 		stat.Left:SetText("Tied Games:")
-		stat.Right:SetText(data and GambleBuddy:Comma(data.ties) or 0)
+		stat.Right:SetText(data and vGambler:Comma(data.ties) or 0)
 	end,
 
 	draws = function(stat, data)
 		stat.Left:SetText("Draw Games:")
-		stat.Right:SetText(data and GambleBuddy:Comma(data.draw) or 0)
+		stat.Right:SetText(data and vGambler:Comma(data.draw) or 0)
 	end,
 
 	totalgold = function(stat, data)
 		stat.Left:SetText("Gold Won:")
-		stat.Right:SetText(string.format("%s|cffffe02eg|r", data and GambleBuddy:Comma(data.totalgold) or 0))
+		stat.Right:SetText(string.format("%s|cffffe02eg|r", data and vGambler:Comma(data.totalgold) or 0))
 	end,
 
 	topwager = function(stat, data)
 		stat.Left:SetText("Highest Wager:")
-		stat.Right:SetText(data and GambleBuddy:Comma(data.topwager) or 0)
+		stat.Right:SetText(data and vGambler:Comma(data.topwager) or 0)
 	end,
 
 	topwin = function(stat, data)
 		stat.Left:SetText("Highest Roll:")
-		stat.Right:SetText(data and GambleBuddy:Comma(data.topwin) or 0)
+		stat.Right:SetText(data and vGambler:Comma(data.topwin) or 0)
 	end,
 
 	toppayout = function(stat, data)
 		stat.Left:SetText("Highest Payout:")
-		stat.Right:SetText(string.format("%s|cffffe02eg|r", data and GambleBuddy:Comma(data.toppayout) or 0))
+		stat.Right:SetText(string.format("%s|cffffe02eg|r", data and vGambler:Comma(data.toppayout) or 0))
 	end,
 
 	uniqueplayers = function(stat, data)
 		local Count = 0
-		local PlayerData = GambleBuddy.Settings.StatDisplay == true and PlayerSession or GambleBuddyPlayers
+		local PlayerData = vGambler.Settings.StatDisplay == true and PlayerSession or vGamblerPlayers
 
 		if PlayerData then
 			if (#PlayerData == 0) then
@@ -69,7 +69,7 @@ GambleBuddy.StatMethods = {	-- Basic stats, just add optional formatting to some
 	end,
 }
 
-function GambleBuddy:AddStatLine(t, parent, id)
+function vGambler:AddStatLine(t, parent, id)
 	local Line = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 	Line:SetSize(parent:GetWidth() - 8, 24)
 	Line:SetBackdrop(self.SmallBackdrop)
@@ -97,7 +97,7 @@ function GambleBuddy:AddStatLine(t, parent, id)
 	return Line
 end
 
-function GambleBuddy:SetupAboutPage(page)
+function vGambler:SetupAboutPage(page)
 	page.Game = {}
 	page.Stats = {}
 
@@ -129,18 +129,18 @@ function GambleBuddy:SetupAboutPage(page)
 	self:UpdateBasicStats()
 end
 
-function GambleBuddy:UpdateStat(stat)
+function vGambler:UpdateStat(stat)
 	local StatsPage = self:GetPage("About")
-	local Data = self.Settings.StatDisplay == true and Session or GambleBuddyData
+	local Data = self.Settings.StatDisplay == true and Session or vGamblerData
 
 	if (StatsPage.Stats[stat] and self.StatMethods[stat]) then
 		self.StatMethods[stat](StatsPage.Stats[stat], Data)
 	end
 end
 
-function GambleBuddy:UpdateBasicStats()
+function vGambler:UpdateBasicStats()
 	local Page = self:GetPage("About")
-	local Data = self.Settings.StatDisplay == true and Session or GambleBuddyData
+	local Data = self.Settings.StatDisplay == true and Session or vGamblerData
 
 	for stat in next, Page.Stats do
 		if self.StatMethods[stat] then

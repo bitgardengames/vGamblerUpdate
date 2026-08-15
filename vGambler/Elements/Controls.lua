@@ -1,60 +1,60 @@
 local Name, AddOn = ...
 local L = AddOn.L
-local GambleBuddy = AddOn.GambleBuddy
+local vGambler = AddOn.vGambler
 
-function GambleBuddy:OnChannelSelection(dropdown, value)
-	if (not GambleBuddySettings) then
-		GambleBuddySettings = {}
+function vGambler:OnChannelSelection(dropdown, value)
+	if (not vGamblerSettings) then
+		vGamblerSettings = {}
 	end
 
-	GambleBuddySettings.Channel = value
-	GambleBuddy.Settings.Channel = value
+	vGamblerSettings.Channel = value
+	vGambler.Settings.Channel = value
 
-	dropdown.Label:SetText(GambleBuddy.ChannelSelections[value])
+	dropdown.Label:SetText(vGambler.ChannelSelections[value])
 
 	if (dropdown.ID == "Channel") then
-		dropdown.Label:SetTextColor(unpack(GambleBuddy.ChannelColors[value]))
+		dropdown.Label:SetTextColor(unpack(vGambler.ChannelColors[value]))
 	end
 end
 
-function GambleBuddy:SetGameScrollOffset(offset)
+function vGambler:SetGameScrollOffset(offset)
 	self.Offset = offset
 
 	if (self.Offset <= 1) then
 		self.Offset = 1
-	elseif (self.Offset > (#GambleBuddy.Players - 8)) then
+	elseif (self.Offset > (#vGambler.Players - 8)) then
 		self.Offset = self.Offset - 1
 	end
 
 	local First
 
-	for i = 1, #GambleBuddy.UIPlayers do
-		if GambleBuddy.UIPlayers[i] then
-			GambleBuddy.UIPlayers[i]:ClearAllPoints()
+	for i = 1, #vGambler.UIPlayers do
+		if vGambler.UIPlayers[i] then
+			vGambler.UIPlayers[i]:ClearAllPoints()
 
 			if (i >= self.Offset) and (i <= self.Offset + 8) then
 				if (not First) then
-					GambleBuddy.UIPlayers[i]:SetPoint("TOPLEFT", GambleBuddy.Window.GameArea, 4, -4)
+					vGambler.UIPlayers[i]:SetPoint("TOPLEFT", vGambler.Window.GameArea, 4, -4)
 					First = i
 				else
-					GambleBuddy.UIPlayers[i]:SetPoint("TOP", GambleBuddy.UIPlayers[i-1], "BOTTOM", 0, -2)
+					vGambler.UIPlayers[i]:SetPoint("TOP", vGambler.UIPlayers[i-1], "BOTTOM", 0, -2)
 				end
 
-				GambleBuddy.UIPlayers[i]:Show()
+				vGambler.UIPlayers[i]:Show()
 			else
-				GambleBuddy.UIPlayers[i]:Hide()
+				vGambler.UIPlayers[i]:Hide()
 			end
 		end
 	end
 end
 
-function GambleBuddy:GameScrollOnValueChanged(offset)
-	GambleBuddy.Window.GameArea.ScrollBar.Offset = offset
+function vGambler:GameScrollOnValueChanged(offset)
+	vGambler.Window.GameArea.ScrollBar.Offset = offset
 
-	GambleBuddy:SetGameScrollOffset(offset)
+	vGambler:SetGameScrollOffset(offset)
 end
 
-function GambleBuddy:GameScrollOnMouseWheel(delta)
+function vGambler:GameScrollOnMouseWheel(delta)
 	if (delta > 0) then -- Up
 		self.Offset = self.Offset - 1
 
@@ -64,17 +64,17 @@ function GambleBuddy:GameScrollOnMouseWheel(delta)
 	else -- Down
 		self.Offset = self.Offset + 1
 
-		if (self.Offset > (#GambleBuddy.Players - 8)) then
+		if (self.Offset > (#vGambler.Players - 8)) then
 			self.Offset = self.Offset - 1
 		end
 	end
 
-	GambleBuddy:SetGameScrollOffset(self.Offset)
+	vGambler:SetGameScrollOffset(self.Offset)
 	self:SetValue(self.Offset)
 end
 
-function GambleBuddy:PlayerOnMouseWheel(delta)
-	local ScrollBar = GambleBuddy.Window.GameArea.ScrollBar
+function vGambler:PlayerOnMouseWheel(delta)
+	local ScrollBar = vGambler.Window.GameArea.ScrollBar
 
 	if (delta > 0) then -- Up
 		ScrollBar.Offset = ScrollBar.Offset - 1
@@ -85,40 +85,40 @@ function GambleBuddy:PlayerOnMouseWheel(delta)
 	else -- Down
 		ScrollBar.Offset = ScrollBar.Offset + 1
 
-		if (ScrollBar.Offset > (#GambleBuddy.Players - 8)) then
+		if (ScrollBar.Offset > (#vGambler.Players - 8)) then
 			ScrollBar.Offset = ScrollBar.Offset - 1
 		end
 	end
 
-	--GambleBuddy:SetGameScrollOffset(ScrollBar.Offset)
+	--vGambler:SetGameScrollOffset(ScrollBar.Offset)
 	ScrollBar:SetValue(ScrollBar.Offset)
 end
 
-function GambleBuddy:ScrollBarOnEnter()
+function vGambler:ScrollBarOnEnter()
 	self:GetThumbTexture():SetVertexColor(0.235, 0.247, 0.27)
 end
 
-function GambleBuddy:ScrollBarOnLeave()
+function vGambler:ScrollBarOnLeave()
 	if (not self.OverrideThumb) then
 		self:GetThumbTexture():SetVertexColor(0.25, 0.266, 0.294)
 	end
 end
 
-function GambleBuddy:ScrollBarOnMouseDown()
+function vGambler:ScrollBarOnMouseDown()
 	self.OverrideThumb = true
 	self:GetThumbTexture():SetVertexColor(0.235, 0.247, 0.27)
 end
 
-function GambleBuddy:ScrollBarOnMouseUp()
+function vGambler:ScrollBarOnMouseUp()
 	self.OverrideThumb = false
 	self:GetThumbTexture():SetVertexColor(0.25, 0.266, 0.294)
 end
 
-function GambleBuddy:ChatScrollBarOnValueChanged(offset)
-	GambleBuddy.ChatWindow:SetScrollOffset(select(2, GambleBuddy.ChatWindow.ScrollBar:GetMinMaxValues()) - offset)
+function vGambler:ChatScrollBarOnValueChanged(offset)
+	vGambler.ChatWindow:SetScrollOffset(select(2, vGambler.ChatWindow.ScrollBar:GetMinMaxValues()) - offset)
 end
 
-function GambleBuddy:ChatOnMouseWheel(delta)
+function vGambler:ChatOnMouseWheel(delta)
 	local Value = self.ScrollBar:GetValue()
 
 	if (delta > 0) then
@@ -136,17 +136,17 @@ function GambleBuddy:ChatOnMouseWheel(delta)
 	end
 end
 
-function GambleBuddy:UpdateChatScrollBar()
-	local NumMessages = GambleBuddy.ChatWindow:GetNumMessages()
+function vGambler:UpdateChatScrollBar()
+	local NumMessages = vGambler.ChatWindow:GetNumMessages()
 
-	GambleBuddy.ChatWindow.ScrollBar:SetMinMaxValues(1, math.max(1, NumMessages))
+	vGambler.ChatWindow.ScrollBar:SetMinMaxValues(1, math.max(1, NumMessages))
 
-	if GambleBuddy.ChatWindow:AtBottom() then -- Only scroll the window if we're currently on the bottom. Otherwise stay at current offset
-		GambleBuddy.ChatWindow.ScrollBar:SetValue(math.max(0, NumMessages))
+	if vGambler.ChatWindow:AtBottom() then -- Only scroll the window if we're currently on the bottom. Otherwise stay at current offset
+		vGambler.ChatWindow.ScrollBar:SetValue(math.max(0, NumMessages))
 	end
 end
 
-function GambleBuddy:SetupControlsPage(page)
+function vGambler:SetupControlsPage(page)
 	--page.Buttons = {} -- self.Window.Buttons should be self.GameButtons.Buttons or something instead
 
 	-- Game tab
@@ -184,7 +184,7 @@ function GambleBuddy:SetupControlsPage(page)
 	GameAreaScroll:SetWidth(12)
 	GameAreaScroll:SetPoint("TOPRIGHT", GameArea, -3, -0)
 	GameAreaScroll:SetPoint("BOTTOMRIGHT", GameArea, -3, 0)
-	GameAreaScroll:SetThumbTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraThumb.tga")
+	GameAreaScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
 	GameAreaScroll:SetOrientation("VERTICAL")
 	GameAreaScroll:SetValueStep(1)
 	GameAreaScroll:SetObeyStepOnDrag(true)
@@ -203,10 +203,10 @@ function GambleBuddy:SetupControlsPage(page)
 	GameAreaScrollThumb:SetVertexColor(0.25, 0.266, 0.294)
 
 	if (self.Settings.UIStyle == 1) then
-		GameAreaScroll:SetThumbTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraRoundThumb.tga")
-		GameAreaScrollThumb:SetTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraRoundThumb.tga")
+		GameAreaScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
+		GameAreaScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
 	else
-		GameAreaScrollThumb:SetTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraThumb.tga")
+		GameAreaScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
 	end
 
 	self.Window.GameArea = GameArea
@@ -218,10 +218,10 @@ function GambleBuddy:SetupControlsPage(page)
 	self:SetGameScrollOffset(1)
 
 	self:AddGameHeader(GameButtons, GameButtons, "Host Game")
-	self:AddGameButton(GameButtons, GameButtons, "Start", "Start Game", function() if GambleBuddy.Settings.Channel == 4 then GambleBuddy:TestGame() else GambleBuddy:StartGame() end end)
-	self:AddGameButton(GameButtons, GameButtons, "LastCall", "Last Call", function() GambleBuddy:LastCall() end)
-	self:AddGameButton(GameButtons, GameButtons, "Close", "Close Game", function() GambleBuddy:CloseGame() end)
-	self:AddGameButton(GameButtons, GameButtons, "Reset", "Reset Game", function() GambleBuddy:ResetGame() end)
+	self:AddGameButton(GameButtons, GameButtons, "Start", "Start Game", function() if vGambler.Settings.Channel == 4 then vGambler:TestGame() else vGambler:StartGame() end end)
+	self:AddGameButton(GameButtons, GameButtons, "LastCall", "Last Call", function() vGambler:LastCall() end)
+	self:AddGameButton(GameButtons, GameButtons, "Close", "Close Game", function() vGambler:CloseGame() end)
+	self:AddGameButton(GameButtons, GameButtons, "Reset", "Reset Game", function() vGambler:ResetGame() end)
 
 	self:AddGameHeader(GameSettings, GameSettings, "Roll Value")
 	self:AddGameInput(GameSettings, GameSettings, "RollValue", self:Comma(self.Settings.RollValue), self.RollInputOnEnter)
@@ -260,7 +260,7 @@ function GambleBuddy:SetupControlsPage(page)
 	ScrollBar:SetWidth(12)
 	ScrollBar:SetPoint("TOPRIGHT", GameChat, -3, 0)
 	ScrollBar:SetPoint("BOTTOMRIGHT", GameChat, -3, 0)
-	ScrollBar:SetThumbTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraThumb.tga")
+	ScrollBar:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
 	ScrollBar:SetOrientation("VERTICAL")
 	ScrollBar:SetValueStep(1)
 	ScrollBar:SetObeyStepOnDrag(true)
@@ -282,13 +282,13 @@ function GambleBuddy:SetupControlsPage(page)
 	Thumb:SetVertexColor(0.25, 0.266, 0.294)
 
 	if (self.Settings.UIStyle == 1) then
-		ScrollBar:SetThumbTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraRoundThumb.tga")
-		Thumb:SetTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraRoundThumb.tga")
+		ScrollBar:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
+		Thumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
 	else
-		Thumb:SetTexture("Interface\\AddOns\\GambleBuddy\\Assets\\HydraThumb.tga")
+		Thumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
 	end
 
-	self.ChatWindow:AddMessage("Welcome to |cffFFC44DGamble|rBuddy")
+	self.ChatWindow:AddMessage("Welcome to |cffFFC44Dv|rGambler")
 
 	self:SortButtonList(GameButtons, GameButtons)
 	self:SortButtonList(GameSettings, GameSettings)
