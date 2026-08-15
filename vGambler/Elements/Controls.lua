@@ -3,6 +3,14 @@ local L = AddOn.L
 local vGambler = AddOn.vGambler
 
 function vGambler:OnChannelSelection(dropdown, value)
+	-- A game's channel is fixed when StartGame captures it. The disabled channel
+	-- control should normally prevent this, but also ignore an already-open menu.
+	if vGambler.GameChannel then
+		dropdown.List:Hide()
+
+		return
+	end
+
 	if (not vGamblerSettings) then
 		vGamblerSettings = {}
 	end

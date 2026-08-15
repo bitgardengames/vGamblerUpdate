@@ -293,13 +293,15 @@ function vGambler:CHAT_MSG_ADDON(prefix, message, chattype, sender)
 end
 
 function vGambler:SendEvent(event, args)
-	if (self.Settings.Channel == 4) then
+	local Channel = self.GameChannel or self.Settings.Channel
+
+	if (Channel == 4) then
 		return
 	end
 
 	local Message = string.format("%s\\%s", event, args or " ")
 
-	CT:SendAddonMessage("NORMAL", "vGambler", Message, self.ChannelSelections[self.Settings.Channel])
+	CT:SendAddonMessage("NORMAL", "vGambler", Message, self.ChannelSelections[Channel])
 end
 
 function vGambler:JoinGame()
