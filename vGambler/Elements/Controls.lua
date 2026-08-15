@@ -46,6 +46,8 @@ function vGambler:SetGameScrollOffset(offset)
 			end
 		end
 	end
+
+	vGambler:SortPlayerList()
 end
 
 function vGambler:GameScrollOnValueChanged(offset)
@@ -90,7 +92,6 @@ function vGambler:PlayerOnMouseWheel(delta)
 		end
 	end
 
-	--vGambler:SetGameScrollOffset(ScrollBar.Offset)
 	ScrollBar:SetValue(ScrollBar.Offset)
 end
 
