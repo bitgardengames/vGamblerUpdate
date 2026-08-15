@@ -1,0 +1,35 @@
+## Interface: 100002
+## Author: Hydra
+## Version: 1.0
+## Title: |cffFFC44DGamble|r|cffFFFFFFBuddy|r
+## Notes: Gamble away your hard earned gold!
+## SavedVariables: GambleBuddyBans, GambleBuddyData, GambleBuddyPlayers, GambleBuddySettings, GambleBuddyHistory
+
+Libs\LibStub.lua
+Libs\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1.lua
+Libs\LibSharedMedia-3.0.lua
+Libs\LibDBIcon-1.0.lua
+Libs\LibMotion.lua
+Libs\ChatThrottleLib.lua
+Languages/deDE.lua
+Languages/enUS.lua
+Languages/esES.lua
+Languages/esMX.lua
+Languages/frFR.lua
+Languages/itIT.lua
+Languages/koKR.lua
+Languages/ptBR.lua
+Languages/ruRU.lua
+Languages/zhCN.lua
+Languages/zhTW.lua
+Elements/Settings.lua
+Elements/Game.lua
+Elements/Interface.lua
+Elements/Controls.lua
+Elements/Comms.lua
+Elements/Stats.lua
+Elements/Bans.lua
+Elements/Commands.lua
+Elements/About.lua
+Elements/Test.lua
