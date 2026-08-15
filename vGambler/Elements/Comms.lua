@@ -189,7 +189,7 @@ vGambler.Events.GameEnded = function(self, args)
 	self:DisablePlayButton("Roll")
 
 	-- If we're in silent, add the message
-	--self:SendMessage(string.format("|cffFFC44Dv|rGambler: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
+	--self:SendMessage(string.format("|cffFFC44DvGambler|r: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
 end
 
 vGambler.Events.GameDraw = function(self, args)

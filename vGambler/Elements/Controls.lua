@@ -288,7 +288,7 @@ function vGambler:SetupControlsPage(page)
 		Thumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
 	end
 
-	self.ChatWindow:AddMessage("Welcome to |cffFFC44Dv|rGambler")
+	self.ChatWindow:AddMessage("Welcome to |cffFFC44DvGambler|r")
 
 	for i = 1, #self.PendingMessages do
 		self.ChatWindow:AddMessage(self.PendingMessages[i])
