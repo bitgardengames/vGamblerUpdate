@@ -154,6 +154,29 @@ function vGambler:UnbanPlayer(player)
 	vGambler:SendMessage(string.format("|cffFFC44Dv|r|cffFFFFFFGambler|r: %s has been removed from the ban list.", player))
 end
 
+function vGambler:ResetBans()
+	if (type(vGamblerBans) ~= "table") then
+		vGamblerBans = {}
+	else
+		for key in pairs(vGamblerBans) do
+			vGamblerBans[key] = nil
+		end
+	end
+
+	for i = #self.BannedPlayers, 1, -1 do
+		local Bar = table.remove(self.BannedPlayers, i)
+
+		Bar:Hide()
+		table.insert(self.FreeBannedPlayers, Bar)
+	end
+
+	if (self.Window and self:GetPage("Bans")) then
+		self:SortBannedPlayers()
+	end
+
+	print("vGambler: Ban list has been reset.")
+end
+
 function vGambler:IsBanned(player)
 	if (not vGamblerBans) then
 		return false
