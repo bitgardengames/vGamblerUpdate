@@ -194,7 +194,7 @@ function vGambler:CloseDrawGame()
 	end
 
 	self:AddStat("draw", 1)
-	self:AddMatchHistory("Draw", "Draw", 0, self.Settings.RollValue, self.MatchPlayers or {})
+	self:AddMatchHistory("Draw", "Draw", 0, self.GameWager or self.Settings.RollValue, self.MatchPlayers or {})
 
 	if self.IsTestGame then -- Just debugging to loop test games
 		self.Ela = 0
@@ -324,7 +324,7 @@ function vGambler:DeclareWinner() -- Declares the winner of the game, calculates
 	self:AddStat("totalgold", Earnings)
 	self:AddMaxStat("topwin", self.Result[3])
 	self:AddMaxStat("toppayout", Earnings)
-	self:AddMaxStat("topwager", self.Settings.RollValue)
+	self:AddMaxStat("topwager", self.GameWager or self.Settings.RollValue)
 	self:AddMaxStat("sessiongames", self.SessionGames)
 
 	self:AddPlayerStat(Winner, "wins", 1)
@@ -350,7 +350,7 @@ function vGambler:DeclareWinner() -- Declares the winner of the game, calculates
 	self:SendMessage(string.format("|cffFFC44Dv|rGambler: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
 
 	self:SendEvent("GameEnded", string.format("%s\\%s\\%d\\%d", Winner, Loser, self.Result[3], self.Result[4]))
-	self:AddMatchHistory(Winner, Loser, Earnings, self.Settings.RollValue, self.MatchPlayers or {})
+	self:AddMatchHistory(Winner, Loser, Earnings, self.GameWager or self.Settings.RollValue, self.MatchPlayers or {})
 
 	if self.IsTestGame then -- Just debugging to loop test games
 		self.Ela = 0

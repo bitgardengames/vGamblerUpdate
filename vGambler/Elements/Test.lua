@@ -46,9 +46,9 @@ function vGambler:RollPlayersOnUpdate(elapsed)
 		end
 
 		local Player = table.remove(self.Testers, 1)
-		local Roll = random(1, self.Settings.RollValue)
+		local Roll = random(1, self.GameWager or self.Settings.RollValue)
 
-		self:CHAT_MSG_SYSTEM(string.format(RANDOM_ROLL_RESULT, Player.Name, Roll, 1, self.Settings.RollValue)) -- This event is already set up to process this information
+		self:CHAT_MSG_SYSTEM(string.format(RANDOM_ROLL_RESULT, Player.Name, Roll, 1, self.GameWager or self.Settings.RollValue)) -- This event is already set up to process this information
 
 		self.Ela = 0
 	end
