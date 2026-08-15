@@ -131,7 +131,7 @@ function vGambler:SetupAboutPage(page)
 end
 
 function vGambler:UpdateStat(stat)
-	local StatsPage = self:GetPage("About")
+	local StatsPage = self:GetPage("Overview")
 	local Data = self.Settings.StatDisplay == true and Session or vGamblerData
 
 	if (StatsPage.Stats[stat] and self.StatMethods[stat]) then
@@ -140,7 +140,7 @@ function vGambler:UpdateStat(stat)
 end
 
 function vGambler:UpdateBasicStats()
-	local Page = self:GetPage("About")
+	local Page = self:GetPage("Overview")
 	local Data = self.Settings.StatDisplay == true and Session or vGamblerData
 
 	for stat in next, Page.Stats do

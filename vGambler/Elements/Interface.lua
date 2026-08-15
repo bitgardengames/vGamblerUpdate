@@ -770,11 +770,11 @@ function vGambler:CreateWindow()
 	Window.TabParent = TabParent
 
 	local GamePage = self:CreatePage("Game", L.PAGE_GAME)
-	local StatsPage = self:CreatePage("Stats", L.PAGE_STATS)
+	local StatsPage = self:CreatePage("Leaderboard", L.PAGE_STATS)
 	local HistoryPage = self:CreatePage("History", L.PAGE_HISTORY)
 	local BansPage = self:CreatePage("Bans", L.PAGE_BANS)
 	local SettingsPage = self:CreatePage("Settings", L.PAGE_SETTINGS)
-	local AboutPage = self:CreatePage("About", L.PAGE_ABOUT)
+	local AboutPage = self:CreatePage("Overview", L.PAGE_ABOUT)
 
 	-- Page stuff, this will be moved later
 	self:SetupControlsPage(GamePage)

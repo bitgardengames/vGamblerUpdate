@@ -258,7 +258,7 @@ end
 
 function vGambler:PopulateStatLines(direction)
 	local PlayerData = self.Settings.StatDisplay == true and PlayerSession or vGamblerPlayers
-	local Page = vGambler:GetPage("Stats")
+	local Page = vGambler:GetPage("Leaderboard")
 
 	for user, data in next, PlayerData do
 		if (data.wins or data.losses) then -- Filter players who haven't won or lost
@@ -305,7 +305,7 @@ function vGambler:SetStatScrollOffset(offset)
 	end
 
 	local First
-	local Page = vGambler:GetPage("Stats")
+	local Page = vGambler:GetPage("Leaderboard")
 
 	Page.StatAreaScroll:SetMinMaxValues(1, math.max(1, #StatsSorter - 9))
 	Page.StatAreaScroll:SetValue(self.Offset)
@@ -354,7 +354,7 @@ function vGambler:StatScrollOnMouseWheel(delta)
 end
 
 function vGambler:StatLineOnMouseWheel(delta)
-	local Page = vGambler:GetPage("Stats")
+	local Page = vGambler:GetPage("Leaderboard")
 	local ScrollBar = Page.StatAreaScroll
 
 	if (delta > 0) then -- Up
@@ -558,7 +558,7 @@ function vGambler:SetupStatsPage(page)
 end
 
 function vGambler:UpdateStat(stat)
-	local StatsPage = self:GetPage("About")
+	local StatsPage = self:GetPage("Overview")
 	local Data = self.Settings.StatDisplay == true and Session or vGamblerData
 
 	if (StatsPage.Stats[stat] and self.StatMethods[stat]) then
@@ -568,7 +568,7 @@ end
 
 function vGambler:ResetGeneralStats()
 	if vGamblerData then
-		local Page = vGambler:GetPage("About")
+		local Page = vGambler:GetPage("Overview")
 
 		for stat in next, Page.Stats do
 			Page.Stats[stat].Right:SetText(0)
