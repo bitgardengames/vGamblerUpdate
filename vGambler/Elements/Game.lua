@@ -34,7 +34,6 @@ function vGambler:ResetGame() -- Resets the game to its initial state, clearing 
 	self.MatchPlayers = nil
 	self.TiedGame = nil
 	self.Host = nil
-	self.GameChannel = nil
 	self.GameWager = self.Settings.RollValue
 	self.Players = table.wipe(self.Players)
 	self.Tie = table.wipe(self.Tie)
@@ -69,6 +68,10 @@ function vGambler:ResetGame() -- Resets the game to its initial state, clearing 
 	self:SendMessage(L.GAME_RESET)
 
 	self:SendEvent("ResetGame", UnitName("player"))
+
+	-- Keep the captured channel through the final game communications. Future
+	-- messages may use the newly selected default channel once teardown finishes.
+	self.GameChannel = nil
 end
 
 function vGambler:StartGame() --  Starts a new game, registers relevant events, and updates button states and UI

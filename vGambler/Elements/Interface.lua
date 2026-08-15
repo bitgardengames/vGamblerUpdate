@@ -113,7 +113,9 @@ function vGambler:CreateTooltip()
 end
 
 function vGambler:SendMessage(message)
-	if (self.Settings.Channel == 4)then
+	local Channel = self.GameChannel or self.Settings.Channel
+
+	if (Channel == 4)then
 		self.ChatWindow:AddMessage(message)
 
 		self:UpdateChatScrollBar()
@@ -122,7 +124,7 @@ function vGambler:SendMessage(message)
 		message = string.gsub(message, "|r", "")
 		message = string.gsub(message, "|c%x%x%x%x%x%x%x%x", "")
 
-		SendChatMessage(message, self.ChannelSelections[self.Settings.Channel])
+		SendChatMessage(message, self.ChannelSelections[Channel])
 	end
 end
 
@@ -1191,9 +1193,12 @@ function vGambler:PLAYER_ENTERING_WORLD()
 end
 
 function vGambler:OnEvent(event, ...)
+	local Channel = self.GameChannel or self.Settings.Channel
+	local EventGroup = self.EventGroups[Channel]
+
 	if self[event] then
 		self[event](self, ...)
-	elseif self.EventGroups[self.Settings.Channel][event] then
+	elseif EventGroup and EventGroup[event] then
 		self:ChatMessageEvent(...)
 	end
 end
