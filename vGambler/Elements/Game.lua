@@ -370,9 +370,9 @@ function vGambler:ChatMessageEvent(message, sender, lang, channel, player, flags
 			end
 		end
 	elseif (message == self.Settings.LeaveCommand) then
-		self:RemovePlayer(sender)
-		self:AddStat("withdraw", 1)
-
-		self:SendEvent("RemovePlayer", sender)
+		if self:RemovePlayer(sender) then
+			self:AddStat("withdraw", 1)
+			self:SendEvent("RemovePlayer", sender)
+		end
 	end
 end
