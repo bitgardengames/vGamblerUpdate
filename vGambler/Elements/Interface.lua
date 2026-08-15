@@ -903,6 +903,7 @@ function vGambler:CreateWindow()
 	-- Page stuff, this will be moved later
 	self:SetupControlsPage(GamePage)
 	self:SetupStatsPage(StatsPage)
+	self:SetupHistoryPage(HistoryPage)
 	self:SetupBansPage(BansPage)
 	self:SetupSettingsPage(SettingsPage)
 	self:SetupAboutPage(AboutPage)
