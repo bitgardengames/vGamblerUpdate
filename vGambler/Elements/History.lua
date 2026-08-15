@@ -5,6 +5,8 @@ local L = AddOn.L
 local math = math
 local table = table
 local string = string
+local date = date
+local time = time
 
 local HistoryLines = {}
 
@@ -22,6 +24,7 @@ function vGambler:AddMatchHistory(winner, loser, value, wager, players)
 		value = value,
 		wager = wager,
 		players = players,
+		timestamp = time(),
 	})
 
 	self:UpdateHistory()
@@ -39,6 +42,11 @@ function vGambler:HistoryLineOnEnter()
 	vGambler.Tooltip:SetPoint("LEFT", self, "RIGHT", 8, 0)
 	vGambler.Tooltip:ClearLines()
 	vGambler.Tooltip:AddLine(string.format(L.MATCH_NUMBER, self.MatchNumber), 1, 1, 1)
+
+	if Match.timestamp then
+		vGambler.Tooltip:AddDoubleLine(L.MATCH_PLAYED, date(L.MATCH_DATE_FORMAT, Match.timestamp), 1, 1, 1, 1, 1, 1)
+	end
+
 	vGambler.Tooltip:AddLine(" ")
 
 	for i = 1, #(Match.players or {}) do

@@ -71,6 +71,8 @@ L.RESET_PLAYER_STATS = "Reset Player Stats"
 L.MATCH_HISTORY = "Match History"
 L.MATCH_NUMBER = "Match %d"
 L.MATCH_SUMMARY = "%d. Winner: %s  Loser: %s  Value: %s|cffffe02eg|r"
+L.MATCH_PLAYED = "Played"
+L.MATCH_DATE_FORMAT = "%Y-%m-%d %H:%M"
 L.PLAYER_ROLL = "%d. %s"
 
 L.REASON_OPTIONAL = "|cffd2d2d2Reason (optional)|r"
