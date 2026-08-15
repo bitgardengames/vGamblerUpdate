@@ -203,6 +203,10 @@ function vGambler:CloseDrawGame()
 	self.Locked = false
 	self.TiedGame = false
 
+	for i = 1, #(self.MatchPlayers or {}) do
+		self:AddPlayerStat(self.MatchPlayers[i].name, "games", 1)
+	end
+
 	if self.Settings.PlaySounds then
 		PlaySound(SOUNDKIT.LFG_DENIED)
 	end
@@ -233,8 +237,6 @@ function vGambler:UpdateGameResults() -- Sorts the player rolls and determines t
 		elseif (self.Players[i].Roll == Low) then
 			table.insert(Losers, self.Players[i])
 		end
-
-		self:AddPlayerStat(self.Players[i].DisplayName, "games", 1)
 	end
 
 	if (not self.Result) then
@@ -333,6 +335,10 @@ function vGambler:DeclareWinner() -- Declares the winner of the game, calculates
 	local Winner = self.Result[1][1].DisplayName
 	local Loser = self.Result[2][1].DisplayName
 	local Earnings = self.Result[3] - self.Result[4]
+
+	for i = 1, #(self.MatchPlayers or {}) do
+		self:AddPlayerStat(self.MatchPlayers[i].name, "games", 1)
+	end
 
 	self.SessionGames = (self.SessionGames or 0) + 1
 
