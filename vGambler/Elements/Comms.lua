@@ -165,6 +165,10 @@ vGambler.Events.GameEnded = function(self, args)
 	local Value = High - Low
 	local Players = ParseMatchPlayers(Fields, 6)
 
+	for i = 1, #Players do
+		self:AddPlayerStat(Players[i].name, "games", 1)
+	end
+
 	self:AddStat("games", 1)
 	self:AddStat("totalgold", Value)
 	self:AddMaxStat("topwin", High)
@@ -198,6 +202,10 @@ vGambler.Events.GameDraw = function(self, args)
 	local Fields = SplitEventArgs(args)
 	local Wager = tonumber(Fields[1]) or self.GameWager or self.Settings.RollValue
 	local Players = ParseMatchPlayers(Fields, 2)
+
+	for i = 1, #Players do
+		self:AddPlayerStat(Players[i].name, "games", 1)
+	end
 
 	if self.Settings.PlaySounds then
 		PlaySound(SOUNDKIT.LFG_DENIED)
