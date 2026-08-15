@@ -399,7 +399,11 @@ function vGambler:CHAT_MSG_SYSTEM(message)
 end
 
 function vGambler:ChatMessageEvent(message, sender, lang, channel, player, flags, zone, channel, base, lang, line, guid)
-	sender = string.match(sender, "(%S+)-.-") -- Remove server name.
+	if (type(sender) ~= "string" or sender == "") then
+		return
+	end
+
+	sender = string.match(sender, "^([^-]+)") or sender -- Remove server name.
 
 	if (message == self.Settings.EnterCommand) then
 		local Banned, Reason = self:IsBanned(sender)
