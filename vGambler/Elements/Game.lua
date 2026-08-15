@@ -12,6 +12,8 @@ vGambler.EventGroups = {
 }
 
 function vGambler:ResetGame() -- Resets the game to its initial state, clearing all data, and enabling/disabling relevant buttons
+	local GameChannel = self.GameChannel or self.Settings.Channel
+
 	self.Rolled = 0
 	self.Locked = false
 	self.IsTestGame = nil
@@ -29,8 +31,8 @@ function vGambler:ResetGame() -- Resets the game to its initial state, clearing 
 		self:SetScript("OnUpdate", nil)
 	end
 
-	if self.EventGroups[self.Settings.Channel] then
-		for event in next, self.EventGroups[self.Settings.Channel] do
+	if self.EventGroups[GameChannel] then
+		for event in next, self.EventGroups[GameChannel] do
 			self:UnregisterEvent(event)
 		end
 	end
@@ -105,8 +107,9 @@ function vGambler:CloseGame() -- Closes the game, stops accepting players, and t
 		self.Rolled = 0
 		self.Locked = true
 
-		if self.EventGroups[self.Settings.Channel] then
-			for event in next, self.EventGroups[self.Settings.Channel] do
+		local GameChannel = self.GameChannel or self.Settings.Channel
+		if self.EventGroups[GameChannel] then
+			for event in next, self.EventGroups[GameChannel] do
 				self:UnregisterEvent(event)
 			end
 		end
@@ -152,7 +155,13 @@ function vGambler:CloseTiedGame()
 		self.TiedGame = true
 		self.Tie = table.wipe(self.Tie)
 
-		self:UnregisterAllEvents()
+		local GameChannel = self.GameChannel or self.Settings.Channel
+		if self.EventGroups[GameChannel] then
+			for event in next, self.EventGroups[GameChannel] do
+				self:UnregisterEvent(event)
+			end
+		end
+
 		self:RegisterEvent("CHAT_MSG_SYSTEM")
 
 		self:DisableGameButton("Start")
