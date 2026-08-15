@@ -19,6 +19,15 @@ local FreeStatTables = {}
 local LastSorter
 local SortDir = 1
 local SortSetting = "Earnings"
+local DashboardToggles = {}
+
+function vGambler:GetAggregateStatData()
+	return self.Settings.StatDisplay == true and Session or vGamblerData
+end
+
+function vGambler:GetPlayerStatData()
+	return self.Settings.StatDisplay == true and PlayerSession or vGamblerPlayers
+end
 
 function vGambler:AddStat(stat, value)
 	if (not vGamblerData) then
@@ -174,8 +183,46 @@ function vGambler:UpdateStatDisplay(value)
 	vGamblerSettings.StatDisplay = value
 	vGambler.Settings.StatDisplay = value
 
+	for i = 1, #DashboardToggles do
+		local Toggle = DashboardToggles[i]
+		Toggle.Toggled = value
+
+		if value then
+			Toggle.Box:SetBackdropColor(vGambler:HexToRGB("FFC44D"))
+			Toggle.Box:SetBackdropBorderColor(vGambler:HexToRGB("FFC44D"))
+		else
+			Toggle.Box:SetBackdropColor(0.125, 0.133, 0.145)
+			Toggle.Box:SetBackdropBorderColor(0.125, 0.133, 0.145)
+		end
+	end
+
 	vGambler:UpdateBasicStats()
 	vGambler:UpdateStatGrid()
+end
+
+function vGambler:SetupDashboardHeader(page)
+	local HeaderBar = CreateFrame("Frame", nil, page, "BackdropTemplate")
+	HeaderBar:SetSize(page:GetWidth(), 32)
+	HeaderBar:SetPoint("TOPLEFT", page, 0, 0)
+	HeaderBar:SetBackdrop(self.MediumBackdrop)
+	HeaderBar:SetBackdropColor(0.184, 0.192, 0.211)
+	HeaderBar:SetBackdropBorderColor(0.184, 0.192, 0.211)
+
+	HeaderBar.Label = HeaderBar:CreateFontString(nil, "OVERLAY")
+	HeaderBar.Label:SetPoint("LEFT", HeaderBar, 7, -0.5)
+	HeaderBar.Label:SetFont(self.Font, self.Settings.FontSize)
+	HeaderBar.Label:SetText(string.format("|cffFFC44D%s|r", L.STAT_VIEW))
+	HeaderBar.Label:SetShadowColor(0.029, 0.029, 0.051)
+	HeaderBar.Label:SetShadowOffset(0, -1)
+
+	local SessionToggle = CreateFrame("Frame", nil, HeaderBar)
+	SessionToggle:SetSize(173, 32)
+	SessionToggle:SetPoint("RIGHT", HeaderBar, "RIGHT", 0, 0)
+	local Toggle = self:AddGameCheckbox({}, SessionToggle, L.SESSION_STATS, self.Settings.StatDisplay, self.UpdateStatDisplay)
+	Toggle:SetPoint("TOPLEFT", SessionToggle, 4, -4)
+	table.insert(DashboardToggles, Toggle)
+
+	return HeaderBar
 end
 
 function vGambler:AddLongStatLine(parent)
@@ -395,26 +442,7 @@ function vGambler:OnStatCategoryMouseUp()
 end
 
 function vGambler:SetupStatsPage(page)
-	page.SessionToggle = {}
-
-	local HeaderBar = CreateFrame("Frame", nil, page, "BackdropTemplate")
-	HeaderBar:SetSize(page:GetWidth(), 32)
-	HeaderBar:SetPoint("TOPLEFT", page, 0, 0)
-	HeaderBar:SetBackdrop(self.MediumBackdrop)
-	HeaderBar:SetBackdropColor(0.184, 0.192, 0.211)
-	HeaderBar:SetBackdropBorderColor(0.184, 0.192, 0.211)
-
-	-- Session toggle
-	local SessionToggle = CreateFrame("Frame", nil, page, "BackdropTemplate")
-	SessionToggle:SetSize(173, 32)
-	SessionToggle:SetPoint("LEFT", HeaderBar, "LEFT", 0, 0)
-	SessionToggle:SetBackdrop(self.MediumBackdrop)
-	SessionToggle:SetBackdropColor(0.184, 0.192, 0.211)
-	SessionToggle:SetBackdropBorderColor(0.184, 0.192, 0.211)
-
-	self:AddGameCheckbox(page.SessionToggle, SessionToggle, L.SESSION_STATS, self.Settings.StatDisplay, self.UpdateStatDisplay)
-
-	self:SortButtonList(page.SessionToggle, SessionToggle)
+	local HeaderBar = self:SetupDashboardHeader(page)
 
 	local StatArea = CreateFrame("Frame", nil, page, "BackdropTemplate")
 	StatArea:SetPoint("TOPLEFT", HeaderBar, "BOTTOMLEFT", 0, -6)

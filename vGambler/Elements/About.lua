@@ -4,6 +4,18 @@ local L = AddOn.L
 
 local table = table
 local string = string
+local tonumber = tonumber
+
+local function GetRatio(data, numerator, denominator, multiplier)
+	local Numerator = data and tonumber(data[numerator]) or 0
+	local Denominator = data and tonumber(data[denominator]) or 0
+
+	if not Numerator or not Denominator or Denominator == 0 then
+		return 0
+	end
+
+	return (Numerator / Denominator) * (multiplier or 1)
+end
 
 vGambler.StatMethods = {	-- Basic stats, just add optional formatting to some of them.
 	games = function(stat, data)
@@ -48,7 +60,7 @@ vGambler.StatMethods = {	-- Basic stats, just add optional formatting to some of
 
 	uniqueplayers = function(stat, data)
 		local Count = 0
-		local PlayerData = vGambler.Settings.StatDisplay == true and PlayerSession or vGamblerPlayers
+		local PlayerData = vGambler:GetPlayerStatData()
 
 		if PlayerData then
 			if (#PlayerData == 0) then
@@ -67,6 +79,26 @@ vGambler.StatMethods = {	-- Basic stats, just add optional formatting to some of
 	sessiongames = function(stat, data)
 		stat.Left:SetText(L.HIGHEST_GAME_STREAK)
 		stat.Right:SetText(data and data.sessiongames or 0)
+	end,
+
+	averagegold = function(stat, data)
+		stat.Left:SetText(L.AVERAGE_GOLD)
+		stat.Right:SetText(string.format(L.GOLD_AMOUNT, string.format("%.2f", GetRatio(data, "totalgold", "games"))))
+	end,
+
+	averagerolls = function(stat, data)
+		stat.Left:SetText(L.AVERAGE_ROLLS)
+		stat.Right:SetText(string.format("%.2f", GetRatio(data, "rolls", "games")))
+	end,
+
+	drawrate = function(stat, data)
+		stat.Left:SetText(L.DRAW_RATE)
+		stat.Right:SetText(string.format(L.PERCENT, string.format("%.2f", GetRatio(data, "draw", "games", 100))))
+	end,
+
+	tierate = function(stat, data)
+		stat.Left:SetText(L.TIE_RATE)
+		stat.Right:SetText(string.format(L.PERCENT, string.format("%.2f", GetRatio(data, "ties", "games", 100))))
 	end,
 }
 
@@ -99,49 +131,68 @@ function vGambler:AddStatLine(t, parent, id)
 end
 
 function vGambler:SetupAboutPage(page)
-	page.Game = {}
+	page.General = {}
+	page.Performance = {}
 	page.Stats = {}
 
-	-- Game stats
-	local GameInfo = CreateFrame("Frame", nil, page, "BackdropTemplate")
-	GameInfo:SetSize(173, 318)
-	GameInfo:SetPoint("TOPLEFT", page, 0, 0)
-	GameInfo:SetBackdrop(self.MediumBackdrop)
-	GameInfo:SetBackdropBorderColor(0, 0, 0)
-	GameInfo:SetBackdropColor(0.184, 0.192, 0.211)
-	GameInfo:SetBackdropBorderColor(0.184, 0.192, 0.211)
+	local HeaderBar = self:SetupDashboardHeader(page)
+	local PanelWidth = (page:GetWidth() - 6) / 2
+	local General = CreateFrame("Frame", nil, page, "BackdropTemplate")
+	General:SetPoint("TOPLEFT", HeaderBar, "BOTTOMLEFT", 0, -6)
+	General:SetPoint("BOTTOMLEFT", page, 0, 0)
+	General:SetWidth(PanelWidth)
+	General:SetBackdrop(self.MediumBackdrop)
+	General:SetBackdropColor(0.184, 0.192, 0.211)
+	General:SetBackdropBorderColor(0.184, 0.192, 0.211)
 
-	self:AddGameHeader(page.Game, GameInfo, L.GENERAL_STATS)
-	page.Stats["games"] = self:AddStatLine(page.Game, GameInfo, "games")
-	page.Stats["rolls"] = self:AddStatLine(page.Game, GameInfo, "rolls")
-	page.Stats["ties"] = self:AddStatLine(page.Game, GameInfo, "ties")
-	page.Stats["draws"] = self:AddStatLine(page.Game, GameInfo, "draws")
-	page.Stats["totalgold"] = self:AddStatLine(page.Game, GameInfo, "totalgold")
-	page.Stats["uniqueplayers"] = self:AddStatLine(page.Game, GameInfo, "uniqueplayers")
+	local Performance = CreateFrame("Frame", nil, page, "BackdropTemplate")
+	Performance:SetPoint("TOPRIGHT", HeaderBar, "BOTTOMRIGHT", 0, -6)
+	Performance:SetPoint("BOTTOMRIGHT", page, 0, 0)
+	Performance:SetWidth(PanelWidth)
+	Performance:SetBackdrop(self.MediumBackdrop)
+	Performance:SetBackdropColor(0.184, 0.192, 0.211)
+	Performance:SetBackdropBorderColor(0.184, 0.192, 0.211)
 
-	self:AddGameHeader(page.Game, GameInfo, L.TOP_STATS)
-	page.Stats["topwager"] = self:AddStatLine(page.Game, GameInfo, "topwager")
-	page.Stats["topwin"] = self:AddStatLine(page.Game, GameInfo, "topwin")
-	page.Stats["toppayout"] = self:AddStatLine(page.Game, GameInfo, "toppayout")
-	page.Stats["sessiongames"] = self:AddStatLine(page.Game, GameInfo, "sessiongames")
+	self:AddGameHeader(page.General, General, L.GENERAL_STATS)
+	for _, stat in ipairs({"games", "rolls", "ties", "draws", "totalgold", "uniqueplayers"}) do
+		page.Stats[stat] = self:AddStatLine(page.General, General, stat)
+	end
+	self:AddGameHeader(page.General, General, L.AVERAGES_AND_RATES)
+	page.Stats["averagerolls"] = self:AddStatLine(page.General, General, "averagerolls")
+	self:SortButtonList(page.General, General)
 
-	self:SortButtonList(page.Game, GameInfo)
+	self:AddGameHeader(page.Performance, Performance, L.TOP_STATS)
+	for _, stat in ipairs({"topwager", "topwin", "toppayout", "sessiongames"}) do
+		page.Stats[stat] = self:AddStatLine(page.Performance, Performance, stat)
+	end
+	self:AddGameHeader(page.Performance, Performance, L.AVERAGES_AND_RATES)
+	for _, stat in ipairs({"averagegold", "drawrate", "tierate"}) do
+		page.Stats[stat] = self:AddStatLine(page.Performance, Performance, stat)
+	end
+	self:SortButtonList(page.Performance, Performance)
 
 	self:UpdateBasicStats()
 end
 
 function vGambler:UpdateStat(stat)
 	local StatsPage = self:GetPage("Overview")
-	local Data = self.Settings.StatDisplay == true and Session or vGamblerData
+	local Data = self:GetAggregateStatData()
 
 	if (StatsPage.Stats[stat] and self.StatMethods[stat]) then
 		self.StatMethods[stat](StatsPage.Stats[stat], Data)
+	end
+
+	-- Aggregate changes can affect any of the derived dashboard metrics.
+	for _, derivedStat in ipairs({"averagegold", "averagerolls", "drawrate", "tierate"}) do
+		if StatsPage.Stats[derivedStat] then
+			self.StatMethods[derivedStat](StatsPage.Stats[derivedStat], Data)
+		end
 	end
 end
 
 function vGambler:UpdateBasicStats()
 	local Page = self:GetPage("Overview")
-	local Data = self.Settings.StatDisplay == true and Session or vGamblerData
+	local Data = self:GetAggregateStatData()
 
 	for stat in next, Page.Stats do
 		if self.StatMethods[stat] then
