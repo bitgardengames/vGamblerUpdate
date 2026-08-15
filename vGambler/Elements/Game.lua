@@ -5,6 +5,17 @@ local L = AddOn.L
 local table = table
 local string = string
 
+local function AddMatchData(payload, wager, players)
+	table.insert(payload, wager)
+
+	for i = 1, #(players or {}) do
+		table.insert(payload, players[i].name)
+		table.insert(payload, players[i].roll)
+	end
+
+	return table.concat(payload, "\\")
+end
+
 vGambler.EventGroups = {
 	{CHAT_MSG_PARTY = true, CHAT_MSG_PARTY_LEADER = true},
 	{CHAT_MSG_RAID = true, CHAT_MSG_RAID_LEADER = true},
@@ -202,7 +213,7 @@ function vGambler:CloseDrawGame()
 	end
 
 	self:SendMessage("|cffFFC44Dv|rGambler: The game has resulted in a draw!")
-	self:SendEvent("GameDraw")
+	self:SendEvent("GameDraw", AddMatchData({}, self.GameWager or self.Settings.RollValue, self.MatchPlayers))
 end
 
 function vGambler:UpdateGameResults() -- Sorts the player rolls and determines the winners and losers
@@ -349,7 +360,7 @@ function vGambler:DeclareWinner() -- Declares the winner of the game, calculates
 
 	self:SendMessage(string.format("|cffFFC44Dv|rGambler: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
 
-	self:SendEvent("GameEnded", string.format("%s\\%s\\%d\\%d", Winner, Loser, self.Result[3], self.Result[4]))
+	self:SendEvent("GameEnded", AddMatchData({Winner, Loser, self.Result[3], self.Result[4]}, self.GameWager or self.Settings.RollValue, self.MatchPlayers))
 	self:AddMatchHistory(Winner, Loser, Earnings, self.GameWager or self.Settings.RollValue, self.MatchPlayers or {})
 
 	if self.IsTestGame then -- Just debugging to loop test games
