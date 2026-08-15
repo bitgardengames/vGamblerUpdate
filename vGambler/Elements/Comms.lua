@@ -6,9 +6,18 @@ local string = string
 local CT = ChatThrottleLib
 
 vGambler.Events = {}
+vGambler.PendingMessages = {}
+
+local PendingMessageLimit = 50
 
 vGambler.Events.Message = function(self, message)
-	if (not self.ChatWindow) then -- Window is load on demand, so it doesn't exist until we open the window. Do something to capture earlier messages until we load our window?
+	if (not self.ChatWindow) then
+		table.insert(self.PendingMessages, message)
+
+		if (#self.PendingMessages > PendingMessageLimit) then
+			table.remove(self.PendingMessages, 1)
+		end
+
 		return
 	end
 
