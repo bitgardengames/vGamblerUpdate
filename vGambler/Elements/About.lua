@@ -22,6 +22,33 @@ local function GetPlayerRecord(field)
 	return RecordName, RecordValue
 end
 
+local function GetPlayerWinRateRecord()
+	local RecordName
+	local RecordWins = 0
+	local RecordGames = 0
+	local RecordRate = 0
+
+	for PlayerName, PlayerData in next, vGambler:GetPlayerStatData() or {} do
+		local Games = tonumber(PlayerData.games) or 0
+		local Wins = tonumber(PlayerData.wins) or 0
+
+		if Games > 0 then
+			local Rate = Wins / Games
+
+			if Rate > RecordRate
+				or (Rate == RecordRate and Games > RecordGames)
+				or (Rate == RecordRate and Games == RecordGames and (not RecordName or PlayerName < RecordName)) then
+				RecordName = PlayerName
+				RecordWins = Wins
+				RecordGames = Games
+				RecordRate = Rate
+			end
+		end
+	end
+
+	return RecordName, RecordWins, RecordGames
+end
+
 vGambler.StatMethods = {	-- Basic stats, just add optional formatting to some of them.
 	games = function(stat, data)
 		stat.Left:SetText(L.GAMES)
@@ -103,6 +130,19 @@ vGambler.StatMethods = {	-- Basic stats, just add optional formatting to some of
 		stat.Left:SetText(L.LONGEST_WINNING_STREAK)
 		stat.Right:SetText(PlayerName and string.format(L.PLAYER_STREAK_RECORD, PlayerName, Value) or L.NO_RECORD)
 	end,
+
+	mostgames = function(stat)
+		local PlayerName, Value = GetPlayerRecord("games")
+		stat.Left:SetText(L.MOST_GAMES_PLAYED)
+		stat.Right:SetText(PlayerName and string.format(L.PLAYER_GAME_RECORD, PlayerName, vGambler:Comma(Value)) or L.NO_RECORD)
+	end,
+
+	bestwinrate = function(stat)
+		local PlayerName, Wins, Games = GetPlayerWinRateRecord()
+		local Percent = Games > 0 and tonumber(string.format("%.2f", (Wins / Games) * 100)) or 0
+		stat.Left:SetText(L.BEST_WIN_RATE)
+		stat.Right:SetText(PlayerName and string.format(L.PLAYER_RATE_RECORD, PlayerName, Percent, vGambler:Comma(Games)) or L.NO_RECORD)
+	end,
 }
 
 function vGambler:AddStatLine(t, parent, id)
@@ -160,8 +200,6 @@ function vGambler:SetupAboutPage(page)
 	for _, stat in ipairs({"games", "rolls", "ties", "draws", "totalgold", "uniqueplayers"}) do
 		page.Stats[stat] = self:AddStatLine(page.General, General, stat)
 	end
-	self:AddGameHeader(page.General, General, L.PLAYER_RECORDS)
-	page.Stats["biggestwinner"] = self:AddStatLine(page.General, General, "biggestwinner")
 	self:SortButtonList(page.General, General)
 
 	self:AddGameHeader(page.Performance, Performance, L.TOP_STATS)
@@ -169,7 +207,7 @@ function vGambler:SetupAboutPage(page)
 		page.Stats[stat] = self:AddStatLine(page.Performance, Performance, stat)
 	end
 	self:AddGameHeader(page.Performance, Performance, L.PLAYER_RECORDS)
-	for _, stat in ipairs({"biggestloser", "winningstreak"}) do
+	for _, stat in ipairs({"biggestwinner", "biggestloser", "winningstreak", "mostgames", "bestwinrate"}) do
 		page.Stats[stat] = self:AddStatLine(page.Performance, Performance, stat)
 	end
 	self:SortButtonList(page.Performance, Performance)
@@ -186,7 +224,7 @@ function vGambler:UpdateStat(stat)
 	end
 
 	-- Player changes can affect any of the dashboard records.
-	for _, recordStat in ipairs({"biggestwinner", "biggestloser", "winningstreak"}) do
+	for _, recordStat in ipairs({"biggestwinner", "biggestloser", "winningstreak", "mostgames", "bestwinrate"}) do
 		if StatsPage.Stats[recordStat] then
 			self.StatMethods[recordStat](StatsPage.Stats[recordStat], Data)
 		end
