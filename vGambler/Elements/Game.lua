@@ -130,6 +130,12 @@ function vGambler:ResetGame() -- Resets the game to its initial state, clearing 
 end
 
 function vGambler:StartGame() --  Starts a new game, registers relevant events, and updates button states and UI
+	if not self.IsTestGame and not self.EventGroups[self.Settings.Channel] then
+		self.ChatWindow:AddMessage(L.CHAT_GAME_CHANNEL_REQUIRED)
+		self:UpdateChatScrollBar()
+		return
+	end
+
 	self.Host = UnitName("player")
 	self.GameChannel = self.Settings.Channel
 	self.GameWager = self.Settings.RollValue
