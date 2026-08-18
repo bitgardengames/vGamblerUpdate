@@ -11,7 +11,6 @@ Libs\LibDataBroker-1.1.lua
 Libs\LibSharedMedia-3.0.lua
 Libs\LibDBIcon-1.0.lua
 Libs\LibMotion.lua
-Libs\ChatThrottleLib.lua
 Languages/enUS.lua
 Languages/deDE.lua
 Languages/esES.lua
