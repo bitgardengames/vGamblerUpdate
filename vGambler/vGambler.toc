@@ -1,4 +1,4 @@
-## Interface: 100002
+## Interface: 120100
 ## Author: Hydra
 ## Version: 1.0
 ## Title: |cffFFC44DvGambler|r
