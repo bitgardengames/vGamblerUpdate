@@ -5,6 +5,30 @@ local L = AddOn.L
 local table = table
 local string = string
 
+local function ParseRollMessage(message)
+	if (type(message) ~= "string") then
+		return
+	end
+
+	-- RANDOM_ROLL_RESULT is localized, so do not assume that the text between the
+	-- player name and the roll is a single word (for example, English "rolls").
+	-- Anchor the stable numeric portion at the end of the system message instead.
+	local Name, Roll, Min, Max = string.match(message, "^(.-)%s+%D-(%d+)%s*%((%d+)%s*%-%s*(%d+)%)%s*$")
+
+	if (not Name) then
+		return
+	end
+
+	-- Depending on the client/chat settings, the name can be realm-qualified or
+	-- wrapped in a player hyperlink. Players entered through chat are stored by
+	-- their short name, so normalize the system-message name the same way.
+	Name = string.match(Name, "|h%[([^%]]+)%]|h") or Name
+	Name = string.match(Name, "|c%x%x%x%x%x%x%x%x(.-)|r") or Name
+	Name = string.match(Name, "^([^-]+)") or Name
+
+	return Name, tonumber(Roll), tonumber(Min), tonumber(Max)
+end
+
 local function AddMatchData(payload, wager, players)
 	table.insert(payload, wager)
 
@@ -419,15 +443,16 @@ function vGambler:DeclareWinner() -- Declares the winner of the game, calculates
 end
 
 function vGambler:CHAT_MSG_SYSTEM(message)
-	local Name, Roll, Min, Max = string.match(message, "^(%S+)%s%S+%s(%d+)%s%((%d+)-(%d+)%)")
+	local Name, Roll, Min, Max = ParseRollMessage(message)
+	local Wager = self.GameWager or self.Settings.RollValue
 
-	if (tonumber(Min) == 1 and tonumber(Max) == (self.GameWager or self.Settings.RollValue)) then
+	if (Min == 1 and Max == Wager) then
 		for i = 1, #self.Players do
 			if (self.Players[i].Name == Name and self.Players[i].Roll == 0) then
-				self.Players[i].Roll = tonumber(Roll)
+				self.Players[i].Roll = Roll
 				self.Rolled = self.Rolled + 1
 
-				if (tonumber(Roll) == (self.GameWager or self.Settings.RollValue) and (self.GameWager or self.Settings.RollValue) > 99) then -- If a player hit the max possible roll, and the wager was 100 or higher
+				if (Roll == Wager and Wager > 99) then -- If a player hit the max possible roll, and the wager was 100 or higher
 					PlaySoundFile(569593)
 				end
 
