@@ -24,6 +24,7 @@ L.GOLD_AMOUNT = "%s|cffffe02eg|r"
 L.PERCENT = "%s%%"
 
 L.GAME_RESET = L.PREFIX .. ": Game has been reset."
+L.CHAT_GAME_CHANNEL_REQUIRED = L.PREFIX .. ": Chat-only games require Party, Raid, or Guild. Choose one of those game channels before starting."
 L.GAME_STARTED = L.PREFIX .. ": New game started! Current roll is for %sg! type %s to enter (%s to withdraw)."
 L.LAST_CALL = L.PREFIX .. ": Last call to enter!"
 L.NEED_TO_ROLL = L.PREFIX .. ": The following players still need to roll: %s"

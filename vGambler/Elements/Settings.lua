@@ -18,7 +18,7 @@ vGambler.Settings = {
 
 	-- Game settings
 	RollValue = 10,
-	Channel = 4,
+	Channel = 1,
 	PlayerNumbers = false,
 	PlayerTooltips = true,
 	ColoredBars = true,
