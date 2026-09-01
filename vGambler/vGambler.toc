@@ -2,7 +2,7 @@
 ## Author: Hydra
 ## Version: 1.0
 ## Title: |cffFFC44DvGambler|r
-## Notes: Gamble away your hard earned gold!
+## Notes: A social gambling game for friends, guildmates, and groups
 ## SavedVariables: vGamblerBans, vGamblerData, vGamblerPlayers, vGamblerSettings, vGamblerHistory
 
 Libs\LibStub.lua

@@ -77,9 +77,11 @@ function vGambler:PauseOnUpdate(elapsed)
 		end
 
 		local Players = {}
+
 		for i = 1, #self.Players do
 			table.insert(Players, self.Players[i].DisplayName)
 		end
+
 		self:AccountTieRound(Players)
 		self.Tie = table.wipe(self.Tie)
 
@@ -99,7 +101,7 @@ function vGambler:ResetOnUpdate(elapsed)
 	if (self.Ela > 3) then
 		self:SetScript("OnUpdate", nil)
 		self.Ela = 0
-		
+
 		self:ResetGame()
 		self:TestGame()
 	end

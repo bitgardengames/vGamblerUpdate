@@ -7,8 +7,6 @@ local string = string
 local next = next
 local tonumber = tonumber
 
--- AFTER TESTING IS DONE, DON'T TRACK STATS FOR TEST PLAYERS.
-
 -- Using a lot of tables in this file, so recycle as much as I can to keep a low overhead
 local Session = {}
 local PlayerSession = {}
@@ -215,6 +213,7 @@ function vGambler:ResetStats()
 	table.wipe(PlayerSession)
 
 	self:UpdateBasicStats()
+
 	print(L.STATS_RESET)
 end
 
@@ -257,8 +256,10 @@ function vGambler:SetupDashboardHeader(page)
 	local SessionToggle = CreateFrame("Frame", nil, HeaderBar)
 	SessionToggle:SetSize(173, 32)
 	SessionToggle:SetPoint("RIGHT", HeaderBar, "RIGHT", 0, 0)
+
 	local Toggle = self:AddGameCheckbox({}, SessionToggle, L.SESSION_STATS, self.Settings.StatDisplay, self.UpdateStatDisplay)
 	Toggle:SetPoint("TOPLEFT", SessionToggle, 4, -4)
+
 	table.insert(DashboardToggles, Toggle)
 
 	return HeaderBar
@@ -669,7 +670,7 @@ function vGambler:ResetPlayerStats()
 	if vGamblerPlayers then
 		vGamblerPlayers = {}
 		table.wipe(PlayerSession)
-		
+
 		vGambler:UpdateBasicStats()
 		vGambler:UpdateStatGrid()
 	end
