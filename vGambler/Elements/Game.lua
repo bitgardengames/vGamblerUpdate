@@ -80,6 +80,7 @@ vGambler.EventGroups = {
 function vGambler:ResetGame() -- Resets the game to its initial state, clearing all data, and enabling/disabling relevant buttons
 	local GameChannel = self.GameChannel or self.Settings.Channel
 
+	self:ClearPendingAction(false)
 	self:UnregisterEvent("CHAT_MSG_SYSTEM")
 
 	self.Rolled = 0
@@ -458,10 +459,12 @@ function vGambler:ChatMessageEvent(message, sender, lang, channel, player, flags
 		local Banned, Reason = self:IsBanned(sender)
 
 		if (not Banned) then
-			self:AddPlayer(sender, guid)
+			self.Events.AddPlayer(self, string.format("%s\\%s", sender, guid))
 
 			self:SendEvent("AddPlayer", string.format("%s\\%s", sender, guid))
 		else
+			self:SendActionResult(sender, "join", "rejected")
+
 			if (Reason == true) then -- No reason specified for this player being banned.
 				self:SendMessage(string.format(L.BANNED_FROM_ENTERING, sender))
 			else -- Let them know why they were banned.
@@ -469,10 +472,10 @@ function vGambler:ChatMessageEvent(message, sender, lang, channel, player, flags
 			end
 		end
 	elseif (message == self.Settings.LeaveCommand) then
-		if self:RemovePlayer(sender) then
-			self:AddStat("withdraw", 1)
-
+		if self.Events.RemovePlayer(self, sender) then
 			self:SendEvent("RemovePlayer", sender)
+		else
+			self:SendActionResult(sender, "withdraw", "rejected")
 		end
 	end
 end
