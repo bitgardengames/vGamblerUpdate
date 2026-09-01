@@ -47,12 +47,18 @@ vGambler.Events.Message = function(self, message)
 	self.ChatWindow:AddMessage(message)
 end
 
-vGambler.Events.NewGame = function(self, args)
+vGambler.Events.NewGame = function(self, args, sender)
 	if self.Host then
 		return
 	end
 
-	local Leader, Channel, Wager = string.match(args, "([^\\]+)\\(%d+)\\(%d+)")
+	local Leader, Channel, Wager = string.match(args, "^([^\\]+)\\(%d+)\\(%d+)$")
+	Channel = tonumber(Channel)
+	Wager = tonumber(Wager)
+
+	if (not Leader or Leader == "" or Leader ~= sender or not Channel or not self.EventGroups[Channel] or not Wager or Wager <= 0) then
+		return
+	end
 
 	self:DisableGameButton("Start")
 	self:DisableGameButton("RollValue")
@@ -65,8 +71,8 @@ vGambler.Events.NewGame = function(self, args)
 	self.Window.PlayButtons:Show()
 
 	self.Host = Leader
-	self.GameChannel = tonumber(Channel)
-	self.GameWager = tonumber(Wager)
+	self.GameChannel = Channel
+	self.GameWager = Wager
 	self.Rolled = 0
 	self.Locked = false
 	self.Players = table.wipe(self.Players)
@@ -273,7 +279,7 @@ function vGambler:CHAT_MSG_ADDON(prefix, message, chattype, sender)
 			self:CreateWindow()
 		end
 
-		self.Events[Event](self, Args)
+		self.Events[Event](self, Args, sender)
 	end
 end
 
