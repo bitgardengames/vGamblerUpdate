@@ -48,6 +48,10 @@ vGambler.Events.Message = function(self, message)
 end
 
 vGambler.Events.NewGame = function(self, args)
+	if self.Host then
+		return
+	end
+
 	local Leader, Channel, Wager = string.match(args, "([^\\]+)\\(%d+)\\(%d+)")
 
 	self:DisableGameButton("Start")
