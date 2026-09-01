@@ -160,7 +160,6 @@ function vGambler:SetupAboutPage(page)
 	for _, stat in ipairs({"topwager", "topwin", "toppayout", "sessiongames"}) do
 		page.Stats[stat] = self:AddStatLine(page.Performance, Performance, stat)
 	end
-	self:AddGameHeader(page.Performance, Performance, L.PLAYER_RECORDS)
 	self:AddGameHeader(page.Performance, Performance, L.BIGGEST_WINNER)
 	page.Stats["biggestwinner"] = self:AddStatLine(page.Performance, Performance, "biggestwinner")
 	self:AddGameHeader(page.Performance, Performance, L.BIGGEST_LOSER)

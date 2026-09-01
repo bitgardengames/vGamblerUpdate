@@ -480,6 +480,14 @@ function vGambler:OnStatCategoryMouseUp()
 	LastSorter = self
 end
 
+function vGambler:StatCategoryOnEnter()
+	self.Label:SetText((string.gsub(self.LabelText, "|cff%x%x%x%x%x%x", "|cffffffff")))
+end
+
+function vGambler:StatCategoryOnLeave()
+	self.Label:SetText(self.LabelText)
+end
+
 function vGambler:SetupStatsPage(page)
 	local HeaderBar = self:SetupDashboardHeader(page)
 
@@ -502,6 +510,8 @@ function vGambler:SetupStatsPage(page)
 	Player:SetPoint("LEFT", StatArea.Header, 0, 0)
 	Player.SortMode = "Name"
 	Player:SetScript("OnMouseUp", self.OnStatCategoryMouseUp)
+	Player:SetScript("OnEnter", self.StatCategoryOnEnter)
+	Player:SetScript("OnLeave", self.StatCategoryOnLeave)
 	Player:HookScript("OnMouseUp", self.WindowButtonMouseUp)
 	Player:HookScript("OnMouseDown", self.WindowButtonMouseDown)
 
@@ -510,13 +520,16 @@ function vGambler:SetupStatsPage(page)
 	Player.Label:SetFont(self.Font, self.Settings.FontSize)
 	Player.Label:SetShadowColor(0.029, 0.029, 0.051)
 	Player.Label:SetShadowOffset(0, -1)
-	Player.Label:SetText(L.PLAYER_HEADER)
+	Player.LabelText = L.PLAYER_HEADER
+	Player.Label:SetText(Player.LabelText)
 
 	local Wins = CreateFrame("Frame", nil, StatArea.Header)
 	Wins:SetSize(67, 24)
 	Wins:SetPoint("LEFT", Player, "RIGHT", 4, 0)
 	Wins.SortMode = "Wins"
 	Wins:SetScript("OnMouseUp", self.OnStatCategoryMouseUp)
+	Wins:SetScript("OnEnter", self.StatCategoryOnEnter)
+	Wins:SetScript("OnLeave", self.StatCategoryOnLeave)
 	Wins:HookScript("OnMouseUp", self.WindowButtonMouseUp)
 	Wins:HookScript("OnMouseDown", self.WindowButtonMouseDown)
 
@@ -525,13 +538,16 @@ function vGambler:SetupStatsPage(page)
 	Wins.Label:SetFont(self.Font, self.Settings.FontSize)
 	Wins.Label:SetShadowColor(0.029, 0.029, 0.051)
 	Wins.Label:SetShadowOffset(0, -1)
-	Wins.Label:SetText(L.WINS_HEADER)
+	Wins.LabelText = L.WINS_HEADER
+	Wins.Label:SetText(Wins.LabelText)
 
 	local WinPercent = CreateFrame("Frame", nil, StatArea.Header)
 	WinPercent:SetSize(87, 24)
 	WinPercent:SetPoint("LEFT", Wins, "RIGHT", 4, 0)
 	WinPercent.SortMode = "WinPercent"
 	WinPercent:SetScript("OnMouseUp", self.OnStatCategoryMouseUp)
+	WinPercent:SetScript("OnEnter", self.StatCategoryOnEnter)
+	WinPercent:SetScript("OnLeave", self.StatCategoryOnLeave)
 	WinPercent:HookScript("OnMouseUp", self.WindowButtonMouseUp)
 	WinPercent:HookScript("OnMouseDown", self.WindowButtonMouseDown)
 
@@ -540,13 +556,16 @@ function vGambler:SetupStatsPage(page)
 	WinPercent.Label:SetFont(self.Font, self.Settings.FontSize)
 	WinPercent.Label:SetShadowColor(0.029, 0.029, 0.051)
 	WinPercent.Label:SetShadowOffset(0, -1)
-	WinPercent.Label:SetText(L.WIN_PERCENT_HEADER)
+	WinPercent.LabelText = L.WIN_PERCENT_HEADER
+	WinPercent.Label:SetText(WinPercent.LabelText)
 
 	local Earnings = CreateFrame("Frame", nil, StatArea.Header)
 	Earnings:SetSize(68, 24)
 	Earnings:SetPoint("LEFT", WinPercent, "RIGHT", 4, 0)
 	Earnings.SortMode = "Earnings"
 	Earnings:SetScript("OnMouseUp", self.OnStatCategoryMouseUp)
+	Earnings:SetScript("OnEnter", self.StatCategoryOnEnter)
+	Earnings:SetScript("OnLeave", self.StatCategoryOnLeave)
 	Earnings:HookScript("OnMouseUp", self.WindowButtonMouseUp)
 	Earnings:HookScript("OnMouseDown", self.WindowButtonMouseDown)
 
@@ -555,7 +574,8 @@ function vGambler:SetupStatsPage(page)
 	Earnings.Label:SetFont(self.Font, self.Settings.FontSize)
 	Earnings.Label:SetShadowColor(0.029, 0.029, 0.051)
 	Earnings.Label:SetShadowOffset(0, -1)
-	Earnings.Label:SetText(L.EARNINGS_HEADER)
+	Earnings.LabelText = L.EARNINGS_HEADER
+	Earnings.Label:SetText(Earnings.LabelText)
 
 	page.StatArea = StatArea
 
