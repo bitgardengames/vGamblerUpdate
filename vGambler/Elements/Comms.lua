@@ -10,6 +10,61 @@ vGambler.Events = {}
 vGambler.PendingMessages = {}
 
 local PendingMessageLimit = 50
+local PendingActionTimeout = 5
+
+local function IsLocalPlayerInRoster(self)
+	local PlayerName = UnitName("player")
+
+	for i = 1, #self.Players do
+		if (self.Players[i].Name == PlayerName) then
+			return true
+		end
+	end
+
+	return false
+end
+
+function vGambler:RestorePlayButtons()
+	if self.Locked then
+		self:DisablePlayButton("Join")
+		self:DisablePlayButton("Withdraw")
+	elseif IsLocalPlayerInRoster(self) then
+		self:DisablePlayButton("Join")
+		self:EnablePlayButton("Withdraw")
+	else
+		self:EnablePlayButton("Join")
+		self:DisablePlayButton("Withdraw")
+	end
+end
+
+function vGambler:ClearPendingAction(restoreButtons)
+	self.PendingAction = nil
+	self.PendingActionToken = (self.PendingActionToken or 0) + 1
+
+	if restoreButtons and self.Window and self.Window.PlayButtons:IsShown() then
+		self:RestorePlayButtons()
+	end
+end
+
+function vGambler:SetPendingAction(action)
+	if self.PendingAction then
+		return false
+	end
+
+	self.PendingAction = action
+	self.PendingActionToken = (self.PendingActionToken or 0) + 1
+	local Token = self.PendingActionToken
+
+	self:DisablePlayButton(action == "join" and "Join" or "Withdraw")
+
+	C_Timer.After(PendingActionTimeout, function()
+		if self.PendingAction == action and self.PendingActionToken == Token then
+			self:ClearPendingAction(true)
+		end
+	end)
+
+	return true
+end
 
 local function ParseMatchPlayers(fields, firstPlayer)
 	local Players = {}
@@ -60,6 +115,8 @@ vGambler.Events.NewGame = function(self, args, sender)
 		return
 	end
 
+	self:ClearPendingAction(false)
+
 	self:DisableGameButton("Start")
 	self:DisableGameButton("RollValue")
 	self:DisableGameButton("Channel")
@@ -83,6 +140,7 @@ vGambler.Events.NewGame = function(self, args, sender)
 end
 
 vGambler.Events.ResetGame = function(self)
+	self:ClearPendingAction(false)
 	self:RemoveAllPlayers()
 	self.Players = table.wipe(self.Players)
 	self:UnregisterEvent("CHAT_MSG_SYSTEM")
@@ -108,22 +166,38 @@ vGambler.Events.AddPlayer = function(self, args)
 	self:AddPlayer(Name, GUID)
 
 	if (Name == UnitName("player")) then
+		self:ClearPendingAction(false)
 		self:DisablePlayButton("Join")
 		self:EnablePlayButton("Withdraw")
 	end
 end
 
 vGambler.Events.RemovePlayer = function(self, name)
-	if self:RemovePlayer(name) then
+	local Removed = self:RemovePlayer(name)
+
+	if Removed then
 		self:AddStat("withdraw", 1)
 	end
 
 	if (name == UnitName("player")) then
+		self:ClearPendingAction(false)
 		self:EnablePlayButton("Join")
 		self:DisablePlayButton("Withdraw")
 	end
 
 	self.Window.Label:SetText(string.format(L.WINDOW_PROGRESS, self.Rolled or 0, #self.Players))
+
+	return Removed
+end
+
+vGambler.Events.ActionResult = function(self, args)
+	local PlayerName, Action, Result = string.match(args, "^([^\\]+)\\([^\\]+)\\([^\\]+)$")
+
+	if (PlayerName ~= UnitName("player") or Result ~= "rejected" or self.PendingAction ~= Action) then
+		return
+	end
+
+	self:ClearPendingAction(true)
 end
 
 vGambler.Events.CloseGame = function(self)
@@ -295,16 +369,32 @@ function vGambler:SendEvent(event, args)
 	CT:SendAddonMessage("NORMAL", "vGambler", Message, self.ChannelSelections[Channel])
 end
 
+function vGambler:SendActionResult(playerName, action, result)
+	local Payload = string.format("%s\\%s\\%s", playerName, action, result)
+
+	-- CHAT_MSG_ADDON deliberately ignores our own messages, so deliver a result
+	-- locally when the host is also the requester.
+	if playerName == UnitName("player") then
+		self.Events.ActionResult(self, Payload)
+	end
+
+	self:SendEvent("ActionResult", Payload)
+end
+
 function vGambler:JoinGame()
+	if not self:SetPendingAction("join") then
+		return
+	end
+
 	SendChatMessage(self.Settings.EnterCommand, self.ChannelSelections[self.GameChannel or self.Settings.Channel])
-	self:DisablePlayButton("Join")
-	self:EnablePlayButton("Withdraw")
 end
 
 function vGambler:WithdrawGame()
+	if not self:SetPendingAction("withdraw") then
+		return
+	end
+
 	SendChatMessage(self.Settings.LeaveCommand, self.ChannelSelections[self.GameChannel or self.Settings.Channel])
-	self:EnablePlayButton("Join")
-	self:DisablePlayButton("Withdraw")
 end
 
 function vGambler:RollGame()
