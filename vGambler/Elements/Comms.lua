@@ -41,7 +41,7 @@ function vGambler:ClearPendingAction(restoreButtons)
 	self.PendingAction = nil
 	self.PendingActionToken = (self.PendingActionToken or 0) + 1
 
-	if restoreButtons and self.Window and self.Window.PlayButtons:IsShown() then
+	if (restoreButtons and self.Window and self.Window.PlayButtons:IsShown()) then
 		self:RestorePlayButtons()
 	end
 end
@@ -53,6 +53,7 @@ function vGambler:SetPendingAction(action)
 
 	self.PendingAction = action
 	self.PendingActionToken = (self.PendingActionToken or 0) + 1
+
 	local Token = self.PendingActionToken
 
 	self:DisablePlayButton(action == "join" and "Join" or "Withdraw")
@@ -372,9 +373,8 @@ end
 function vGambler:SendActionResult(playerName, action, result)
 	local Payload = string.format("%s\\%s\\%s", playerName, action, result)
 
-	-- CHAT_MSG_ADDON deliberately ignores our own messages, so deliver a result
-	-- locally when the host is also the requester.
-	if playerName == UnitName("player") then
+	-- CHAT_MSG_ADDON deliberately ignores our own messages, so deliver a result locally when the host is also the requester.
+	if (playerName == UnitName("player")) then
 		self.Events.ActionResult(self, Payload)
 	end
 
@@ -382,7 +382,7 @@ function vGambler:SendActionResult(playerName, action, result)
 end
 
 function vGambler:JoinGame()
-	if not self:SetPendingAction("join") then
+	if (not self:SetPendingAction("join")) then
 		return
 	end
 
