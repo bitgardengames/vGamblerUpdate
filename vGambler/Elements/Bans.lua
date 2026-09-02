@@ -254,16 +254,9 @@ end
 
 function vGambler:BanInputOnEnterPressed()
 	local Text = self:GetText()
-	local Page = vGambler:GetPage("Bans")
 
-	if string.find(Text, "%S") then
-		Page.BanButton:SetBackdropColor(0.839, 0.270, 0.270)
-		Page.BanButton:SetBackdropBorderColor(0.839, 0.270, 0.270)
-	else
+	if not string.find(Text, "%S") then
 		self:SetText(self.DefaultText)
-
-		Page.BanButton:SetBackdropColor(0.839, 0.270, 0.270)
-		Page.BanButton:SetBackdropBorderColor(0.839, 0.270, 0.270)
 	end
 
 	self:SetAutoFocus(false)
@@ -278,11 +271,6 @@ end
 function vGambler:BanButtonMouseUp()
 	self.Label:ClearAllPoints()
 	self.Label:SetPoint("CENTER", self, 0, -1)
-
-	local Page = vGambler:GetPage("Bans")
-
-	Page.BanButton:SetBackdropColor(0.839, 0.270, 0.270)
-	Page.BanButton:SetBackdropBorderColor(0.839, 0.270, 0.270)
 end
 
 function vGambler:SetupBansPage(page)
@@ -336,9 +324,11 @@ function vGambler:SetupBansPage(page)
 	BanButton:SetSize(60, 24)
 	BanButton:SetPoint("LEFT", ReasonInput, "RIGHT", 4, 0)
 	BanButton:SetBackdrop(self.SmallBackdrop)
-	BanButton:SetBackdropColor(0.839, 0.270, 0.270)
-	BanButton:SetBackdropBorderColor(0.839, 0.270, 0.270)
+	BanButton:SetBackdropColor(0.184, 0.192, 0.211)
+	BanButton:SetBackdropBorderColor(0.184, 0.192, 0.211)
 	BanButton:SetScript("OnMouseUp", vGambler.BanPlayerFromUI)
+	BanButton:SetScript("OnEnter", self.WindowButtonOnEnter)
+	BanButton:SetScript("OnLeave", self.WindowButtonOnLeave)
 	BanButton:HookScript("OnMouseUp", self.BanButtonMouseUp)
 	BanButton:HookScript("OnMouseDown", self.BanButtonMouseDown)
 
@@ -347,6 +337,7 @@ function vGambler:SetupBansPage(page)
 	BanButton.Label:SetFont(self.Font, self.Settings.FontSize)
 	BanButton.Label:SetJustifyH("CENTER")
 	BanButton.Label:SetText(CHAT_BAN)
+	BanButton.Label:SetTextColor(0.839, 0.270, 0.270)
 	BanButton.Label:SetShadowColor(0.029, 0.029, 0.051)
 	BanButton.Label:SetShadowOffset(0, -1)
 
