@@ -28,8 +28,11 @@ vGambler.Settings = {
 
 vGambler.UIStyleSelections = {L.ROUND, L.SQUARE} -- Localize these
 
+local fontObjectIndex = 0
+
 function vGambler:SetFont(fontString, path, size, shadowRed, shadowGreen, shadowBlue, shadowX, shadowY)
-	local font = CreateFont()
+	fontObjectIndex = fontObjectIndex + 1
+	local font = CreateFont(Name .. "Font" .. fontObjectIndex)
 	font:SetFont(path, size)
 	font:SetShadowColor(shadowRed or 0.029, shadowGreen or 0.029, shadowBlue or 0.051)
 	font:SetShadowOffset(shadowX or 0, shadowY or -1)
