@@ -135,7 +135,10 @@ function vGambler:SetupHistoryPage(page)
 
 		Line.Label = Line:CreateFontString(nil, "OVERLAY")
 		Line.Label:SetPoint("LEFT", Line, 5, -0.5)
-		self:SetFont(Line.Label, self.Font, self.Settings.FontSize)
+		Line.Label:SetFont(self.Font, self.Settings.FontSize)
+		Line.Label:SetShadowColor(0.029, 0.029, 0.051)
+		Line.Label:SetShadowOffset(0, -1)
+
 		table.insert(HistoryLines, Line)
 	end
 

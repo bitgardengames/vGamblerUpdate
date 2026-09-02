@@ -28,14 +28,6 @@ vGambler.Settings = {
 
 vGambler.UIStyleSelections = {L.ROUND, L.SQUARE} -- Localize these
 
-function vGambler:SetFont(fontString, path, size, shadowRed, shadowGreen, shadowBlue, shadowX, shadowY)
-	local font = CreateFont()
-	font:SetFont(path, size)
-	font:SetShadowColor(shadowRed or 0.029, shadowGreen or 0.029, shadowBlue or 0.051)
-	font:SetShadowOffset(shadowX or 0, shadowY or -1)
-	fontString:SetFontObject(font)
-end
-
 function vGambler:CheckBoxOnMouseUp()
 	if self.Toggled then
 		self.Toggled = false
@@ -74,8 +66,10 @@ function vGambler:AddGameCheckbox(t, parent, text, value, func)
 
 	Line.Label = Line:CreateFontString(nil, "OVERLAY")
 	Line.Label:SetPoint("LEFT", Line, 5, -0.5)
-	self:SetFont(Line.Label, self.Font, self.Settings.FontSize)
+	Line.Label:SetFont(self.Font, self.Settings.FontSize)
 	Line.Label:SetText(text)
+	Line.Label:SetShadowColor(0.029, 0.029, 0.051)
+	Line.Label:SetShadowOffset(0, -1)
 
 	Line.Box = CreateFrame("Frame", nil, Line, "BackdropTemplate")
 	Line.Box:SetSize(18, 18)

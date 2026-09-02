@@ -263,8 +263,10 @@ function vGambler:SetupDashboardHeader(page)
 
 	HeaderBar.Label = HeaderBar:CreateFontString(nil, "OVERLAY")
 	HeaderBar.Label:SetPoint("LEFT", HeaderBar, 7, -0.5)
-	self:SetFont(HeaderBar.Label, self.Font, self.Settings.FontSize)
+	HeaderBar.Label:SetFont(self.Font, self.Settings.FontSize)
 	HeaderBar.Label:SetText(string.format("|cffFFC44D%s|r", L.STAT_VIEW))
+	HeaderBar.Label:SetShadowColor(0.029, 0.029, 0.051)
+	HeaderBar.Label:SetShadowOffset(0, -1)
 
 	local SessionToggle = CreateFrame("Frame", nil, HeaderBar)
 	SessionToggle:SetSize(173, 32)
@@ -299,22 +301,32 @@ function vGambler:AddLongStatLine(parent)
 
 	Line.Name = Line:CreateFontString(nil, "OVERLAY")
 	Line.Name:SetPoint("LEFT", Line, 5, -0.5)
-	self:SetFont(Line.Name, self.Font, self.Settings.FontSize)
+	Line.Name:SetFont(self.Font, self.Settings.FontSize)
 	Line.Name:SetJustifyH("LEFT")
+	Line.Name:SetShadowColor(0.029, 0.029, 0.051)
+	Line.Name:SetShadowOffset(0, -1)
 
 	Line.Wins = Line:CreateFontString(nil, "OVERLAY")
 	Line.Wins:SetPoint("LEFT", Line, 120, -0.5)
-	self:SetFont(Line.Wins, self.Font, self.Settings.FontSize)
+	Line.Wins:SetFont(self.Font, self.Settings.FontSize)
 	Line.Wins:SetJustifyH("LEFT")
+	Line.Wins:SetShadowColor(0.029, 0.029, 0.051)
+	Line.Wins:SetShadowOffset(0, -1)
 
 	Line.WinPercent = Line:CreateFontString(nil, "OVERLAY")
 	Line.WinPercent:SetPoint("RIGHT", Line, -106, -0.5)
 	Line.WinPercent:SetJustifyH("RIGHT")
-	self:SetFont(Line.WinPercent, self.Font, self.Settings.FontSize)
+	Line.WinPercent:SetFont(self.Font, self.Settings.FontSize)
+	Line.WinPercent:SetShadowColor(0.029, 0.029, 0.051)
+	Line.WinPercent:SetShadowOffset(0, -1)
+
 	Line.Earnings = Line:CreateFontString(nil, "OVERLAY")
 	Line.Earnings:SetPoint("RIGHT", Line, -5, -0.5)
 	Line.Earnings:SetJustifyH("RIGHT")
-	self:SetFont(Line.Earnings, self.Font, self.Settings.FontSize)
+	Line.Earnings:SetFont(self.Font, self.Settings.FontSize)
+	Line.Earnings:SetShadowColor(0.029, 0.029, 0.051)
+	Line.Earnings:SetShadowOffset(0, -1)
+
 	table.insert(StatLines, Line)
 end
 
@@ -521,7 +533,9 @@ function vGambler:SetupStatsPage(page)
 
 	Player.Label = Player:CreateFontString(nil, "OVERLAY")
 	Player.Label:SetPoint("LEFT", Player, 5, -1)
-	self:SetFont(Player.Label, self.Font, self.Settings.FontSize)
+	Player.Label:SetFont(self.Font, self.Settings.FontSize)
+	Player.Label:SetShadowColor(0.029, 0.029, 0.051)
+	Player.Label:SetShadowOffset(0, -1)
 	Player.LabelText = L.PLAYER_HEADER
 	Player.Label:SetText(Player.LabelText)
 
@@ -537,7 +551,9 @@ function vGambler:SetupStatsPage(page)
 
 	Wins.Label = Wins:CreateFontString(nil, "OVERLAY")
 	Wins.Label:SetPoint("LEFT", Wins, 5, -1)
-	self:SetFont(Wins.Label, self.Font, self.Settings.FontSize)
+	Wins.Label:SetFont(self.Font, self.Settings.FontSize)
+	Wins.Label:SetShadowColor(0.029, 0.029, 0.051)
+	Wins.Label:SetShadowOffset(0, -1)
 	Wins.LabelText = L.WINS_HEADER
 	Wins.Label:SetText(Wins.LabelText)
 
@@ -553,7 +569,9 @@ function vGambler:SetupStatsPage(page)
 
 	WinPercent.Label = WinPercent:CreateFontString(nil, "OVERLAY")
 	WinPercent.Label:SetPoint("LEFT", WinPercent, 5, -1)
-	self:SetFont(WinPercent.Label, self.Font, self.Settings.FontSize)
+	WinPercent.Label:SetFont(self.Font, self.Settings.FontSize)
+	WinPercent.Label:SetShadowColor(0.029, 0.029, 0.051)
+	WinPercent.Label:SetShadowOffset(0, -1)
 	WinPercent.LabelText = L.WIN_PERCENT_HEADER
 	WinPercent.Label:SetText(WinPercent.LabelText)
 
@@ -569,7 +587,9 @@ function vGambler:SetupStatsPage(page)
 
 	Earnings.Label = Earnings:CreateFontString(nil, "OVERLAY")
 	Earnings.Label:SetPoint("LEFT", Earnings, 5, -1)
-	self:SetFont(Earnings.Label, self.Font, self.Settings.FontSize)
+	Earnings.Label:SetFont(self.Font, self.Settings.FontSize)
+	Earnings.Label:SetShadowColor(0.029, 0.029, 0.051)
+	Earnings.Label:SetShadowOffset(0, -1)
 	Earnings.LabelText = L.EARNINGS_HEADER
 	Earnings.Label:SetText(Earnings.LabelText)
 
