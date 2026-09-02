@@ -18,3 +18,10 @@ inside them:
 The host ignores its own addon result messages and accounts locally. Other clients
 account the received events through the same routines, keeping saved aggregate and
 player statistics identical for the same sequence of match events.
+
+## Pairwise ledger
+
+Each resolved match also updates `vGamblerPlayerBalances` with equal and opposite
+balances for its winner and loser. Hovering a player name on the leaderboard shows
+these all-time balances, grouped into winnings from and losses to each opponent.
+The ledger remains all-time even while the leaderboard is displaying session stats.
