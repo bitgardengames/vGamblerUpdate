@@ -47,8 +47,6 @@ function vGambler:HistoryLineOnEnter()
 	vGambler.Tooltip:SetOwner(self, "ANCHOR_NONE")
 	vGambler.Tooltip:SetPoint("LEFT", self, "RIGHT", 8, 0)
 	vGambler.Tooltip:ClearLines()
-	vGambler.Tooltip:AddLine(string.format(L.MATCH_NUMBER, self.MatchNumber), 1, 1, 1)
-
 	if Match.timestamp then
 		vGambler.Tooltip:AddDoubleLine(L.MATCH_PLAYED, date(L.MATCH_DATE_FORMAT, Match.timestamp), 1, 1, 1, 1, 1, 1)
 	end
@@ -78,14 +76,13 @@ function vGambler:SetHistoryScrollOffset(offset)
 	Page.HistoryScroll:SetValue(offset)
 
 	for i = 1, #HistoryLines do
-		local MatchNumber = #self.MatchHistory - offset - i + 2
-		local Match = self.MatchHistory[MatchNumber]
+		local MatchIndex = #self.MatchHistory - offset - i + 2
+		local Match = self.MatchHistory[MatchIndex]
 		local Line = HistoryLines[i]
 
 		if Match then
-			Line.MatchIndex = MatchNumber
-			Line.MatchNumber = MatchNumber
-			Line.Label:SetText(string.format(L.MATCH_SUMMARY, MatchNumber, Match.winner, Match.loser, self:Comma(Match.value)))
+			Line.MatchIndex = MatchIndex
+			Line.Label:SetText(string.format(L.MATCH_SUMMARY, Match.winner, Match.loser, self:Comma(Match.value)))
 			Line:Show()
 		else
 			Line:Hide()
