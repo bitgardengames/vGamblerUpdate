@@ -599,7 +599,7 @@ function vGambler:SetupStatsPage(page)
 	StatAreaScroll:SetWidth(12)
 	StatAreaScroll:SetPoint("TOPRIGHT", StatArea.Header, "BOTTOMRIGHT", 1, 0)
 	StatAreaScroll:SetPoint("BOTTOMRIGHT", StatArea, -3, 16)
-	StatAreaScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
+	StatAreaScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
 	StatAreaScroll:SetOrientation("VERTICAL")
 	StatAreaScroll:SetValueStep(1)
 	StatAreaScroll:SetObeyStepOnDrag(true)
@@ -619,18 +619,13 @@ function vGambler:SetupStatsPage(page)
 	StatAreaScrollThumb:SetSize(32, 32)
 	StatAreaScrollThumb:SetVertexColor(0.25, 0.266, 0.294)
 
-	if (self.Settings.UIStyle == 1) then
-		StatAreaScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
-		StatAreaScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
-	else
-		StatAreaScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
-	end
+	StatAreaScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
 
 	local StatWidthScroll = CreateFrame("Slider", nil, StatArea)
 	StatWidthScroll:SetHeight(12)
 	StatWidthScroll:SetPoint("BOTTOMLEFT", StatArea, 1, 4)
 	StatWidthScroll:SetPoint("BOTTOMRIGHT", StatArea, -17, 4)
-	StatWidthScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumbHoriz.tga")
+	StatWidthScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumbHoriz.tga")
 	StatWidthScroll:SetOrientation("HORIZONTAL")
 	StatWidthScroll:SetValueStep(1)
 	StatWidthScroll:SetObeyStepOnDrag(true)
@@ -650,12 +645,7 @@ function vGambler:SetupStatsPage(page)
 	StatWidthScrollThumb:SetSize(32, 32)
 	StatWidthScrollThumb:SetVertexColor(0.25, 0.266, 0.294)
 
-	if (self.Settings.UIStyle == 1) then
-		StatWidthScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumbHoriz.tga")
-		StatWidthScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumbHoriz.tga")
-	else
-		StatWidthScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumbHoriz.tga")
-	end
+	StatWidthScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumbHoriz.tga")
 
 	self:PopulateStatLines(1)
 end

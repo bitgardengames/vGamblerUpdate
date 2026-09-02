@@ -193,7 +193,7 @@ function vGambler:SetupControlsPage(page)
 	GameAreaScroll:SetWidth(12)
 	GameAreaScroll:SetPoint("TOPRIGHT", GameArea, -3, -0)
 	GameAreaScroll:SetPoint("BOTTOMRIGHT", GameArea, -3, 0)
-	GameAreaScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
+	GameAreaScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
 	GameAreaScroll:SetOrientation("VERTICAL")
 	GameAreaScroll:SetValueStep(1)
 	GameAreaScroll:SetObeyStepOnDrag(true)
@@ -211,12 +211,7 @@ function vGambler:SetupControlsPage(page)
 	GameAreaScrollThumb:SetSize(32, 32)
 	GameAreaScrollThumb:SetVertexColor(0.25, 0.266, 0.294)
 
-	if (self.Settings.UIStyle == 1) then
-		GameAreaScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
-		GameAreaScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
-	else
-		GameAreaScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
-	end
+	GameAreaScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
 
 	self.Window.GameArea = GameArea
 	self.Window.GameArea.ScrollBar = GameAreaScroll
@@ -269,7 +264,7 @@ function vGambler:SetupControlsPage(page)
 	ScrollBar:SetWidth(12)
 	ScrollBar:SetPoint("TOPRIGHT", GameChat, -3, 0)
 	ScrollBar:SetPoint("BOTTOMRIGHT", GameChat, -3, 0)
-	ScrollBar:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
+	ScrollBar:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
 	ScrollBar:SetOrientation("VERTICAL")
 	ScrollBar:SetValueStep(1)
 	ScrollBar:SetObeyStepOnDrag(true)
@@ -290,12 +285,7 @@ function vGambler:SetupControlsPage(page)
 	Thumb:SetSize(32, 32)
 	Thumb:SetVertexColor(0.25, 0.266, 0.294)
 
-	if (self.Settings.UIStyle == 1) then
-		ScrollBar:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
-		Thumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
-	else
-		Thumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
-	end
+	Thumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
 
 	self.ChatWindow:AddMessage(L.WELCOME)
 
