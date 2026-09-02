@@ -7,37 +7,6 @@ LSM:Register("font", "PT Sans", "Interface\\Addons\\vGambler\\Assets\\PTSans.ttf
 
 vGambler.LSMFonts = LSM:HashTable("font")
 vGambler.Blank = "Interface\\AddOns\\vGambler\\Assets\\HydraUIBlank.tga"
-vGambler.FontObjects = {}
-vGambler.FontObjectCount = 0
-
--- FontInstance shadow setters no longer reliably affect text that was configured
--- directly with SetFont. Keep the complete font style on reusable Font objects so
--- every FontString, EditBox, and ScrollingMessageFrame receives its shadow.
-function vGambler:ApplyFont(region, path, size, flags, shadowStyle)
-	flags = flags or ""
-	shadowStyle = shadowStyle or "ui"
-
-	local key = table.concat({path, size, flags, shadowStyle}, "\031")
-	local fontObject = self.FontObjects[key]
-
-	if (not fontObject) then
-		self.FontObjectCount = self.FontObjectCount + 1
-		fontObject = CreateFont("vGamblerFont" .. self.FontObjectCount)
-		fontObject:SetFont(path, size, flags)
-
-		if (shadowStyle == "game") then
-			fontObject:SetShadowColor(0, 0, 0)
-			fontObject:SetShadowOffset(1, -1)
-		else
-			fontObject:SetShadowColor(0.029, 0.029, 0.051)
-			fontObject:SetShadowOffset(0, -1)
-		end
-
-		self.FontObjects[key] = fontObject
-	end
-
-	region:SetFontObject(fontObject)
-end
 
 --[[
 	To do
@@ -268,8 +237,10 @@ function vGambler:AddGameHeader(t, parent, name)
 
 	Header.Label = Header:CreateFontString(nil, "OVERLAY")
 	Header.Label:SetPoint("LEFT", Header, 6, -0.5)
-	vGambler:ApplyFont(Header.Label, self.Font, self.Settings.FontSize)
+	Header.Label:SetFont(self.Font, self.Settings.FontSize)
 	Header.Label:SetText(string.format("|cffFFC44D%s|r", name))
+	Header.Label:SetShadowColor(0.029, 0.029, 0.051)
+	Header.Label:SetShadowOffset(0, -1)
 
 	table.insert(t, Header)
 
@@ -291,8 +262,10 @@ function vGambler:AddGameButton(t, parent, id, name, func)
 
 	Button.Label = Button:CreateFontString(nil, "OVERLAY")
 	Button.Label:SetPoint("LEFT", Button, 5, -0.5)
-	vGambler:ApplyFont(Button.Label, self.Font, self.Settings.FontSize)
+	Button.Label:SetFont(self.Font, self.Settings.FontSize)
 	Button.Label:SetText(name)
+	Button.Label:SetShadowColor(0.029, 0.029, 0.051)
+	Button.Label:SetShadowOffset(0, -1)
 
 	Button.Animation = LibMotion:CreateAnimation(Button.Label, "color")
 	Button.Animation:SetColorType("text")
@@ -331,7 +304,9 @@ function vGambler:AddGameInput(t, parent, id, value, func)
 	Input:SetBackdrop(self.SmallBackdrop)
 	Input:SetBackdropColor(0.184, 0.192, 0.211)
 	Input:SetBackdropBorderColor(0.184, 0.192, 0.211)
-	vGambler:ApplyFont(Input, self.Font, self.Settings.FontSize, "")
+	Input:SetFont(self.Font, self.Settings.FontSize, "")
+	Input:SetShadowColor(0.029, 0.029, 0.051)
+	Input:SetShadowOffset(0, -1)
 	Input:SetText(value)
 	Input:SetAutoFocus(false)
 	Input:SetTextInsets(5, -5, 2, 0)
@@ -380,7 +355,7 @@ function vGambler:FontDropdownItemOnMouseUp()
 		self.Button.List:Hook(self.Index)
 	end
 
-	vGambler:ApplyFont(self.Button.Label, vGambler.LSMFonts[self.Index], 12)
+	self.Button.Label:SetFont(vGambler.LSMFonts[self.Index], 12)
 	self.Button.Label:SetText(self.Index)
 
 	if vGambler.Settings.PlaySounds then
@@ -403,8 +378,10 @@ function vGambler:AddGameDropdown(t, parent, id, text, selections, func)
 
 	Button.Label = Button:CreateFontString(nil, "OVERLAY")
 	Button.Label:SetPoint("LEFT", Button, 5, -0.5)
-	vGambler:ApplyFont(Button.Label, self.Font, self.Settings.FontSize)
+	Button.Label:SetFont(self.Font, self.Settings.FontSize)
 	Button.Label:SetText(text)
+	Button.Label:SetShadowColor(0.029, 0.029, 0.051)
+	Button.Label:SetShadowOffset(0, -1)
 
 	if (id == "Channel") then
 		Button.Label:SetTextColor(unpack(self.ChannelColors[self.Settings.Channel]))
@@ -445,8 +422,10 @@ function vGambler:AddGameDropdown(t, parent, id, text, selections, func)
 
 		Button.List[i].Label = Button.List[i]:CreateFontString(nil, "OVERLAY")
 		Button.List[i].Label:SetPoint("LEFT", Button.List[i], 5, -0.5)
-		vGambler:ApplyFont(Button.List[i].Label, self.Font, self.Settings.FontSize)
+		Button.List[i].Label:SetFont(self.Font, self.Settings.FontSize)
 		Button.List[i].Label:SetText(selections[i])
+		Button.List[i].Label:SetShadowColor(0.029, 0.029, 0.051)
+		Button.List[i].Label:SetShadowOffset(0, -1)
 
 		if (id == "Channel") then
 			Button.List[i].Label:SetTextColor(unpack(self.ChannelColors[i]))
@@ -534,9 +513,11 @@ function vGambler:AddFontDropdown(t, parent, id, value, func)
 	Button.Label = Button:CreateFontString(nil, "OVERLAY")
 	Button.Label:SetPoint("LEFT", Button, 5, -0.5)
 	Button.Label:SetSize(Button:GetWidth() - 10, 12)
-	vGambler:ApplyFont(Button.Label, self.LSMFonts[value] or self.LSMFonts["PT Sans"], self.Settings.FontSize)
+	Button.Label:SetFont(self.LSMFonts[value] or self.LSMFonts["PT Sans"], self.Settings.FontSize)
 	Button.Label:SetText(value)
 	Button.Label:SetJustifyH("LEFT")
+	Button.Label:SetShadowColor(0.029, 0.029, 0.051)
+	Button.Label:SetShadowOffset(0, -1)
 
 	Button.Animation = LibMotion:CreateAnimation(Button.Label, "color")
 	Button.Animation:SetColorType("text")
@@ -573,9 +554,11 @@ function vGambler:AddFontDropdown(t, parent, id, value, func)
 		MenuItem.Label = MenuItem:CreateFontString(nil, "OVERLAY")
 		MenuItem.Label:SetPoint("LEFT", MenuItem, 5, 0)
 		MenuItem.Label:SetSize(150, 12)
-		vGambler:ApplyFont(MenuItem.Label, path, 12)
+		MenuItem.Label:SetFont(path, 12)
 		MenuItem.Label:SetText(font)
 		MenuItem.Label:SetJustifyH("LEFT")
+		MenuItem.Label:SetShadowColor(0.029, 0.029, 0.051)
+		MenuItem.Label:SetShadowOffset(0, -1)
 
 		table.insert(Button.List, MenuItem)
 	end
@@ -683,8 +666,10 @@ function vGambler:CreatePage(name, label)
 
 	Tab.Label = Tab:CreateFontString(nil, "OVERLAY")
 	Tab.Label:SetPoint("LEFT", Tab, 5, -0.5)
-	vGambler:ApplyFont(Tab.Label, self.Font, self.Settings.FontSize, "")
+	Tab.Label:SetFont(self.Font, self.Settings.FontSize, "")
 	Tab.Label:SetText(label or name)
+	Tab.Label:SetShadowColor(0.029, 0.029, 0.051)
+	Tab.Label:SetShadowOffset(0, -1)
 
 	local Page = CreateFrame("Frame", nil, self.Window)
 	Page:SetSize(353, 366)
@@ -755,8 +740,10 @@ function vGambler:CreateWindow()
 
 	Window.Label = Header:CreateFontString(nil, "OVERLAY")
 	Window.Label:SetPoint("TOPLEFT", Header, 7, -6)
-	vGambler:ApplyFont(Window.Label, self.Font, 14)
+	Window.Label:SetFont(self.Font, 14)
 	Window.Label:SetText(L.WINDOW_TITLE)
+	Window.Label:SetShadowColor(0.029, 0.029, 0.051)
+	Window.Label:SetShadowOffset(0, -1)
 
 	local Close = CreateFrame("Frame", nil, Header)
 	Close:SetPoint("RIGHT", Header, 0, 0)
@@ -975,12 +962,16 @@ function vGambler:AddPlayerUI()
 
 		Player.Label = Player:CreateFontString(nil, "OVERLAY")
 		Player.Label:SetPoint("LEFT", Player, 5, -0.5)
-		vGambler:ApplyFont(Player.Label, self.GameFont, 12, "", "game")
+		Player.Label:SetFont(self.GameFont, 12)
+		Player.Label:SetShadowColor(0, 0, 0)
+		Player.Label:SetShadowOffset(1, -1)
 
 		Player.RollValue = Player:CreateFontString(nil, "OVERLAY")
 		Player.RollValue:SetPoint("RIGHT", Player, -5, -0.5)
-		vGambler:ApplyFont(Player.RollValue, self.GameFont, 12, "", "game")
+		Player.RollValue:SetFont(self.GameFont, 12)
 		Player.RollValue:SetText("-")
+		Player.RollValue:SetShadowColor(0, 0, 0)
+		Player.RollValue:SetShadowOffset(1, -1)
 	end
 
 	Player.Index = #self.UIPlayers + 1
