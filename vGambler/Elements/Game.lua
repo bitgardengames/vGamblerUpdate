@@ -49,6 +49,7 @@ function vGambler:AccountCompletedGame(winner, loser, high, low, wager, players)
 	self:AddPlayerStat(winner, "earnings", Earnings)
 	self:AddPlayerStat(loser, "losses", 1)
 	self:AddPlayerStat(loser, "loss", Earnings)
+	self:AccountPlayerBalance(winner, loser, Earnings)
 	self:RecordWinningStreak(winner, loser, players)
 
 	if self.TiedGame then
