@@ -19,6 +19,11 @@ local SortDir = 1
 local SortSetting = "Earnings"
 local DashboardToggles = {}
 
+-- This ledger starts empty for users upgrading from versions that did not save
+-- pairwise balances. Match history is intentionally not used to reconstruct it
+-- because history only retains the most recent matches.
+vGamblerPlayerBalances = vGamblerPlayerBalances or {}
+
 function vGambler:GetAggregateStatData()
 	return self.Settings.StatDisplay == true and Session or vGamblerData
 end
@@ -88,6 +93,15 @@ function vGambler:AddPlayerStat(name, stat, value)
 
 	vGamblerPlayers[name][stat] = vGamblerPlayers[name][stat] + value
 	PlayerSession[name][stat] = PlayerSession[name][stat] + value
+end
+
+function vGambler:AccountPlayerBalance(winner, loser, payout)
+	vGamblerPlayerBalances = vGamblerPlayerBalances or {}
+	vGamblerPlayerBalances[winner] = vGamblerPlayerBalances[winner] or {}
+	vGamblerPlayerBalances[loser] = vGamblerPlayerBalances[loser] or {}
+
+	vGamblerPlayerBalances[winner][loser] = (vGamblerPlayerBalances[winner][loser] or 0) + payout
+	vGamblerPlayerBalances[loser][winner] = (vGamblerPlayerBalances[loser][winner] or 0) - payout
 end
 
 function vGambler:AddPlayerMaxStat(name, stat, value)
@@ -209,7 +223,8 @@ vGambler.SortStats = {
 }
 
 function vGambler:ResetStats()
-	vGamblerPlayers = nil
+	vGamblerPlayers = {}
+	vGamblerPlayerBalances = {}
 	table.wipe(PlayerSession)
 
 	self:UpdateBasicStats()
@@ -655,6 +670,7 @@ function vGambler:UpdateStat(stat)
 end
 
 function vGambler:ResetGeneralStats()
+	-- Pairwise balances are player statistics, so a general-stat reset preserves them.
 	if vGamblerData then
 		local Page = vGambler:GetPage("Overview")
 
@@ -667,8 +683,9 @@ function vGambler:ResetGeneralStats()
 end
 
 function vGambler:ResetPlayerStats()
-	if vGamblerPlayers then
+	if vGamblerPlayers or vGamblerPlayerBalances then
 		vGamblerPlayers = {}
+		vGamblerPlayerBalances = {}
 		table.wipe(PlayerSession)
 
 		vGambler:UpdateBasicStats()

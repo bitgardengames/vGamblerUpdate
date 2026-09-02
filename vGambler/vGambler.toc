@@ -3,7 +3,7 @@
 ## Version: 1.0
 ## Title: |cffFFC44DvGambler|r
 ## Notes: A social gambling game for friends, guildmates, and groups
-## SavedVariables: vGamblerBans, vGamblerData, vGamblerPlayers, vGamblerSettings, vGamblerHistory
+## SavedVariables: vGamblerBans, vGamblerData, vGamblerPlayers, vGamblerPlayerBalances, vGamblerSettings, vGamblerHistory
 
 Libs\LibStub.lua
 Libs\CallbackHandler-1.0.lua
