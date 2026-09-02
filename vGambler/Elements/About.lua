@@ -111,16 +111,12 @@ function vGambler:AddStatLine(t, parent, id)
 
 	Line.Left = Line:CreateFontString(nil, "OVERLAY")
 	Line.Left:SetPoint("LEFT", Line, 5, -0.5)
-	Line.Left:SetFont(self.Font, self.Settings.FontSize)
-	Line.Left:SetShadowColor(0.029, 0.029, 0.051)
-	Line.Left:SetShadowOffset(0, -1)
+	vGambler:ApplyFont(Line.Left, self.Font, self.Settings.FontSize)
 
 	Line.Right = Line:CreateFontString(nil, "OVERLAY")
 	Line.Right:SetPoint("RIGHT", Line, -5, -0.5)
 	Line.Right:SetJustifyH("RIGHT")
-	Line.Right:SetFont(self.Font, self.Settings.FontSize)
-	Line.Right:SetShadowColor(0.029, 0.029, 0.051)
-	Line.Right:SetShadowOffset(0, -1)
+	vGambler:ApplyFont(Line.Right, self.Font, self.Settings.FontSize)
 
 	table.insert(t, Line)
 
