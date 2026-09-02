@@ -318,16 +318,6 @@ vGambler.Events.GameTie = function(self, args)
 
 end
 
-vGambler.Events.Toggle = function(self) -- Just a testing event, remove for release
-	if (not self.Window) then
-		self:CreateWindow()
-	end
-
-	if (not self.Window:IsShown()) then
-		self:ShowWindow()
-	end
-end
-
 vGambler.Events.Version = function(self, message)
 	local Version = tonumber(message)
 
