@@ -10,7 +10,6 @@ vGambler.Settings = {
 	MinimapIcon = true,
 	PlaySounds = true,
 	StatDisplay = true, -- true = session, false = total
-	UIStyle = 1, -- 1 = round, 2 = square
 	FadeChat = true,
 	UIFont = "PT Sans",
 	GameFont = "PT Sans",
@@ -25,8 +24,6 @@ vGambler.Settings = {
 	EnterCommand = "1", -- Fun idea, but has problems when players with different commands play together
 	LeaveCommand = "0",
 }
-
-vGambler.UIStyleSelections = {L.ROUND, L.SQUARE} -- Localize these
 
 function vGambler:CheckBoxOnMouseUp()
 	if self.Toggled then
@@ -189,19 +186,6 @@ function vGambler:UpdatePlaySounds(value)
 	vGambler.Settings.PlaySounds = value
 end
 
-function vGambler:UpdateUIStyle(dropdown, value)
-	if (not vGamblerSettings) then
-		vGamblerSettings = {}
-	end
-
-	vGamblerSettings.UIStyle = value
-	vGambler.Settings.UIStyle = value
-
-	dropdown.Label:SetText(vGambler.UIStyleSelections[value])
-
-	-- Create a prompt, REQUIRES_RELOAD
-end
-
 function vGambler:UpdateFadeChat(value)
 	if (not vGamblerSettings) then
 		vGamblerSettings = {}
@@ -293,9 +277,6 @@ function vGambler:SetupSettingsPage(page)
 	self:AddGameCheckbox(page.RightSettings, Right, L.SHOW_MINIMAP_BUTTON, self.Settings.MinimapIcon, self.UpdateShowMinimapButton)
 	self:AddGameCheckbox(page.RightSettings, Right, L.PLAY_SOUNDS, self.Settings.PlaySounds, self.UpdatePlaySounds)
 	self:AddGameCheckbox(page.RightSettings, Right, L.FADE_CHAT, self.Settings.FadeChat, self.UpdateFadeChat)
-
-	self:AddGameHeader(page.RightSettings, Right, L.UI_STYLE)
-	self:AddGameDropdown(page.RightSettings, Right, L.UI_STYLE_LABEL, self.UIStyleSelections[self.Settings.UIStyle], self.UIStyleSelections, self.UpdateUIStyle)
 
 	self:AddGameHeader(page.RightSettings, Right, L.STATS_SETTINGS)
 	self:AddGameButton(page.RightSettings, Right, "resetgeneral", L.RESET_GENERAL_STATS, self.ResetGeneralStats)

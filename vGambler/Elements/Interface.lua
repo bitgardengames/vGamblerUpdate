@@ -43,49 +43,26 @@ vGambler.ChannelSelections = {
 }
 
 function vGambler:CreateBackdrops()
-	if (self.Settings.UIStyle == 1) then
-		self.LargeBackdrop = {
-			bgFile = self.Blank,
-			edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound3.tga",
-			edgeSize = 14,
-			insets = {left = 3, right = 3, top = 3, bottom = 3},
-		}
+	self.LargeBackdrop = {
+		bgFile = self.Blank,
+		edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound3.tga",
+		edgeSize = 14,
+		insets = {left = 3, right = 3, top = 3, bottom = 3},
+	}
 
-		self.MediumBackdrop = {
-			bgFile = self.Blank,
-			edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound2.tga",
-			edgeSize = 14,
-			insets = {left = 3, right = 3, top = 3, bottom = 3},
-		}
+	self.MediumBackdrop = {
+		bgFile = self.Blank,
+		edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound2.tga",
+		edgeSize = 14,
+		insets = {left = 3, right = 3, top = 3, bottom = 3},
+	}
 
-		self.SmallBackdrop = {
-			bgFile = self.Blank,
-			edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound1.tga",
-			edgeSize = 14,
-			insets = {left = 2, right = 2, top = 2, bottom = 2},
-		}
-	else
-		self.LargeBackdrop = {
-			bgFile = self.Blank,
-			edgeFile = self.Blank,
-			edgeSize = 1,
-			insets = {left = 0, right = 0, top = 0, bottom = 0},
-		}
-
-		self.MediumBackdrop = {
-			bgFile = self.Blank,
-			edgeFile = self.Blank,
-			edgeSize = 1,
-			insets = {left = 0, right = 0, top = 0, bottom = 0},
-		}
-
-		self.SmallBackdrop = {
-			bgFile = self.Blank,
-			edgeFile = self.Blank,
-			edgeSize = 1,
-			insets = {left = 0, right = 0, top = 0, bottom = 0},
-		}
-	end
+	self.SmallBackdrop = {
+		bgFile = self.Blank,
+		edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound1.tga",
+		edgeSize = 14,
+		insets = {left = 2, right = 2, top = 2, bottom = 2},
+	}
 end
 
 function vGambler:CreateTooltip()
@@ -569,7 +546,7 @@ function vGambler:AddFontDropdown(t, parent, id, value, func)
 	ListScroll:SetWidth(12)
 	ListScroll:SetPoint("TOPRIGHT", Button.List, -5, -2)
 	ListScroll:SetPoint("BOTTOMRIGHT", Button.List, -5, 2)
-	ListScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
+	ListScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
 	ListScroll:SetOrientation("VERTICAL")
 	ListScroll:SetValueStep(1)
 	ListScroll:SetObeyStepOnDrag(true)
@@ -589,12 +566,7 @@ function vGambler:AddFontDropdown(t, parent, id, value, func)
 	ListScrollThumb:SetSize(32, 32)
 	ListScrollThumb:SetVertexColor(0.25, 0.266, 0.294)
 
-	if (self.Settings.UIStyle == 1) then
-		ListScroll:SetThumbTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
-		ListScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
-	else
-		ListScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraThumb.tga")
-	end
+	ListScrollThumb:SetTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundThumb.tga")
 
 	self.SetFontScrollOffset(ListScroll, 1)
 
@@ -946,11 +918,7 @@ function vGambler:AddPlayerUI()
 		Player.Bar:SetFrameLevel(10)
 		Player.Bar:SetAlpha(0)
 
-		if (self.Settings.UIStyle == 1) then
-			Player.Bar:SetStatusBarTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundBar.tga")
-		else
-			Player.Bar:SetStatusBarTexture(self.Blank)
-		end
+		Player.Bar:SetStatusBarTexture("Interface\\AddOns\\vGambler\\Assets\\HydraRoundBar.tga")
 
 		Player.Fade = LibMotion:CreateAnimation(Player, "fade")
 		Player.Fade:SetDuration(0.25)
