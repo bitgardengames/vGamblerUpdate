@@ -280,6 +280,79 @@ function vGambler:SetupDashboardHeader(page)
 	return HeaderBar
 end
 
+function vGambler:StatLineNameOnEnter()
+	vGambler.WindowButtonOnEnter(self:GetParent())
+
+	if (not vGambler.Settings.PlayerTooltips or not self.PlayerName) then
+		return
+	end
+
+	local Balances = vGamblerPlayerBalances and vGamblerPlayerBalances[self.PlayerName]
+	local Winnings = {}
+	local Losses = {}
+	local Total = 0
+
+	for OtherPlayer, Balance in next, Balances or {} do
+		if Balance > 0 then
+			table.insert(Winnings, {OtherPlayer, Balance})
+			Total = Total + Balance
+		elseif Balance < 0 then
+			table.insert(Losses, {OtherPlayer, -Balance})
+			Total = Total + Balance
+		end
+	end
+
+	local function SortBalances(a, b)
+		if a[2] == b[2] then
+			return a[1] < b[1]
+		end
+
+		return a[2] > b[2]
+	end
+
+	table.sort(Winnings, SortBalances)
+	table.sort(Losses, SortBalances)
+
+	vGambler.Tooltip:SetOwner(self, "ANCHOR_NONE")
+	vGambler.Tooltip:SetPoint("LEFT", self:GetParent(), "RIGHT", 8, 0)
+	vGambler.Tooltip:ClearLines()
+	vGambler.Tooltip:AddDoubleLine(self.PlayerName, L.PAIRWISE_LEDGER, 1, 1, 1, 1, 0.769, 0.302)
+
+	if (#Winnings == 0 and #Losses == 0) then
+		vGambler.Tooltip:AddLine(" ")
+		vGambler.Tooltip:AddLine(L.NO_PAIRWISE_BALANCES, 0.7, 0.7, 0.7)
+	else
+		if #Winnings > 0 then
+			vGambler.Tooltip:AddLine(" ")
+			vGambler.Tooltip:AddLine(L.WON_FROM, 0.35, 1, 0.35)
+
+			for _, Entry in ipairs(Winnings) do
+				vGambler.Tooltip:AddDoubleLine(Entry[1], string.format("+" .. L.GOLD_AMOUNT, vGambler:Comma(Entry[2])), 1, 1, 1, 0.35, 1, 0.35)
+			end
+		end
+
+		if #Losses > 0 then
+			vGambler.Tooltip:AddLine(" ")
+			vGambler.Tooltip:AddLine(L.LOST_TO, 1, 0.35, 0.35)
+
+			for _, Entry in ipairs(Losses) do
+				vGambler.Tooltip:AddDoubleLine(Entry[1], string.format("-" .. L.GOLD_AMOUNT, vGambler:Comma(Entry[2])), 1, 1, 1, 1, 0.35, 0.35)
+			end
+		end
+
+		vGambler.Tooltip:AddLine(" ")
+		local TotalColor = Total >= 0 and "|cff59ff59+" or "|cffff5959"
+		vGambler.Tooltip:AddDoubleLine(L.NET_BALANCE, string.format(TotalColor .. L.GOLD_AMOUNT .. "|r", vGambler:Comma(Total)), 1, 1, 1, 1, 1, 1)
+	end
+
+	vGambler.Tooltip:Show()
+end
+
+function vGambler:StatLineNameOnLeave()
+	vGambler.WindowButtonOnLeave(self:GetParent())
+	vGambler.Tooltip:Hide()
+end
+
 function vGambler:AddLongStatLine(parent)
 	if FreeStatLines[1] then -- Get an old line, only make new ones as needed
 		local Line = table.remove(FreeStatLines, 1)
@@ -305,6 +378,16 @@ function vGambler:AddLongStatLine(parent)
 	Line.Name:SetJustifyH("LEFT")
 	Line.Name:SetShadowColor(0.029, 0.029, 0.051)
 	Line.Name:SetShadowOffset(0, -1)
+
+	Line.NameArea = CreateFrame("Frame", nil, Line)
+	Line.NameArea:SetPoint("TOPLEFT", Line, 0, 0)
+	Line.NameArea:SetPoint("BOTTOMLEFT", Line, 0, 0)
+	Line.NameArea:SetWidth(115)
+	Line.NameArea:EnableMouse(true)
+	Line.NameArea:EnableMouseWheel(true)
+	Line.NameArea:SetScript("OnEnter", self.StatLineNameOnEnter)
+	Line.NameArea:SetScript("OnLeave", self.StatLineNameOnLeave)
+	Line.NameArea:SetScript("OnMouseWheel", self.StatLineOnMouseWheel)
 
 	Line.Wins = Line:CreateFontString(nil, "OVERLAY")
 	Line.Wins:SetPoint("LEFT", Line, 120, -0.5)
@@ -339,6 +422,7 @@ function vGambler:ResetStatLines()
 
 	for i = #StatLines, 1, -1 do
 		Line = table.remove(StatLines, i)
+		Line.NameArea.PlayerName = nil
 		Line:Hide()
 
 		table.insert(FreeStatLines, Line)
@@ -388,6 +472,7 @@ function vGambler:PopulateStatLines(direction)
 
 	for i = 1, #StatsSorter do
 		vGambler:AddLongStatLine(Page.StatArea)
+		StatLines[i].NameArea.PlayerName = StatsSorter[i][1]
 		StatLines[i].Name:SetText(string.format(L.NUMBERED_PLAYER, i, StatsSorter[i][1]))
 		StatLines[i].Wins:SetText(StatsSorter[i][2])
 		StatLines[i].WinPercent:SetText(string.format(L.PERCENT, StatsSorter[i][3]))
