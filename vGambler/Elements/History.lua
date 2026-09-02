@@ -9,12 +9,24 @@ local date = date
 local time = time
 
 local HistoryLines = {}
+local MaxMatchHistory = 50
 
-vGamblerHistory = vGamblerHistory or {}
+-- Keep match history in a SavedVariables table so it survives reloads and new
+-- sessions. Trim older data here as well as when adding matches in case a
+-- previous version (or a manually edited SavedVariables file) contains more
+-- than the supported number of entries.
+if (type(vGamblerHistory) ~= "table") then
+	vGamblerHistory = {}
+end
+
+while (#vGamblerHistory > MaxMatchHistory) do
+	table.remove(vGamblerHistory, 1)
+end
+
 vGambler.MatchHistory = vGamblerHistory
 
 function vGambler:AddMatchHistory(winner, loser, value, wager, players)
-	while (#self.MatchHistory >= 50) do
+	while (#self.MatchHistory >= MaxMatchHistory) do
 		table.remove(self.MatchHistory, 1)
 	end
 
