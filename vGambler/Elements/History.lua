@@ -12,15 +12,9 @@ local HistoryLines = {}
 local MaxMatchHistory = 50
 
 -- Keep match history in a SavedVariables table so it survives reloads and new
--- sessions. Trim older data here as well as when adding matches in case a
--- previous version (or a manually edited SavedVariables file) contains more
--- than the supported number of entries.
+-- sessions. The history is trimmed when new matches are added.
 if (type(vGamblerHistory) ~= "table") then
 	vGamblerHistory = {}
-end
-
-while (#vGamblerHistory > MaxMatchHistory) do
-	table.remove(vGamblerHistory, 1)
 end
 
 vGambler.MatchHistory = vGamblerHistory
