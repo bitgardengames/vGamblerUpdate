@@ -55,7 +55,14 @@ vGambler.Commands = {
 		value = tonumber(value)
 
 		if (value and value > 0) then
-			vGambler.RollValue = math.max(2, value)
+			value = math.max(2, value)
+
+			if (not vGamblerSettings) then
+				vGamblerSettings = {}
+			end
+
+			vGambler.Settings.RollValue = value
+			vGamblerSettings.RollValue = value
 
 			-- Update interface
 			if (not vGambler.Window) then
@@ -64,12 +71,6 @@ vGambler.Commands = {
 
 			for i = 1, #vGambler.Window.Buttons do
 				if (vGambler.Window.Buttons[i].ID == "RollValue") then -- Can adjust this if I need something prettier.
-					if (not vGamblerSettings) then
-						vGamblerSettings = {}
-					end
-
-					vGamblerSettings.RollValue = value
-					vGambler.Settings.RollValue = value
 					vGambler.Window.Buttons[i]:SetText(vGambler:Comma(value))
 
 					return
