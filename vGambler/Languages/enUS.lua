@@ -6,8 +6,6 @@ AddOn.vGambler = AddOn.vGambler or CreateFrame("Frame")
 
 local L = AddOn.L
 
--- English is the base catalog.  Locale files loaded after this one replace only
--- the entries that they translate, leaving every other string in English.
 L.PREFIX = "|cffFFC44DvGambler|r"
 L.WINDOW_TITLE = L.PREFIX
 L.WINDOW_PROGRESS = L.PREFIX .. "  (%s / %s)"
@@ -119,9 +117,3 @@ L.NO_BANNED_PLAYERS = "No players are banned"
 L.PLAYER_IS_BANNED = "%s is banned (%s)"
 L.PLAYER_NOT_BANNED = "%s is not banned"
 L.NEW_VERSION = "vGambler: A new version is available (%s)"
-
--- This condition deliberately accepts both English clients.  The catalog is
--- still populated above for every locale so untranslated keys can fall back.
-if (AddOn.Locale ~= "enUS" and AddOn.Locale ~= "enGB") then
-	return
-end
