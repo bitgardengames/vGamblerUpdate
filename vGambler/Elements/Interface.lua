@@ -930,13 +930,13 @@ function vGambler:AddPlayerUI()
 
 		Player.Label = Player:CreateFontString(nil, "OVERLAY")
 		Player.Label:SetPoint("LEFT", Player, 5, -0.5)
-		Player.Label:SetFont(self.GameFont, 12)
+		Player.Label:SetFont(self.Font, 12)
 		Player.Label:SetShadowColor(0, 0, 0)
 		Player.Label:SetShadowOffset(1, -1)
 
 		Player.RollValue = Player:CreateFontString(nil, "OVERLAY")
 		Player.RollValue:SetPoint("RIGHT", Player, -5, -0.5)
-		Player.RollValue:SetFont(self.GameFont, 12)
+		Player.RollValue:SetFont(self.Font, 12)
 		Player.RollValue:SetText("-")
 		Player.RollValue:SetShadowColor(0, 0, 0)
 		Player.RollValue:SetShadowOffset(1, -1)
@@ -1109,17 +1109,12 @@ function vGambler:PLAYER_ENTERING_WORLD()
 	end
 
 	self.Font = self.LSMFonts[self.Settings.UIFont]
-	self.GameFont = self.LSMFonts[self.Settings.GameFont]
 
 	-- If the font isn't available anymore, use PTSans
 	if (not self.Font) then
 		self.Font = "Interface\\AddOns\\vGambler\\Assets\\PTSans.ttf"
 
 		-- Update the font dropdown menu to PTSans as well
-	end
-
-	if (not self.GameFont) then
-		self.GameFont = "Interface\\AddOns\\vGambler\\Assets\\PTSans.ttf"
 	end
 
 	self:CreateBackdrops()

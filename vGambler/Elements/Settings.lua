@@ -12,7 +12,6 @@ vGambler.Settings = {
 	StatDisplay = true, -- true = session, false = total
 	FadeChat = true,
 	UIFont = "PT Sans",
-	GameFont = "PT Sans",
 	FontSize = 14,
 
 	-- Game settings
@@ -208,15 +207,6 @@ function vGambler:UpdateUIFont(value)
 	vGambler.Settings.UIFont = value
 end
 
-function vGambler:UpdateGameFont(value)
-	if (not vGamblerSettings) then
-		vGamblerSettings = {}
-	end
-
-	vGamblerSettings.GameFont = value
-	vGambler.Settings.GameFont = value
-end
-
 function vGambler:FontSizeInputOnEnter(value)
 	if (not vGamblerSettings) then
 		vGamblerSettings = {}
@@ -244,7 +234,7 @@ function vGambler:SetupSettingsPage(page)
 	page.RightSettings = {}
 
 	local Left = CreateFrame("Frame", nil, page, "BackdropTemplate")
-	Left:SetSize(175, 266)
+	Left:SetSize(175, 214)
 	Left:SetPoint("TOPLEFT", page, 0, 0)
 	Left:SetBackdrop(self.MediumBackdrop)
 	Left:SetBackdropColor(0.184, 0.192, 0.211)
@@ -257,9 +247,6 @@ function vGambler:SetupSettingsPage(page)
 
 	self:AddGameHeader(page.LeftSettings, Left, L.UI_FONT)
 	self:AddFontDropdown(page.LeftSettings, Left, "Font", self.Settings.UIFont, self.UpdateUIFont)
-
-	self:AddGameHeader(page.LeftSettings, Left, L.GAME_FONT)
-	self:AddFontDropdown(page.LeftSettings, Left, "Font", self.Settings.GameFont, self.UpdateGameFont)
 
 	self:AddGameHeader(page.LeftSettings, Left, L.SET_FONT_SIZE)
 	self:AddGameInput(page.LeftSettings, Left, "FontSize", self.Settings.FontSize, self.FontSizeInputOnEnter)
