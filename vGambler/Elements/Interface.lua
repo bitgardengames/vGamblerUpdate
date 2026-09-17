@@ -32,38 +32,35 @@ vGambler.ChannelColors = {
 	{vGambler:HexToRGB("ff7f00")},
 	{vGambler:HexToRGB("40ff40")},
 	{vGambler:HexToRGB("e6cc80")},
-	{vGambler:HexToRGB("aa00ff")},
 }
 
 vGambler.ChannelSelections = {
 	PARTY,
 	RAID,
 	GUILD,
-	"Test",
+	--"Test",
 }
 
-function vGambler:CreateBackdrops()
-	self.LargeBackdrop = {
-		bgFile = self.Blank,
-		edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound3.tga",
-		edgeSize = 14,
-		insets = {left = 3, right = 3, top = 3, bottom = 3},
-	}
+vGambler.LargeBackdrop = {
+	bgFile = vGambler.Blank,
+	edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound3.tga",
+	edgeSize = 14,
+	insets = {left = 3, right = 3, top = 3, bottom = 3},
+}
 
-	self.MediumBackdrop = {
-		bgFile = self.Blank,
-		edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound2.tga",
-		edgeSize = 14,
-		insets = {left = 3, right = 3, top = 3, bottom = 3},
-	}
+vGambler.MediumBackdrop = {
+	bgFile = vGambler.Blank,
+	edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound2.tga",
+	edgeSize = 14,
+	insets = {left = 3, right = 3, top = 3, bottom = 3},
+}
 
-	self.SmallBackdrop = {
-		bgFile = self.Blank,
-		edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound1.tga",
-		edgeSize = 14,
-		insets = {left = 2, right = 2, top = 2, bottom = 2},
-	}
-end
+vGambler.SmallBackdrop = {
+	bgFile = vGambler.Blank,
+	edgeFile = "Interface\\AddOns\\vGambler\\Assets\\HydraRound1.tga",
+	edgeSize = 14,
+	insets = {left = 2, right = 2, top = 2, bottom = 2},
+}
 
 function vGambler:CreateTooltip()
 	local Tooltip = CreateFrame("GameTooltip", "vGamblerTooltip", UIParent, "GameTooltipTemplate")
@@ -784,6 +781,9 @@ function vGambler:PlayerOnEnter()
 		local Stats = vGamblerPlayers[vGambler.Players[self.Index].DisplayName]
 
 		if (not Stats) then
+			-- Debug
+			print("No stats debug", vGambler.Players[self.Index].DisplayName)
+
 			return
 		end
 
@@ -1114,7 +1114,6 @@ function vGambler:PLAYER_ENTERING_WORLD()
 		-- Update the font dropdown menu to PTSans as well
 	end
 
-	self:CreateBackdrops()
 	self:CreateTooltip()
 
 	-- Minimap Icon

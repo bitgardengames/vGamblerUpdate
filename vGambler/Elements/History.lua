@@ -160,5 +160,6 @@ function vGambler:SetupHistoryPage(page)
 	HistoryScroll:SetScript("OnMouseUp", self.ScrollBarOnMouseUp)
 
 	page.HistoryScroll = HistoryScroll
+
 	self:UpdateHistory()
 end

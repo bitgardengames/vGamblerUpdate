@@ -1,7 +1,0 @@
-## Interface: 60200
-## Author: Vexisle
-## Version: 1.02
-## Title: SilentGambler
-## Notes: SilentGambler
-
-SilentGambler.lua

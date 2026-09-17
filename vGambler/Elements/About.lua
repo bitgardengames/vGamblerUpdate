@@ -22,7 +22,7 @@ local function GetPlayerRecord(field)
 	return RecordName, RecordValue
 end
 
-vGambler.StatMethods = {	-- Basic stats, just add optional formatting to some of them.
+vGambler.StatMethods = { -- Basic stats, just add optional formatting to some of them.
 	games = function(stat, data)
 		stat.Left:SetText(L.GAMES)
 		stat.Right:SetText(data and vGambler:Comma(data.games) or 0)
@@ -135,6 +135,7 @@ function vGambler:SetupAboutPage(page)
 	local HeaderBar = self:SetupDashboardHeader(page)
 	local PanelWidth = (page:GetWidth() - 6) / 2
 	local General = CreateFrame("Frame", nil, page, "BackdropTemplate")
+
 	General:SetPoint("TOPLEFT", HeaderBar, "BOTTOMLEFT", 0, -6)
 	General:SetPoint("BOTTOMLEFT", page, 0, 0)
 	General:SetWidth(PanelWidth)
@@ -151,19 +152,27 @@ function vGambler:SetupAboutPage(page)
 	Performance:SetBackdropBorderColor(0.184, 0.192, 0.211)
 
 	self:AddGameHeader(page.General, General, L.GENERAL_STATS)
+
 	for _, stat in ipairs({"games", "rolls", "ties", "draws", "totalgold", "uniqueplayers"}) do
 		page.Stats[stat] = self:AddStatLine(page.General, General, stat)
 	end
+
 	self:SortButtonList(page.General, General)
 
 	self:AddGameHeader(page.Performance, Performance, L.TOP_STATS)
+
 	for _, stat in ipairs({"topwager", "topwin", "toppayout", "sessiongames"}) do
 		page.Stats[stat] = self:AddStatLine(page.Performance, Performance, stat)
 	end
+
 	self:AddGameHeader(page.Performance, Performance, L.BIGGEST_WINNER)
+
 	page.Stats["biggestwinner"] = self:AddStatLine(page.Performance, Performance, "biggestwinner")
+
 	self:AddGameHeader(page.Performance, Performance, L.BIGGEST_LOSER)
+
 	page.Stats["biggestloser"] = self:AddStatLine(page.Performance, Performance, "biggestloser")
+
 	self:SortButtonList(page.Performance, Performance)
 
 	self:UpdateBasicStats()

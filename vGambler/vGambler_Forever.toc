@@ -1,6 +1,6 @@
 ## Interface: 16001
 ## Author: Hydra
-## Version: 1.0
+## Version: 2.0
 ## Title: |cffFFC44DvGambler|r
 ## Notes: A social gambling game for friends, guildmates, and groups
 ## SavedVariables: vGamblerBans, vGamblerData, vGamblerPlayers, vGamblerPlayerBalances, vGamblerSettings, vGamblerHistory
@@ -33,4 +33,3 @@ Elements/History.lua
 Elements/Bans.lua
 Elements/Commands.lua
 Elements/About.lua
-Elements/Test.lua

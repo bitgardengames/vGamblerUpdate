@@ -161,7 +161,7 @@ function vGambler:StartGame() --  Starts a new game, registers relevant events, 
 	self:DisablePlayButton("Withdraw")
 	self:DisablePlayButton("Roll")
 
-	self:SendMessage(string.format(L.GAME_STARTED, self:Comma(self.Settings.RollValue)))
+	self:SendMessage(string.format(L.GAME_STARTED, self:Comma(self.Settings.RollValue), self.Settings.EnterCommand, self.Settings.LeaveCommand))
 
 	self:SendEvent("NewGame", string.format("%s\\%s\\%d", UnitName("player"), self.Settings.Channel, self.Settings.RollValue))
 end
@@ -456,7 +456,7 @@ function vGambler:ChatMessageEvent(message, sender, lang, channel, player, flags
 
 	sender = string.match(sender, "^([^-]+)") or sender -- Remove server name.
 
-	if (message == "1") then
+	if (message == self.Settings.EnterCommand) then
 		local Banned, Reason = self:IsBanned(sender)
 
 		if (not Banned) then
@@ -472,7 +472,7 @@ function vGambler:ChatMessageEvent(message, sender, lang, channel, player, flags
 				self:SendMessage(string.format(L.BANNED_FROM_ENTERING_REASON, sender, Reason))
 			end
 		end
-	elseif (message == "-1") then
+	elseif (message == self.Settings.LeaveCommand) then
 		if self.Events.RemovePlayer(self, sender) then
 			self:SendEvent("RemovePlayer", sender)
 		else

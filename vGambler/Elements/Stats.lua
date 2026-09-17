@@ -761,6 +761,7 @@ function vGambler:ResetPlayerStats()
 	if vGamblerPlayers or vGamblerPlayerBalances then
 		vGamblerPlayers = {}
 		vGamblerPlayerBalances = {}
+
 		table.wipe(PlayerSession)
 
 		vGambler:UpdateBasicStats()
