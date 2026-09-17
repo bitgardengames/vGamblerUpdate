@@ -1100,11 +1100,6 @@ end
 
 function vGambler:PLAYER_ENTERING_WORLD()
 	if vGamblerSettings then
-		-- Entry and withdrawal are protocol commands, not user settings. Remove
-		-- values persisted by versions that allowed clients to customize them.
-		vGamblerSettings.EnterCommand = nil
-		vGamblerSettings.LeaveCommand = nil
-
 		for name, value in next, vGamblerSettings do
 			self.Settings[name] = value
 		end
