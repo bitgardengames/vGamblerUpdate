@@ -82,21 +82,22 @@ buttons.
 
 ### 1. Configure and start
 
-The current defaults are **10 gold**, **Party**, entry command `1`, and leave
-command `0`. The UI permits Party, Raid, Guild, and a local Test mode. A normal
-start rejects any selection that does not map to a supported chat event group,
-then captures the host, channel, and wager for the life of the game. This
-capture correctly prevents mid-game setting changes from redirecting later
-messages or changing the valid roll range.
+The current defaults are **10 gold** and **Party**. Entry and withdrawal are
+canonical protocol commands, `1` and `-1`; they are not settings and are not
+included in addon events. The UI permits Party, Raid, Guild, and a local Test
+mode. A normal start rejects any selection that does not map to a supported
+chat event group, then captures the host, channel, and wager for the life of the
+game. This capture correctly prevents mid-game setting changes from redirecting
+later messages or changing the valid roll range.
 
-The current announcement uses the configured entry and leave commands. The
-host registers entry chat, locks host settings, enables Last Call/Reset/Close,
+The current announcement states the canonical entry and withdrawal commands.
+The host registers entry chat, locks host settings, enables Last Call/Reset/Close,
 and sends a `NewGame` addon message so other current-addon clients can mirror
 the UI.
 
 ### 2. Read entry and withdrawal chat
 
-Host-side chat handling preserves the core legacy filters: exact configured
+Host-side chat handling preserves the core legacy filters: exact canonical
 command, selected channel, realm suffix removal, ban rejection, duplicate
 suppression, and harmless withdrawal by a non-entrant. Accepted changes are
 broadcast as addon `AddPlayer`/`RemovePlayer` events. Consequently:
@@ -107,8 +108,8 @@ broadcast as addon `AddPlayer`/`RemovePlayer` events. Consequently:
 - only the host processes entry chat after a synchronized `NewGame` (receivers
   rely on host addon events rather than independently accepting entries).
 
-The Join and Withdraw buttons send the local client's configured commands to
-the captured channel and update their button state immediately.
+The Join and Withdraw buttons send `1` and `-1`, respectively, to the captured
+channel and update their button state immediately.
 
 ### 3. Last call and close entries
 
@@ -144,10 +145,10 @@ is enabled again.
 
 | Stage | Legacy behavior retained? | Assessment |
 | --- | --- | --- |
-| Start announcement | Same purpose and chat transport; current text reflects configurable commands | Compatible when configured to legacy values |
+| Start announcement | Same purpose, chat transport, and canonical commands | Match |
 | Supported live channels | Party, Raid, Guild | Match |
-| Entry | Exact `1`, ban check, de-duplicate, strip realm | Match with default settings |
-| Withdrawal | Exact `-1` | **Default mismatch** (`0` now) |
+| Entry | Exact `1`, ban check, de-duplicate, strip realm | Match |
+| Withdrawal | Exact `-1` | Match |
 | Minimum entrants | Two | Match |
 | Close announcement | Announces closure and asks players to roll | Match |
 | Missing-roll reminder | Reusing Roll/Close announces missing players | **UI regression** |
@@ -185,19 +186,6 @@ roller. The current host has no normal button path to that branch.
 it “Remind”), or add a dedicated reminder control. Add a test that closes a
 three-player game, accepts two rolls, invokes the control, and verifies that the
 third display name appears in chat.
-
-### P1 — default withdrawal protocol is not legacy-compatible
-
-Legacy announces and accepts `-1`; current defaults announce and accept `0`.
-This is self-consistent for a fresh current installation, but it does not “work
-exactly the same,” and players following the old convention cannot withdraw.
-Saved settings can also make different clients' optimistic Join/Withdraw
-buttons send commands that disagree with the host, because addon `NewGame`
-synchronizes channel and wager but not entry/leave commands.
-
-**Suggested correction:** restore `-1` as the leave default. Put the host's entry
-and leave commands in `NewGame`, store them as per-game values on receivers,
-and make Join/Withdraw use those captured values.
 
 ### P1 — tie and draw semantics differ from legacy gameplay
 
@@ -261,8 +249,8 @@ host-authoritative entry and resolution.
 
 Use two addon clients plus one client without vGambler where possible.
 
-1. Select Party, wager 1,000, entry `1`, leave `-1`; start and verify the exact
-   channel and announced values.
+1. Select Party and wager 1,000; start and verify the exact channel and the
+   canonical `1`/`-1` commands in the announcement.
 2. Send unrelated chat, wrong-case/whitespace variants, duplicate joins, an
    absent-player withdrawal, a valid withdrawal/rejoin, and a banned join.
 3. Close with zero and one entrant; verify rejection without losing entry
@@ -276,8 +264,8 @@ Use two addon clients plus one client without vGambler where possible.
    the chosen legacy-or-new tie policy.
 7. Start a competing game from another addon client during step 4 and verify it
    cannot replace the active game.
-8. Change local settings after start and verify the captured host channel,
-   wager, and commands remain authoritative.
+8. Change local settings after start and verify the captured host channel and
+   wager remain authoritative.
 9. Resolve, then verify the intended one-click New Game or explicit Next Game
    workflow and that no old entrant or roll leaks into the next match.
 10. Repeat with two same-named characters from different realms.
@@ -289,6 +277,5 @@ rolls: announce, accept exact chat commands, de-duplicate entrants, close at two
 players, accept one correctly ranged system roll per entrant, and settle high
 minus low. It is **not exactly legacy-equivalent** yet. The most actionable
 regression is the inaccessible missing-roll reminder; the most serious new
-multi-client risk is active-game replacement by another `NewGame`; and the
-withdraw command, tie rules, next-game flow, and defaults require explicit
-compatibility decisions.
+multi-client risk is active-game replacement by another `NewGame`; and the tie
+rules, next-game flow, and defaults require explicit compatibility decisions.

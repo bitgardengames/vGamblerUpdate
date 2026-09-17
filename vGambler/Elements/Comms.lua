@@ -376,7 +376,7 @@ function vGambler:JoinGame()
 		return
 	end
 
-	SendChatMessage(self.Settings.EnterCommand, self.ChannelSelections[self.GameChannel or self.Settings.Channel])
+	SendChatMessage("1", self.ChannelSelections[self.GameChannel or self.Settings.Channel])
 end
 
 function vGambler:WithdrawGame()
@@ -384,7 +384,7 @@ function vGambler:WithdrawGame()
 		return
 	end
 
-	SendChatMessage(self.Settings.LeaveCommand, self.ChannelSelections[self.GameChannel or self.Settings.Channel])
+	SendChatMessage("-1", self.ChannelSelections[self.GameChannel or self.Settings.Channel])
 end
 
 function vGambler:RollGame()
