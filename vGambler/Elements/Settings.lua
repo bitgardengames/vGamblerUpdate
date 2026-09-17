@@ -20,8 +20,6 @@ vGambler.Settings = {
 	PlayerNumbers = false,
 	PlayerTooltips = true,
 	ColoredBars = true,
-	EnterCommand = "1", -- Fun idea, but has problems when players with different commands play together
-	LeaveCommand = "0",
 }
 
 function vGambler:CheckBoxOnMouseUp()
