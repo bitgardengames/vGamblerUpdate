@@ -155,7 +155,9 @@ function vGambler:BanPlayer(player, reason)
 
 	table.insert(vGamblerBans, {player, reason}) -- Can add date here if I feel like it
 
-	self:AddBannedPlayerUI(player, reason)
+	if Page then
+		self:AddBannedPlayerUI(player, reason)
+	end
 
 	if self.Settings.PlaySounds then
 		PlaySound(SOUNDKIT.IG_CHAT_EMOTE_BUTTON)
