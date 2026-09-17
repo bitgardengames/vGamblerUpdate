@@ -784,9 +784,6 @@ function vGambler:PlayerOnEnter()
 		local Stats = vGamblerPlayers[vGambler.Players[self.Index].DisplayName]
 
 		if (not Stats) then
-			-- Debug
-			print("No stats debug", vGambler.Players[self.Index].DisplayName)
-
 			return
 		end
 
