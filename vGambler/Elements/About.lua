@@ -95,7 +95,7 @@ vGambler.StatMethods = { -- Basic stats, just add optional formatting to some of
 	biggestloser = function(stat)
 		local PlayerName, Value = GetPlayerRecord("loss")
 		stat.Left:SetText(PlayerName or L.NO_RECORD)
-		stat.Right:SetText(PlayerName and string.format(L.GOLD_AMOUNT, vGambler:Comma(Value)) or "")
+		stat.Right:SetText(PlayerName and string.format("-" .. L.GOLD_AMOUNT, vGambler:Comma(Value)) or "")
 	end,
 }
 
