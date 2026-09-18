@@ -38,7 +38,7 @@ vGambler.ChannelSelections = {
 	PARTY,
 	RAID,
 	GUILD,
-	--"Test",
+	"Test",
 }
 
 vGambler.LargeBackdrop = {
