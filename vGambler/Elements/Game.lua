@@ -16,6 +16,10 @@ local function AddMatchData(payload, wager, players)
 	return table.concat(payload, "\\")
 end
 
+function vGambler:FormatGameResult(winner, loser, high, low, earnings)
+	return string.format(L.GAME_RESULT, loser, low, winner, high, self:Comma(earnings or high - low))
+end
+
 -- A "game" is a resolved, non-draw match. A "tie" is one tie-break round, so
 -- one match can contribute several ties. Player games count match participation;
 -- player ties count participation in tie-break rounds. tieswon/tieslost are added
@@ -410,7 +414,7 @@ function vGambler:DeclareWinner() -- Declares the winner of the game, calculates
 	self.Locked = false
 	self.TiedGame = false
 
-	self:SendMessage(string.format(L.GAME_RESULT, self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
+	self:SendMessage(self:FormatGameResult(Winner, Loser, self.Result[3], self.Result[4], Earnings))
 
 	self:SendEvent("GameEnded", AddMatchData({Winner, Loser, self.Result[3], self.Result[4]}, Wager, self.MatchPlayers))
 
