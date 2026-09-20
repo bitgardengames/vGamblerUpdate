@@ -249,7 +249,7 @@ vGambler.Events.GameEnded = function(self, args)
 	local Wager = tonumber(Fields[5]) or self.GameWager or self.Settings.RollValue
 	local Players = ParseMatchPlayers(Fields, 6)
 
-	self:AccountCompletedGame(Winner, Loser, High, Low, Wager, Players)
+	local Earnings = self:AccountCompletedGame(Winner, Loser, High, Low, Wager, Players)
 
 	self:UpdateBasicStats()
 	self:UpdateStatGrid()
@@ -263,8 +263,9 @@ vGambler.Events.GameEnded = function(self, args)
 	self:UnregisterEvent("CHAT_MSG_SYSTEM")
 	self:DisablePlayButton("Roll")
 
-	-- If we're in silent, add the message
-	--self:SendMessage(string.format("|cffFFC44DvGambler|r: %s (%s) owes %s (%s) %s gold!", self.Result[2][1].DisplayName, self.Result[4], self.Result[1][1].DisplayName, self.Result[3], self:Comma(Earnings)))
+	-- The host already announced the result to the game channel. Report the
+	-- synchronized result in this client's game log without rebroadcasting it.
+	self.Events.Message(self, self:FormatGameResult(Winner, Loser, High, Low, Earnings))
 end
 
 vGambler.Events.GameDraw = function(self, args)
