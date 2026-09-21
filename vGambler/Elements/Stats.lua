@@ -841,6 +841,7 @@ function vGambler:ResetGeneralStats()
 		end
 
 		vGamblerData = {}
+		print(L.GENERAL_STATS_RESET)
 	end
 end
 
@@ -853,5 +854,6 @@ function vGambler:ResetPlayerStats()
 
 		vGambler:UpdateBasicStats()
 		vGambler:UpdateStatGrid()
+		print(L.PLAYER_STATS_RESET)
 	end
 end
