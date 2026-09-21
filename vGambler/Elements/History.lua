@@ -190,7 +190,7 @@ function vGambler:SetupHistoryPage(page)
 	Header.Date:SetShadowColor(0.029, 0.029, 0.051)
 	Header.Date:SetShadowOffset(0, -1)
 
-	for i = 1, 11 do
+	for i = 1, 12 do
 		local Line = CreateFrame("Frame", nil, HistoryArea, "BackdropTemplate")
 		Line:SetSize(HistoryArea:GetWidth() - 24, 24)
 		Line:SetPoint("TOPLEFT", HistoryArea, 4, -32 - ((i - 1) * 28))
