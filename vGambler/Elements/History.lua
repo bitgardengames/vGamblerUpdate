@@ -10,6 +10,7 @@ local time = time
 
 local HistoryLines = {}
 local MaxMatchHistory = 50
+local HistoryRefreshInterval = 30
 
 -- Keep match history in a SavedVariables table so it survives reloads and new
 -- sessions. The history is trimmed when new matches are added.
@@ -18,6 +19,26 @@ if (type(vGamblerHistory) ~= "table") then
 end
 
 vGambler.MatchHistory = vGamblerHistory
+
+function vGambler:FormatHistoryTimestamp(timestamp, currentTime)
+	if (not timestamp) then
+		return ""
+	end
+
+	currentTime = currentTime or time()
+	local elapsed = currentTime - timestamp
+	if (elapsed >= 0 and date("%Y%m%d", timestamp) == date("%Y%m%d", currentTime)) then
+		if (elapsed < 60) then
+			return L.MATCH_JUST_NOW
+		elseif (elapsed < 3600) then
+			return string.format(L.MATCH_MINUTES_AGO, math.floor(elapsed / 60))
+		end
+
+		return string.format(L.MATCH_HOURS_AGO, math.floor(elapsed / 3600))
+	end
+
+	return date(L.MATCH_HISTORY_DATE_FORMAT, timestamp)
+end
 
 function vGambler:AddMatchHistory(winner, loser, value, wager, players)
 	while (#self.MatchHistory >= MaxMatchHistory) do
@@ -69,6 +90,7 @@ end
 function vGambler:SetHistoryScrollOffset(offset)
 	local Page = self:GetPage("History")
 	local Maximum = math.max(1, #self.MatchHistory - #HistoryLines + 1)
+	local CurrentTime = time()
 
 	offset = math.max(1, math.min(math.floor(offset + 0.5), Maximum))
 	Page.HistoryScroll.Offset = offset
@@ -85,12 +107,25 @@ function vGambler:SetHistoryScrollOffset(offset)
 			Line.Winner:SetText(Match.winner)
 			Line.Loser:SetText(Match.loser)
 			Line.Value:SetText(string.format(L.GOLD_AMOUNT, self:Comma(Match.value)))
-			Line.Date:SetText(Match.timestamp and date(L.MATCH_DATE_FORMAT, Match.timestamp) or "")
+			Line.Date:SetText(self:FormatHistoryTimestamp(Match.timestamp, CurrentTime))
 			Line:Show()
 		else
 			Line:Hide()
 		end
 	end
+end
+
+function vGambler:HistoryPageOnUpdate(elapsed)
+	self.HistoryRefreshElapsed = (self.HistoryRefreshElapsed or 0) + elapsed
+	if (self.HistoryRefreshElapsed >= HistoryRefreshInterval) then
+		self.HistoryRefreshElapsed = 0
+		vGambler:SetHistoryScrollOffset(self.HistoryScroll.Offset)
+	end
+end
+
+function vGambler:HistoryPageOnShow()
+	self.HistoryRefreshElapsed = 0
+	vGambler:SetHistoryScrollOffset(self.HistoryScroll.Offset)
 end
 
 function vGambler:HistoryScrollOnValueChanged(offset)
@@ -221,6 +256,8 @@ function vGambler:SetupHistoryPage(page)
 	HistoryScroll:SetScript("OnMouseUp", self.ScrollBarOnMouseUp)
 
 	page.HistoryScroll = HistoryScroll
+	page:SetScript("OnShow", self.HistoryPageOnShow)
+	page:SetScript("OnUpdate", self.HistoryPageOnUpdate)
 
 	self:UpdateHistory()
 end
