@@ -229,6 +229,74 @@ function vGambler:FontSizeInputOnEnter(value)
 	return value
 end
 
+function vGambler:ShowResetStatsConfirmation(resetFunc)
+	local Dialog = self.ResetStatsDialog
+
+	Dialog.ResetFunc = resetFunc
+	Dialog:Show()
+end
+
+function vGambler:CreateResetStatsDialog()
+	local Dialog = CreateFrame("Frame", nil, self.Window, "BackdropTemplate")
+	Dialog:SetSize(300, 136)
+	Dialog:SetPoint("CENTER", self.Window, 0, 0)
+	Dialog:SetBackdrop(self.LargeBackdrop)
+	Dialog:SetBackdropColor(0.125, 0.133, 0.145)
+	Dialog:SetBackdropBorderColor(0.125, 0.133, 0.145)
+	Dialog:SetFrameLevel(self.Window:GetFrameLevel() + 10)
+	Dialog:EnableMouse(true)
+	Dialog:Hide()
+
+	local Header = CreateFrame("Frame", nil, Dialog, "BackdropTemplate")
+	Header:SetPoint("TOPLEFT", Dialog, 6, -6)
+	Header:SetPoint("TOPRIGHT", Dialog, -6, -6)
+	Header:SetHeight(24)
+	Header:SetBackdrop(self.MediumBackdrop)
+	Header:SetBackdropColor(0.184, 0.192, 0.211)
+	Header:SetBackdropBorderColor(0.184, 0.192, 0.211)
+
+	local Title = Header:CreateFontString(nil, "OVERLAY")
+	Title:SetPoint("CENTER", Header, 0, 0)
+	Title:SetFont(self.Font, self.Settings.FontSize)
+	Title:SetText(string.format("|cffFFC44D%s|r", L.STATS_SETTINGS))
+	Title:SetShadowColor(0.029, 0.029, 0.051)
+	Title:SetShadowOffset(0, -1)
+
+	local Warning = Dialog:CreateFontString(nil, "OVERLAY")
+	Warning:SetPoint("TOPLEFT", Header, "BOTTOMLEFT", 8, -8)
+	Warning:SetPoint("TOPRIGHT", Header, "BOTTOMRIGHT", -8, -8)
+	Warning:SetHeight(38)
+	Warning:SetFont(self.Font, self.Settings.FontSize)
+	Warning:SetJustifyH("CENTER")
+	Warning:SetJustifyV("MIDDLE")
+	Warning:SetText(L.RESET_STATS_WARNING)
+	Warning:SetShadowColor(0.029, 0.029, 0.051)
+	Warning:SetShadowOffset(0, -1)
+
+	local Buttons = {}
+	local Accept = self:AddGameButton(Buttons, Dialog, "acceptreset", L.ACCEPT, function()
+		local ResetFunc = Dialog.ResetFunc
+
+		Dialog:Hide()
+		Dialog.ResetFunc = nil
+
+		if ResetFunc then
+			ResetFunc()
+		end
+	end)
+	Accept:SetSize(137, 24)
+	Accept:SetPoint("BOTTOMLEFT", Dialog, 8, 8)
+
+	local Cancel = self:AddGameButton(Buttons, Dialog, "cancelreset", L.CANCEL, function()
+		Dialog:Hide()
+		Dialog.ResetFunc = nil
+	end)
+	Cancel:SetSize(137, 24)
+	Cancel:SetPoint("BOTTOMRIGHT", Dialog, -8, 8)
+
+	self.ResetStatsDialog = Dialog
+end
+
 function vGambler:SetupSettingsPage(page)
 	page.LeftSettings = {}
 	page.RightSettings = {}
@@ -266,8 +334,13 @@ function vGambler:SetupSettingsPage(page)
 	self:AddGameCheckbox(page.RightSettings, Right, L.FADE_CHAT, self.Settings.FadeChat, self.UpdateFadeChat)
 
 	self:AddGameHeader(page.RightSettings, Right, L.STATS_SETTINGS)
-	self:AddGameButton(page.RightSettings, Right, "resetgeneral", L.RESET_GENERAL_STATS, self.ResetGeneralStats)
-	self:AddGameButton(page.RightSettings, Right, "resetplayers", L.RESET_PLAYER_STATS, self.ResetPlayerStats)
+	self:AddGameButton(page.RightSettings, Right, "resetgeneral", L.RESET_GENERAL_STATS, function()
+		vGambler:ShowResetStatsConfirmation(vGambler.ResetGeneralStats)
+	end)
+	self:AddGameButton(page.RightSettings, Right, "resetplayers", L.RESET_PLAYER_STATS, function()
+		vGambler:ShowResetStatsConfirmation(vGambler.ResetPlayerStats)
+	end)
 
 	self:SortButtonList(page.RightSettings, Right)
+	self:CreateResetStatsDialog()
 end
