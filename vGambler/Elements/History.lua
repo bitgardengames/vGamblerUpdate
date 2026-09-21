@@ -29,7 +29,7 @@ function vGambler:FormatHistoryTimestamp(timestamp, currentTime)
 
 	if (elapsed >= 0 and date("%Y%m%d", timestamp) == date("%Y%m%d", currentTime)) then
 		if (elapsed < 60) then
-			return L.MATCH_JUST_NOW
+			return string.format(L.MATCH_SECONDS_AGO, math.floor(elapsed))
 		elseif (elapsed < 3600) then
 			return string.format(L.MATCH_MINUTES_AGO, math.floor(elapsed / 60))
 		end
