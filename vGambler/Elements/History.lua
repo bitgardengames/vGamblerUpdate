@@ -10,7 +10,7 @@ local time = time
 
 local HistoryLines = {}
 local MaxMatchHistory = 50
-local HistoryRefreshInterval = 30
+local HistoryRefreshInterval = 10
 
 -- Keep match history in a SavedVariables table so it survives reloads and new sessions. The history is trimmed when new matches are added.
 if (type(vGamblerHistory) ~= "table") then
