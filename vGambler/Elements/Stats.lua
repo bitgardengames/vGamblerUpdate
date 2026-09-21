@@ -343,6 +343,8 @@ function vGambler:SetupDashboardHeader(page)
 	Report:SetScript("OnMouseUp", function() vGambler:ReportStats() end)
 	Report:SetScript("OnEnter", self.WindowButtonOnEnter)
 	Report:SetScript("OnLeave", self.WindowButtonOnLeave)
+	Report:HookScript("OnMouseUp", self.WindowButtonMouseUp)
+	Report:HookScript("OnMouseDown", self.WindowButtonMouseDown)
 
 	Report.Label = Report:CreateFontString(nil, "OVERLAY")
 	Report.Label:SetPoint("LEFT", Report, 5, -0.5)
@@ -357,6 +359,8 @@ function vGambler:SetupDashboardHeader(page)
 
 	local Toggle = self:AddGameCheckbox({}, SessionToggle, L.SESSION_STATS, self.Settings.StatDisplay, self.UpdateStatDisplay)
 	Toggle:SetPoint("TOPLEFT", SessionToggle, 4, -4)
+	Toggle:HookScript("OnMouseUp", self.WindowButtonMouseUp)
+	Toggle:HookScript("OnMouseDown", self.WindowButtonMouseDown)
 
 	table.insert(DashboardToggles, Toggle)
 
