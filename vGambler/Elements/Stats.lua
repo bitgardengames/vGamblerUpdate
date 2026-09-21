@@ -32,6 +32,79 @@ function vGambler:GetPlayerStatData()
 	return self.Settings.StatDisplay == true and PlayerSession or vGamblerPlayers
 end
 
+local function StripPlayerName(name)
+	return string.match(name or "", "|c%x%x%x%x%x%x%x%x(.-)|r") or name
+end
+
+local function SendStatMessage(self, message, chatType, chatTarget)
+	if chatType then
+		SendChatMessage(message, chatType, nil, chatTarget)
+	else
+		self:SendMessage(message)
+	end
+end
+
+function vGambler:ReportStats(player, chatType, chatTarget)
+	if player and player ~= "" then
+		local PlayerName
+
+		for Name in next, vGamblerPlayerBalances or {} do
+			if string.lower(StripPlayerName(Name)) == string.lower(player) then
+				PlayerName = Name
+				break
+			end
+		end
+
+		local Balances = PlayerName and vGamblerPlayerBalances[PlayerName]
+
+		if not Balances then
+			SendStatMessage(self, L.NO_PLAYER_STATS, chatType, chatTarget)
+			return
+		end
+
+		local Results = {}
+
+		for Name, Value in next, Balances do
+			table.insert(Results, {Name, Value})
+		end
+
+		table.sort(Results, function(a, b) return a[2] > b[2] end)
+		SendStatMessage(self, string.format(L.SPECIFIC_STATS, StripPlayerName(PlayerName)), chatType, chatTarget)
+
+		for i = 1, #Results do
+			local Name, Value = StripPlayerName(Results[i][1]), Results[i][2]
+
+			if Value > 0 then
+				SendStatMessage(self, string.format(L.PLAYER_OWES, Name, StripPlayerName(PlayerName), self:Comma(Value)), chatType, chatTarget)
+			else
+				SendStatMessage(self, string.format(L.PLAYER_OWES, StripPlayerName(PlayerName), Name, self:Comma(math.abs(Value))), chatType, chatTarget)
+			end
+		end
+
+		return
+	end
+
+	local Results = {}
+
+	for Name, Data in next, vGamblerPlayers or {} do
+		if Data.wins or Data.losses then
+			table.insert(Results, {Name, (Data.earnings or 0) - (Data.loss or 0)})
+		end
+	end
+
+	if not Results[1] then
+		SendStatMessage(self, L.NO_STATS, chatType, chatTarget)
+		return
+	end
+
+	table.sort(Results, function(a, b) return a[2] > b[2] end)
+	SendStatMessage(self, L.REPORTED_STATS, chatType, chatTarget)
+
+	for i = 1, #Results do
+		SendStatMessage(self, string.format(L.REPORTED_STAT_LINE, i, StripPlayerName(Results[i][1]), self:Comma(Results[i][2])), chatType, chatTarget)
+	end
+end
+
 function vGambler:AddStat(stat, value)
 	if (not vGamblerData) then
 		vGamblerData = {}
@@ -267,6 +340,25 @@ function vGambler:SetupDashboardHeader(page)
 	HeaderBar.Label:SetText(string.format("|cffFFC44D%s|r", L.STAT_VIEW))
 	HeaderBar.Label:SetShadowColor(0.029, 0.029, 0.051)
 	HeaderBar.Label:SetShadowOffset(0, -1)
+
+	local Report = CreateFrame("Frame", nil, HeaderBar, "BackdropTemplate")
+	Report:SetSize(92, 24)
+	Report:SetPoint("RIGHT", HeaderBar, "RIGHT", -177, 0)
+	Report:SetBackdrop(self.SmallBackdrop)
+	Report:SetBackdropColor(0.25, 0.266, 0.294)
+	Report:SetBackdropBorderColor(0.25, 0.266, 0.294)
+	Report:SetScript("OnMouseUp", function() vGambler:ReportStats() end)
+	Report:SetScript("OnEnter", self.WindowButtonOnEnter)
+	Report:SetScript("OnLeave", self.WindowButtonOnLeave)
+	Report:HookScript("OnMouseUp", self.WindowButtonMouseUp)
+	Report:HookScript("OnMouseDown", self.WindowButtonMouseDown)
+
+	Report.Label = Report:CreateFontString(nil, "OVERLAY")
+	Report.Label:SetPoint("CENTER", Report, 0, -0.5)
+	Report.Label:SetFont(self.Font, self.Settings.FontSize)
+	Report.Label:SetText(L.REPORT_STATS)
+	Report.Label:SetShadowColor(0.029, 0.029, 0.051)
+	Report.Label:SetShadowOffset(0, -1)
 
 	local SessionToggle = CreateFrame("Frame", nil, HeaderBar)
 	SessionToggle:SetSize(173, 32)
