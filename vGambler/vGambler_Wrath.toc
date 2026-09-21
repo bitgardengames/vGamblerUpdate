@@ -33,3 +33,4 @@ Elements/History.lua
 Elements/Bans.lua
 Elements/Commands.lua
 Elements/About.lua
+Elements/Test.lua
