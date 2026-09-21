@@ -12,8 +12,7 @@ local HistoryLines = {}
 local MaxMatchHistory = 50
 local HistoryRefreshInterval = 30
 
--- Keep match history in a SavedVariables table so it survives reloads and new
--- sessions. The history is trimmed when new matches are added.
+-- Keep match history in a SavedVariables table so it survives reloads and new sessions. The history is trimmed when new matches are added.
 if (type(vGamblerHistory) ~= "table") then
 	vGamblerHistory = {}
 end
@@ -27,6 +26,7 @@ function vGambler:FormatHistoryTimestamp(timestamp, currentTime)
 
 	currentTime = currentTime or time()
 	local elapsed = currentTime - timestamp
+
 	if (elapsed >= 0 and date("%Y%m%d", timestamp) == date("%Y%m%d", currentTime)) then
 		if (elapsed < 60) then
 			return L.MATCH_JUST_NOW
@@ -68,6 +68,7 @@ function vGambler:HistoryLineOnEnter()
 	vGambler.Tooltip:SetOwner(self, "ANCHOR_NONE")
 	vGambler.Tooltip:SetPoint("LEFT", self, "RIGHT", 8, 0)
 	vGambler.Tooltip:ClearLines()
+
 	if Match.timestamp then
 		vGambler.Tooltip:AddDoubleLine(L.MATCH_PLAYED, date(L.MATCH_DATE_FORMAT, Match.timestamp), 1, 1, 1, 1, 1, 1)
 	end
@@ -76,6 +77,7 @@ function vGambler:HistoryLineOnEnter()
 
 	for i = 1, #(Match.players or {}) do
 		local Player = Match.players[i]
+
 		vGambler.Tooltip:AddDoubleLine(string.format(L.PLAYER_ROLL, i, Player.name), vGambler:Comma(Player.roll), 1, 1, 1, 1, 1, 1)
 	end
 
@@ -117,14 +119,17 @@ end
 
 function vGambler:HistoryPageOnUpdate(elapsed)
 	self.HistoryRefreshElapsed = (self.HistoryRefreshElapsed or 0) + elapsed
+
 	if (self.HistoryRefreshElapsed >= HistoryRefreshInterval) then
 		self.HistoryRefreshElapsed = 0
+
 		vGambler:SetHistoryScrollOffset(self.HistoryScroll.Offset)
 	end
 end
 
 function vGambler:HistoryPageOnShow()
 	self.HistoryRefreshElapsed = 0
+
 	vGambler:SetHistoryScrollOffset(self.HistoryScroll.Offset)
 end
 
@@ -134,6 +139,7 @@ end
 
 function vGambler:HistoryScrollOnMouseWheel(delta)
 	local ScrollBar = vGambler:GetPage("History").HistoryScroll
+
 	ScrollBar:SetValue(ScrollBar.Offset - delta)
 end
 
