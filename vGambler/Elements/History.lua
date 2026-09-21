@@ -12,11 +12,8 @@ local HistoryLines = {}
 local MaxMatchHistory = 50
 local HistoryRefreshInterval = 10
 
--- Keep match history in a SavedVariables table so it survives reloads and new sessions. The history is trimmed when new matches are added.
-if (type(vGamblerHistory) ~= "table") then
-	vGamblerHistory = {}
-end
-
+-- Use the saved table when it is loaded, or create it for a player's first session.
+vGamblerHistory = type(vGamblerHistory) == "table" and vGamblerHistory or {}
 vGambler.MatchHistory = vGamblerHistory
 
 function vGambler:FormatHistoryTimestamp(timestamp, currentTime)
