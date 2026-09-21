@@ -253,6 +253,42 @@ function vGambler:UpdateStatDisplay(value)
 	vGambler:UpdateStatGrid()
 end
 
+function vGambler:ReportStats()
+	local PlayerData = self:GetPlayerStatData()
+	local Report = {}
+
+	for PlayerName, Data in next, PlayerData do
+		if (Data.wins or Data.losses) then
+			table.insert(Report, {PlayerName, (Data.earnings or 0) - (Data.loss or 0)})
+		end
+	end
+
+	table.sort(Report, function(a, b)
+		if (a[2] == b[2]) then
+			local A = string.match(a[1], "|c%x%x%x%x%x%x%x%x(.-)|r") or a[1]
+			local B = string.match(b[1], "|c%x%x%x%x%x%x%x%x(.-)|r") or b[1]
+
+			return A < B
+		end
+
+		return a[2] > b[2]
+	end)
+
+	if (#Report == 0) then
+		self:SendMessage(L.NO_STATS_TO_REPORT)
+
+		return
+	end
+
+	local View = self.Settings.StatDisplay == true and L.SESSION_STATS or L.ALL_TIME_STATS
+	self:SendMessage(string.format(L.STATS_REPORT_HEADER, View))
+
+	for Rank, Entry in ipairs(Report) do
+		local Sign = Entry[2] > 0 and "+" or ""
+		self:SendMessage(string.format(L.STATS_REPORT_ENTRY, Rank, Entry[1], Sign, self:Comma(Entry[2])))
+	end
+end
+
 function vGambler:SetupDashboardHeader(page)
 	local HeaderBar = CreateFrame("Frame", nil, page, "BackdropTemplate")
 	HeaderBar:SetSize(page:GetWidth(), 32)
@@ -267,6 +303,10 @@ function vGambler:SetupDashboardHeader(page)
 	HeaderBar.Label:SetText(string.format("|cffFFC44D%s|r", L.STAT_VIEW))
 	HeaderBar.Label:SetShadowColor(0.029, 0.029, 0.051)
 	HeaderBar.Label:SetShadowOffset(0, -1)
+
+	local ReportButton = self:AddGameButton({}, HeaderBar, "ReportStats", L.REPORT_STATS, function() vGambler:ReportStats() end)
+	ReportButton:SetSize(72, 24)
+	ReportButton:SetPoint("LEFT", HeaderBar.Label, "RIGHT", 6, 0)
 
 	local SessionToggle = CreateFrame("Frame", nil, HeaderBar)
 	SessionToggle:SetSize(173, 32)
