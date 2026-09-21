@@ -10,7 +10,6 @@ vGambler.Settings = {
 	MinimapIcon = true,
 	PlaySounds = true,
 	StatDisplay = true, -- true = session, false = total
-	FadeChat = true,
 	UIFont = "PT Sans",
 	FontSize = 14,
 
@@ -185,19 +184,6 @@ function vGambler:UpdatePlaySounds(value)
 	vGambler.Settings.PlaySounds = value
 end
 
-function vGambler:UpdateFadeChat(value)
-	if (not vGamblerSettings) then
-		vGamblerSettings = {}
-	end
-
-	vGamblerSettings.FadeChat = value
-	vGambler.Settings.FadeChat = value
-
-	if vGambler.ChatWindow then
-		vGambler.ChatWindow:SetFading(vGambler.Settings.FadeChat)
-	end
-end
-
 function vGambler:UpdateUIFont(value)
 	if (not vGamblerSettings) then
 		vGamblerSettings = {}
@@ -346,7 +332,6 @@ function vGambler:SetupSettingsPage(page)
 	self:AddGameHeader(page.RightSettings, Right, L.GENERAL_SETTINGS)
 	self:AddGameCheckbox(page.RightSettings, Right, L.SHOW_MINIMAP_BUTTON, self.Settings.MinimapIcon, self.UpdateShowMinimapButton)
 	self:AddGameCheckbox(page.RightSettings, Right, L.PLAY_SOUNDS, self.Settings.PlaySounds, self.UpdatePlaySounds)
-	self:AddGameCheckbox(page.RightSettings, Right, L.FADE_CHAT, self.Settings.FadeChat, self.UpdateFadeChat)
 
 	self:AddGameHeader(page.RightSettings, Right, L.STATS_SETTINGS)
 	self:AddGameButton(page.RightSettings, Right, "resetgeneral", L.RESET_GENERAL_STATS, self.ShowResetGeneralStatsConfirmation)

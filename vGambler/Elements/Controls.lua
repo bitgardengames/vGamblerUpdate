@@ -256,7 +256,7 @@ function vGambler:SetupControlsPage(page)
 	ChatWindow:SetJustifyH("LEFT")
 	ChatWindow:SetShadowColor(0.029, 0.029, 0.051)
 	ChatWindow:SetShadowOffset(0, -1)
-	ChatWindow:SetFading(self.Settings.FadeChat)
+	ChatWindow:SetFading(false)
 	ChatWindow:EnableMouseWheel(true)
 	ChatWindow:SetScript("OnMouseWheel", self.ChatOnMouseWheel)
 
