@@ -12,9 +12,9 @@ local HistoryLines = {}
 local MaxMatchHistory = 50
 local HistoryRefreshInterval = 10
 
--- Use the saved table when it is loaded, or create it for a player's first session.
-vGamblerHistory = type(vGamblerHistory) == "table" and vGamblerHistory or {}
-vGambler.MatchHistory = vGamblerHistory
+-- Saved variables are attached after addon files load, so use a temporary table
+-- until PLAYER_ENTERING_WORLD binds the saved history.
+vGambler.MatchHistory = {}
 
 function vGambler:FormatHistoryTimestamp(timestamp, currentTime)
 	if (not timestamp) then

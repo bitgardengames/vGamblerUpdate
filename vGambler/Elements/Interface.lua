@@ -1099,6 +1099,9 @@ function vGambler:HideWindow()
 end
 
 function vGambler:PLAYER_ENTERING_WORLD()
+	vGamblerHistory = type(vGamblerHistory) == "table" and vGamblerHistory or {}
+	self.MatchHistory = vGamblerHistory
+
 	if vGamblerSettings then
 		for name, value in next, vGamblerSettings do
 			self.Settings[name] = value
