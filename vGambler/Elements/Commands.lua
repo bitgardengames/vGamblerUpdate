@@ -39,6 +39,10 @@ vGambler.Commands = {
 		vGambler:ResetBans()
 	end,
 
+	stats = function(name) -- /vg stats {player}
+		vGambler:ReportStats(name)
+	end,
+
 	show = function() -- /vg show
 		vGambler:ShowWindow()
 	end,
@@ -96,3 +100,19 @@ SlashCmdList.VGAMBLER = function(command)
 		end
 	end
 end
+
+function vGambler:CHAT_MSG_WHISPER(message, sender)
+	if message == "!stats" then
+		self:ReportStats(nil, "WHISPER", sender)
+	elseif message == "!stats me" then
+		self:ReportStats(string.match(sender, "^([^-]+)"), "WHISPER", sender)
+	else
+		local PlayerName = string.match(message, "^!stats%s+(%S+)$")
+
+		if PlayerName then
+			self:ReportStats(PlayerName, "WHISPER", sender)
+		end
+	end
+end
+
+vGambler:RegisterEvent("CHAT_MSG_WHISPER")
