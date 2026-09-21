@@ -236,6 +236,33 @@ function vGambler:ShowResetStatsConfirmation(resetFunc)
 	Dialog:Show()
 end
 
+function vGambler:AcceptResetStats()
+	local Dialog = vGambler.ResetStatsDialog
+	local ResetFunc = Dialog.ResetFunc
+
+	Dialog:Hide()
+	Dialog.ResetFunc = nil
+
+	if ResetFunc then
+		ResetFunc()
+	end
+end
+
+function vGambler:CancelResetStats()
+	local Dialog = vGambler.ResetStatsDialog
+
+	Dialog:Hide()
+	Dialog.ResetFunc = nil
+end
+
+function vGambler:ShowResetGeneralStatsConfirmation()
+	vGambler:ShowResetStatsConfirmation(vGambler.ResetGeneralStats)
+end
+
+function vGambler:ShowResetPlayerStatsConfirmation()
+	vGambler:ShowResetStatsConfirmation(vGambler.ResetPlayerStats)
+end
+
 function vGambler:CreateResetStatsDialog()
 	local Dialog = CreateFrame("Frame", nil, self.Window, "BackdropTemplate")
 	Dialog:SetSize(300, 136)
@@ -274,23 +301,11 @@ function vGambler:CreateResetStatsDialog()
 	Warning:SetShadowOffset(0, -1)
 
 	local Buttons = {}
-	local Accept = self:AddGameButton(Buttons, Dialog, "acceptreset", L.ACCEPT, function()
-		local ResetFunc = Dialog.ResetFunc
-
-		Dialog:Hide()
-		Dialog.ResetFunc = nil
-
-		if ResetFunc then
-			ResetFunc()
-		end
-	end)
+	local Accept = self:AddGameButton(Buttons, Dialog, "acceptreset", L.ACCEPT, self.AcceptResetStats)
 	Accept:SetSize(137, 24)
 	Accept:SetPoint("BOTTOMLEFT", Dialog, 8, 8)
 
-	local Cancel = self:AddGameButton(Buttons, Dialog, "cancelreset", L.CANCEL, function()
-		Dialog:Hide()
-		Dialog.ResetFunc = nil
-	end)
+	local Cancel = self:AddGameButton(Buttons, Dialog, "cancelreset", L.CANCEL, self.CancelResetStats)
 	Cancel:SetSize(137, 24)
 	Cancel:SetPoint("BOTTOMRIGHT", Dialog, -8, 8)
 
@@ -334,12 +349,8 @@ function vGambler:SetupSettingsPage(page)
 	self:AddGameCheckbox(page.RightSettings, Right, L.FADE_CHAT, self.Settings.FadeChat, self.UpdateFadeChat)
 
 	self:AddGameHeader(page.RightSettings, Right, L.STATS_SETTINGS)
-	self:AddGameButton(page.RightSettings, Right, "resetgeneral", L.RESET_GENERAL_STATS, function()
-		vGambler:ShowResetStatsConfirmation(vGambler.ResetGeneralStats)
-	end)
-	self:AddGameButton(page.RightSettings, Right, "resetplayers", L.RESET_PLAYER_STATS, function()
-		vGambler:ShowResetStatsConfirmation(vGambler.ResetPlayerStats)
-	end)
+	self:AddGameButton(page.RightSettings, Right, "resetgeneral", L.RESET_GENERAL_STATS, self.ShowResetGeneralStatsConfirmation)
+	self:AddGameButton(page.RightSettings, Right, "resetplayers", L.RESET_PLAYER_STATS, self.ShowResetPlayerStatsConfirmation)
 
 	self:SortButtonList(page.RightSettings, Right)
 	self:CreateResetStatsDialog()
