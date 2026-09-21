@@ -403,7 +403,7 @@ function vGambler:StatLineNameOnEnter()
 	vGambler.Tooltip:SetOwner(self, "ANCHOR_NONE")
 	vGambler.Tooltip:SetPoint("LEFT", self:GetParent(), "RIGHT", 8, 0)
 	vGambler.Tooltip:ClearLines()
-	vGambler.Tooltip:AddDoubleLine(self.PlayerName, L.PAIRWISE_LEDGER, 1, 1, 1, 1, 0.769, 0.302)
+	vGambler.Tooltip:AddLine(self.PlayerName, 1, 1, 1)
 
 	if (#Winnings == 0 and #Losses == 0) then
 		vGambler.Tooltip:AddLine(" ")
@@ -414,7 +414,7 @@ function vGambler:StatLineNameOnEnter()
 			vGambler.Tooltip:AddLine(L.WON_FROM, 0.35, 1, 0.35)
 
 			for _, Entry in ipairs(Winnings) do
-				vGambler.Tooltip:AddDoubleLine(Entry[1], string.format("+" .. L.GOLD_AMOUNT, vGambler:Comma(Entry[2])), 1, 1, 1, 0.35, 1, 0.35)
+				vGambler.Tooltip:AddDoubleLine(Entry[1], string.format("+" .. L.GOLD_AMOUNT, vGambler:Comma(Entry[2])), 1, 1, 1, 1, 1, 1)
 			end
 		end
 
@@ -423,13 +423,13 @@ function vGambler:StatLineNameOnEnter()
 			vGambler.Tooltip:AddLine(L.LOST_TO, 1, 0.35, 0.35)
 
 			for _, Entry in ipairs(Losses) do
-				vGambler.Tooltip:AddDoubleLine(Entry[1], string.format("-" .. L.GOLD_AMOUNT, vGambler:Comma(Entry[2])), 1, 1, 1, 1, 0.35, 0.35)
+				vGambler.Tooltip:AddDoubleLine(Entry[1], string.format("-" .. L.GOLD_AMOUNT, vGambler:Comma(Entry[2])), 1, 1, 1, 1, 1, 1)
 			end
 		end
 
 		vGambler.Tooltip:AddLine(" ")
-		local TotalColor = Total >= 0 and "|cff59ff59+" or "|cffff5959"
-		vGambler.Tooltip:AddDoubleLine(L.NET_BALANCE, string.format(TotalColor .. L.GOLD_AMOUNT .. "|r", vGambler:Comma(Total)), 1, 1, 1, 1, 1, 1)
+		local TotalPrefix = Total >= 0 and "+" or ""
+		vGambler.Tooltip:AddDoubleLine(L.NET_BALANCE, string.format(TotalPrefix .. L.GOLD_AMOUNT, vGambler:Comma(Total)), 1, 1, 1, 1, 1, 1)
 	end
 
 	vGambler.Tooltip:Show()
