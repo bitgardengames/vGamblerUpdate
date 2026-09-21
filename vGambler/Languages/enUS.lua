@@ -62,6 +62,8 @@ L.STATS_SETTINGS = "Stats Settings"
 L.RESET_GENERAL_STATS = "Reset General Stats"
 L.RESET_PLAYER_STATS = "Reset Player Stats"
 L.RESET_STATS_WARNING = "This action is destructive and cannot be undone. Are you sure you want to continue?"
+L.GENERAL_STATS_RESET = L.PREFIX .. ": General stats have been reset."
+L.PLAYER_STATS_RESET = L.PREFIX .. ": Player stats have been reset."
 L.ACCEPT = "Accept"
 L.CANCEL = "Cancel"
 
