@@ -1101,6 +1101,7 @@ end
 function vGambler:PLAYER_ENTERING_WORLD()
 	vGamblerHistory = type(vGamblerHistory) == "table" and vGamblerHistory or {}
 	self.MatchHistory = vGamblerHistory
+	self:UpdateHistory()
 
 	if vGamblerSettings then
 		for name, value in next, vGamblerSettings do
