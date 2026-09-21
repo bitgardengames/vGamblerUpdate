@@ -323,7 +323,7 @@ function vGambler:SetupSettingsPage(page)
 	self:SortButtonList(page.LeftSettings, Left)
 
 	local Right = CreateFrame("Frame", nil, page, "BackdropTemplate")
-	Right:SetSize(174, 188)
+	Right:SetSize(174, 162)
 	Right:SetPoint("TOPRIGHT", page, 0, 0)
 	Right:SetBackdrop(self.MediumBackdrop)
 	Right:SetBackdropColor(0.184, 0.192, 0.211)
