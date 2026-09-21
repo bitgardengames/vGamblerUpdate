@@ -336,7 +336,7 @@ function vGambler:SetupDashboardHeader(page)
 
 	local Report = CreateFrame("Frame", nil, HeaderBar, "BackdropTemplate")
 	Report:SetSize(92, 24)
-	Report:SetPoint("LEFT", HeaderBar, "LEFT", 4, 0)
+	Report:SetPoint("LEFT", HeaderBar, 4, 0)
 	Report:SetBackdrop(self.SmallBackdrop)
 	Report:SetBackdropColor(0.25, 0.266, 0.294)
 	Report:SetBackdropBorderColor(0.25, 0.266, 0.294)
