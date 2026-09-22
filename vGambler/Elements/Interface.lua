@@ -178,6 +178,16 @@ function vGambler:EnableGameButton(id)
 	end
 end
 
+function vGambler:SetGameButtonLabel(id, text)
+	for i = 1, #self.Window.GameButtons do
+		if (self.Window.GameButtons[i].ID and self.Window.GameButtons[i].ID == id) then
+			self.Window.GameButtons[i].Label:SetText(text)
+
+			break
+		end
+	end
+end
+
 function vGambler:DisablePlayButton(id)
 	for i = 1, #self.Window.PlayButtons do
 		if (self.Window.PlayButtons[i].ID and self.Window.PlayButtons[i].ID == id) then
