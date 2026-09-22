@@ -224,7 +224,7 @@ function vGambler:SetupControlsPage(page)
 	self:AddGameHeader(GameButtons, GameButtons, L.HOST_GAME)
 	self:AddGameButton(GameButtons, GameButtons, "Start", L.START_GAME, function() if vGambler.Settings.Channel == 4 then vGambler:TestGame() else vGambler:StartGame() end end)
 	self:AddGameButton(GameButtons, GameButtons, "LastCall", L.LAST_CALL_BUTTON, function() vGambler:LastCall() end)
-	self:AddGameButton(GameButtons, GameButtons, "Close", L.CLOSE_GAME, function() vGambler:CloseGame() end)
+	self.Window.CloseButton = self:AddGameButton(GameButtons, GameButtons, "Close", L.CLOSE_GAME, function() vGambler:CloseGame() end)
 	self:AddGameButton(GameButtons, GameButtons, "Reset", L.RESET_GAME, function() vGambler:ResetGame() end)
 
 	self:AddGameHeader(GameSettings, GameSettings, L.ROLL_VALUE)
