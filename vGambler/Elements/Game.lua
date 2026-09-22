@@ -118,6 +118,7 @@ function vGambler:ResetGame() -- Resets the game to its initial state, clearing 
 	self:DisableGameButton("LastCall")
 	self:DisableGameButton("Reset")
 	self:DisableGameButton("Close")
+	self.Window.CloseButton.Label:SetText(L.CLOSE_GAME)
 
 	self.Window.PlayButtons:Hide()
 	self.Window.GameSettings:Show()
@@ -157,6 +158,7 @@ function vGambler:StartGame() --  Starts a new game, registers relevant events, 
 	self:EnableGameButton("LastCall")
 	self:EnableGameButton("Reset")
 	self:EnableGameButton("Close")
+	self.Window.CloseButton.Label:SetText(L.CLOSE_GAME)
 
 	self.Window.GameSettings:Hide()
 	self.Window.PlayButtons:Show()
@@ -202,7 +204,7 @@ function vGambler:CloseGame() -- Closes the game, stops accepting players, and t
 
 		self:DisableGameButton("Start")
 		self:DisableGameButton("LastCall")
-		self:DisableGameButton("Close")
+		self.Window.CloseButton.Label:SetText(L.REMIND)
 		self:DisableGameButton("RollValue")
 		self:DisableGameButton("Channel")
 		self:EnableGameButton("Reset")
@@ -272,6 +274,7 @@ end
 function vGambler:CloseDrawGame()
 	self.Locked = false
 	self.TiedGame = false
+	self:DisableGameButton("Close")
 
 	if self.Settings.PlaySounds then
 		PlaySound(SOUNDKIT.LFG_DENIED)
@@ -413,6 +416,7 @@ function vGambler:DeclareWinner() -- Declares the winner of the game, calculates
 
 	self.Locked = false
 	self.TiedGame = false
+	self:DisableGameButton("Close")
 
 	self:SendMessage(self:FormatGameResult(Winner, Loser, self.Result[3], self.Result[4], Earnings))
 

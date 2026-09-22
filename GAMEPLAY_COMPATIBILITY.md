@@ -151,7 +151,7 @@ is enabled again.
 | Withdrawal | Exact `-1` | Match |
 | Minimum entrants | Two | Match |
 | Close announcement | Announces closure and asks players to roll | Match |
-| Missing-roll reminder | Reusing Roll/Close announces missing players | **UI regression** |
+| Missing-roll reminder | Close becomes Remind and announces missing players | Match |
 | Roll acceptance | Entrant's first `1..wager` system roll only | Match |
 | Automatic resolution | After every entrant rolls | Match |
 | Payout | Highest minus lowest | Match for unique extremes |
@@ -175,17 +175,13 @@ but affected player clients display and interact with the wrong game.
 it is an explicitly supported replacement/reset protocol), and consider adding
 a match identifier to every addon event.
 
-### P1 — the legacy missing-roll reminder is unreachable from the current UI
+### P1 — resolved: the missing-roll reminder is available from the current UI
 
-`CloseGame` still contains the locked-game reminder branch, but the current
-implementation disables **Close** as soon as rolling starts. Legacy kept its
-Roll control enabled, allowing the host to press it again and name each missing
-roller. The current host has no normal button path to that branch.
-
-**Suggested correction:** leave Close enabled during rolling (possibly relabel
-it “Remind”), or add a dedicated reminder control. Add a test that closes a
-three-player game, accepts two rolls, invokes the control, and verifies that the
-third display name appears in chat.
+After the host closes entry, **Close Game** remains enabled and is relabeled
+**Remind**. Pressing it invokes the existing locked-game branch and announces
+the display names of players who have not rolled. The control is disabled once
+the game resolves and returns to **Close Game** when the game is reset or a new
+game starts.
 
 ### P1 — tie and draw semantics differ from legacy gameplay
 
@@ -275,7 +271,7 @@ Use two addon clients plus one client without vGambler where possible.
 The current implementation preserves the central host workflow for unique
 rolls: announce, accept exact chat commands, de-duplicate entrants, close at two
 players, accept one correctly ranged system roll per entrant, and settle high
-minus low. It is **not exactly legacy-equivalent** yet. The most actionable
-regression is the inaccessible missing-roll reminder; the most serious new
+minus low. It is **not exactly legacy-equivalent** yet. The missing-roll
+reminder is available through the relabeled host control; the most serious new
 multi-client risk is active-game replacement by another `NewGame`; and the tie
 rules, next-game flow, and defaults require explicit compatibility decisions.
