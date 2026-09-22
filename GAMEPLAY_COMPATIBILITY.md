@@ -175,30 +175,6 @@ but affected player clients display and interact with the wrong game.
 it is an explicitly supported replacement/reset protocol), and consider adding
 a match identifier to every addon event.
 
-### P1 — the legacy missing-roll reminder is unreachable from the current UI
-
-`CloseGame` still contains the locked-game reminder branch, but the current
-implementation disables **Close** as soon as rolling starts. Legacy kept its
-Roll control enabled, allowing the host to press it again and name each missing
-roller. The current host has no normal button path to that branch.
-
-**Suggested correction:** leave Close enabled during rolling (possibly relabel
-it “Remind”), or add a dedicated reminder control. Add a test that closes a
-three-player game, accepts two rolls, invokes the control, and verifies that the
-third display name appears in chat.
-
-### P1 — tie and draw semantics differ from legacy gameplay
-
-The current tie breakers are clearer gameplay, but they are not behavioral
-parity. Legacy would select sorted endpoints even when equal and could announce
-zero gold; current code rerolls tied extrema and declares an all-equal opening
-round a draw.
-
-**Suggested correction:** make a product decision and document it. For strict
-compatibility, remove tie/draw special cases. If the new rules are desired,
-label this an intentional rules upgrade and test unique high, unique low,
-winning tie, losing tie, repeated tie, and all-player draw paths.
-
 ### P2 — next-game workflow and reset visibility differ
 
 Legacy resolution clears entrants and permits New Game directly. Current
@@ -211,15 +187,6 @@ prints reset only locally.
 Start availability, or explicitly retain the result screen and provide a
 “Next Game” action that performs Reset plus Start. Decide whether group-visible
 reset announcements are wanted.
-
-### P2 — default wager and channel changed
-
-Legacy starts at 1,000/Raid; current starts at 10/Party. This changes the first
-run but not the state machine.
-
-**Suggested correction:** restore the legacy defaults if exact out-of-box
-compatibility is required. Otherwise treat them as intentional UX defaults and
-call them out in release notes.
 
 ### P2 — short-name normalization can collide in cross-realm groups
 
