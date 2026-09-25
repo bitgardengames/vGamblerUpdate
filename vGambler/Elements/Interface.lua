@@ -93,19 +93,19 @@ function vGambler:CreateTooltip()
 	Tooltip:SetFrameLevel(3)
 	Tooltip.NineSlice:SetAlpha(0)
 	Tooltip:HookScript("OnShow", function(tooltip)
-		local fontObject = self:GetFontObject(self.Font, self.Settings.FontSize)
-		local tooltipName = tooltip:GetName()
+		local FontObject = self:GetFontObject(self.Font, self.Settings.FontSize)
+		local TooltipName = tooltip:GetName()
 
 		for i = 1, tooltip:NumLines() do
-			local left = _G[tooltipName .. "TextLeft" .. i]
-			local right = _G[tooltipName .. "TextRight" .. i]
+			local Left = _G[TooltipName .. "TextLeft" .. i]
+			local Right = _G[TooltipName .. "TextRight" .. i]
 
-			if (left) then
-				left:SetFontObject(fontObject)
+			if Left then
+				Left:SetFontObject(FontObject)
 			end
 
-			if (right) then
-				right:SetFontObject(fontObject)
+			if Right then
+				Right:SetFontObject(FontObject)
 			end
 		end
 	end)
