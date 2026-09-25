@@ -1,6 +1,6 @@
 ## Interface: 120100
 ## Author: Hydra
-## Version: 2.01
+## Version: 2.03
 ## Title: |cffFFC44DvGambler|r
 ## Notes: A social gambling game for friends, guildmates, and groups
 ## SavedVariables: vGamblerBans, vGamblerData, vGamblerPlayers, vGamblerPlayerBalances, vGamblerSettings, vGamblerHistory
