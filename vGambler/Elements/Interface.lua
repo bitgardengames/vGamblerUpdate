@@ -92,6 +92,23 @@ function vGambler:CreateTooltip()
 	local Tooltip = CreateFrame("GameTooltip", "vGamblerTooltip", UIParent, "GameTooltipTemplate")
 	Tooltip:SetFrameLevel(3)
 	Tooltip.NineSlice:SetAlpha(0)
+	Tooltip:HookScript("OnShow", function(tooltip)
+		local fontObject = self:GetFontObject(self.Font, self.Settings.FontSize)
+		local tooltipName = tooltip:GetName()
+
+		for i = 1, tooltip:NumLines() do
+			local left = _G[tooltipName .. "TextLeft" .. i]
+			local right = _G[tooltipName .. "TextRight" .. i]
+
+			if (left) then
+				left:SetFontObject(fontObject)
+			end
+
+			if (right) then
+				right:SetFontObject(fontObject)
+			end
+		end
+	end)
 
 	Tooltip.Outside = CreateFrame("Frame", nil, Tooltip, "BackdropTemplate")
 	Tooltip.Outside:SetPoint("TOPLEFT", Tooltip, -4, 4)
